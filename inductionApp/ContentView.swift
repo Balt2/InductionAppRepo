@@ -18,11 +18,14 @@ struct ContentView: View {
     
     //Observable object that contains data that the user puts in when creating a class
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
+    @EnvironmentObject var currentAuth: UserAuth
     var db = Firestore.firestore()
     var body: some View {
+        NavigationView {
         VStack {
-            Image("ilLogo")
-                .padding()
+            Image("ilLogo").resizable()
+            .aspectRatio(contentMode: .fit)
+                //.padding()
             
             FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
             RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
@@ -38,14 +41,14 @@ struct ContentView: View {
             FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationViewModel.passwordConfirm, isSecure: true)
             RequirementText(iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "Your confirm password should be the same as password", isStrikeThrough: userRegistrationViewModel.isPasswordConfirmValid)
                 .padding()
-                .padding(.bottom, 50)
+                
             
             Button(action: {
                 //Check if email is valid,
                 //check if password is minum 8 characters and has on upercase letter
                 //Check confirm password is equal to password
                 if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
-                    && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordLengthValid){
+                    && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordConfirmValid){
                     let tempEmail = self.userRegistrationViewModel.email
                     let tempPassword = self.userRegistrationViewModel.password
                     Auth.auth().createUser(withEmail: tempEmail, password: tempPassword) { authResult, error in
@@ -60,6 +63,9 @@ struct ContentView: View {
                                 }else{
                                     print("Suuccess creating user document")
                                     //I created a user here. But now I am having the user being created on the UserHompageView file.
+//                                    let sceneDelegate: SceneDelegate? = UIApplication.shared.delegate as? SceneDelegate
+//                                    sceneDelegate!.updateSceneDelegate(manager: self.currentAuth)
+ 
                                 }
                                 
                             }
@@ -87,21 +93,26 @@ struct ContentView: View {
             HStack {
                 Text("Already have an account?")
                     .font(.system(.body, design: .rounded))
-                    .bold()
-                    
-                Button(action: {
-                    // Proceed to Sign in screen
-                }) {
-                    Text("Sign in")
+                    .bold().padding(.bottom, 25.0)
+                NavigationLink(destination: LoginView()){
+                     Text("Sign in")
                         .font(.system(.body, design: .rounded))
                         .bold()
                         .foregroundColor(Color(red: 255/255, green: 126/255, blue: 103/255))
-                }
-            }.padding(.top, 50)
+                }.padding(.bottom, 25.0)
+//                NavigationLink(destination: LoginView()) {
+//                    LoginView()
+//                }) {
+//
+//                }
+            }
             
-            Spacer()
+           // Spacer()
         }
         .padding()
+        }.navigationViewStyle(StackNavigationViewStyle())
+            .edgesIgnoringSafeArea(.bottom)
+        
     }
     
 

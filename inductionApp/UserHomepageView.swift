@@ -11,7 +11,7 @@ import Firebase
 
 struct UserHomepageView: View {
     var user: User
-    
+    @EnvironmentObject var currentAuth: UserAuth
   var body: some View {
       HStack {
           VStack {
@@ -68,6 +68,8 @@ struct UserHomepageView: View {
                             do {
                                 print("BEN")
                                 try Auth.auth().signOut()
+//                                 let sceneDelegate: SceneDelegate? = UIApplication.shared.delegate as? SceneDelegate
+//                                 sceneDelegate!.updateSceneDelegate(manager: self.currentAuth)
                             } catch{
                                 print("ERROR logging out")
                             }

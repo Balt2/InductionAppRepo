@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Firebase
 
 
 class User: ObservableObject {
@@ -23,5 +24,6 @@ class User: ObservableObject {
         self.lastName = ln
         self.association = "NU Tutors"
     }
+    
 }
 

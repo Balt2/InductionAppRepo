@@ -14,13 +14,13 @@ struct AppRootView: View {
 //    let handle = Auth.auth().addStateDidChangeListener { (auth, user) in
 //
 //    }
-    @ObservedObject var currentAuth: UserAuth
+    @EnvironmentObject var currentAuth: UserAuth
     
     var body: some View {
         Group {
             if currentAuth.auth.currentUser != nil {
 //                print(currentAuth.auth.currentUser?.providerData)
-                UserHomepageView(user: User(fn: "\(currentAuth.auth.currentUser?.metadata)", ln: "\(currentAuth.auth.currentUser)", id: "\(currentAuth.auth.currentUser)"))
+                UserHomepageView(user: User(fn: "\(currentAuth.auth.currentUser?.uid)", ln: "b", id: "d"))
               // ...
             } else {
               // No user is signed in.
@@ -33,13 +33,14 @@ struct AppRootView: View {
 }
 
 class UserAuth: ObservableObject {
+    
     @Published var auth = Auth.auth()
+    init(){
+        let handle = auth.addStateDidChangeListener { (authFromDataB, user) in
+            self.auth = authFromDataB
+        }
+    }
+ 
+   
 }
 
-//struct AppRootView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let userT = User(fn: "B", ln: "L", id: "DS")
-//        userT.isLoggedIn = true
-//        return AppRootView
-//    }
-//}
