@@ -17,7 +17,7 @@ class UserRegistrationViewModel: ObservableObject {
     @Published var passwordConfirm = ""
     
     // Output
-    @Published var isemailLengthValid = false
+    @Published var isemailValid = false
     @Published var isPasswordLengthValid = false
     @Published var isPasswordCapitalLetter = false
     @Published var isPasswordConfirmValid = false
@@ -28,9 +28,11 @@ class UserRegistrationViewModel: ObservableObject {
         $email
             .receive(on: RunLoop.main)
             .map { email in
-                return email.count >= 4
+                let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+                let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+                return emailPred.evaluate(with: email)
             }
-            .assign(to: \.isemailLengthValid, on: self)
+            .assign(to: \.isemailValid, on: self)
             .store(in: &cancellableSet)
         
         $password

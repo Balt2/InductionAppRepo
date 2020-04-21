@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:inductionApp.xcodeproj">
+      location = "self:/Users/baltschuler/Desktop/inductionApp/InductionApp.xcodeproj">
    </FileRef>
 </Workspace>

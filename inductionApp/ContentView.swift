@@ -7,22 +7,25 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseUI
 
 struct ContentView: View {
     
-    @State private var email = ""
-    @State private var password = ""
-    @State private var passwordConfirm = ""
+//    @State private var email = ""
+//    @State private var password = ""
+//    @State private var passwordConfirm = ""
     
+    //Observable object that contains data that the user puts in when creating a class
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
-    
+    var db = Firestore.firestore()
     var body: some View {
         VStack {
             Image("ilLogo")
                 .padding()
             
             FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
-            RequirementText(iconColor: userRegistrationViewModel.isemailLengthValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters", isStrikeThrough: userRegistrationViewModel.isemailLengthValid)
+            RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
                 .padding()
             
             FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
@@ -38,7 +41,36 @@ struct ContentView: View {
                 .padding(.bottom, 50)
             
             Button(action: {
-                // Proceed to the next screen
+                //Check if email is valid,
+                //check if password is minum 8 characters and has on upercase letter
+                //Check confirm password is equal to password
+                if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
+                    && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordLengthValid){
+                    let tempEmail = self.userRegistrationViewModel.email
+                    let tempPassword = self.userRegistrationViewModel.password
+                    Auth.auth().createUser(withEmail: tempEmail, password: tempPassword) { authResult, error in
+                        if let error = error {
+                            print("Error creating account: \(error.localizedDescription)")
+                        } else{
+                            //The authResult has user.uid and user.email
+                            print("Sucess creating accouunt: \(authResult!)")
+                            self.db.collection("users").document("\(authResult!.user.uid)").setData(["firstN": "Josh", "lastN": "Breite", "associationID": "NUTUTORS"]){ error in
+                                if let error = error {
+                                    print("Error creating user document: \(error.localizedDescription)")
+                                }else{
+                                    print("Suuccess creating user document")
+                                    //I created a user here. But now I am having the user being created on the UserHompageView file.
+                                }
+                                
+                            }
+                        }
+
+                    }
+                }else{
+                    print("Error on Sign up: Invalid Email and/or password")
+
+                }
+                
             }) {
                 Text("Sign Up")
                     .font(.system(.body, design: .rounded))
@@ -77,7 +109,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
     }
 }
 
@@ -96,7 +128,8 @@ struct FormField: View {
                     .padding(.horizontal)
                 
             } else {
-                TextField(fieldName, text: $fieldValue)                 .font(.system(size: 20, weight: .semibold, design: .rounded))
+                TextField(fieldName, text: $fieldValue)
+                    .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .padding(.horizontal)
             }
 
