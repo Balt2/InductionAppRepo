@@ -11,9 +11,7 @@ import Firebase
 
 struct AppRootView: View {
     
-//    let handle = Auth.auth().addStateDidChangeListener { (auth, user) in
-//
-//    }
+
     @EnvironmentObject var currentAuth: UserAuth
     
     var body: some View {
