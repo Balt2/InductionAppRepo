@@ -12,9 +12,6 @@ import FirebaseUI
 
 struct ContentView: View {
     
-//    @State private var email = ""
-//    @State private var password = ""
-//    @State private var passwordConfirm = ""
     
     //Observable object that contains data that the user puts in when creating a class
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
@@ -57,14 +54,13 @@ struct ContentView: View {
                         } else{
                             //The authResult has user.uid and user.email
                             print("Sucess creating accouunt: \(authResult!)")
+                            //This creates a user in the database with more information
                             self.db.collection("users").document("\(authResult!.user.uid)").setData(["firstN": "Josh", "lastN": "Breite", "associationID": "NUTUTORS"]){ error in
                                 if let error = error {
                                     print("Error creating user document: \(error.localizedDescription)")
                                 }else{
                                     print("Suuccess creating user document")
-                                    //I created a user here. But now I am having the user being created on the UserHompageView file.
-//                                    let sceneDelegate: SceneDelegate? = UIApplication.shared.delegate as? SceneDelegate
-//                                    sceneDelegate!.updateSceneDelegate(manager: self.currentAuth)
+                                    //The sceneDelegate automatically changes the rootView to userHompageView because of the EnvirnomentObject currentAuth.
  
                                 }
                                 

@@ -39,6 +39,5 @@ class UserAuth: ObservableObject {
         }
     }
  
-   
 }
 

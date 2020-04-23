@@ -11,8 +11,6 @@ import Firebase
 
 struct LoginView: View {
     
-    @State private var email = ""
-    @State private var password = ""
     
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
     @EnvironmentObject var currentAuth: UserAuth
@@ -35,6 +33,7 @@ struct LoginView: View {
                             print(self.userRegistrationViewModel.password)
                             print("Error logging in: \(error.localizedDescription)")
                         }else{
+                            //Create User here
 //                            guard let strongSelf = self else { return }
 //
 //                            strongSelf.createUser(id: authResult!.user.uid, completionHandler: { (success) -> Void in

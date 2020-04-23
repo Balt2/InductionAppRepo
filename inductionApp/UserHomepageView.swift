@@ -13,6 +13,7 @@ struct UserHomepageView: View {
     var user: User
     @EnvironmentObject var currentAuth: UserAuth
   var body: some View {
+    NavigationView{
       HStack {
           VStack {
               HStack {
@@ -28,14 +29,13 @@ struct UserHomepageView: View {
               .padding()
               HStack(alignment: .top) {
                   VStack (alignment: .leading) {
-                      Button(action: {
-                          //What the button does
-                      }) {
-                          HStack {
+                    
+                    NavigationLink(destination: TestView()) {
+                         HStack {
                               Image(systemName: "folder")
-                               Text("Test Library")
+                               Text("Take TEST!")
                           }
-                      }
+                        }
                       .buttonStyle(buttonBackgroundStyle())
                       Button(action: {
                           //What the button does
@@ -110,7 +110,8 @@ struct UserHomepageView: View {
                   Spacer()
               }
           }
-      }
+        }
+    }.navigationViewStyle(StackNavigationViewStyle())
   }
 }
 
