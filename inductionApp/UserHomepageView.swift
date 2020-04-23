@@ -112,6 +112,7 @@ struct UserHomepageView: View {
           }
         }
     }.navigationViewStyle(StackNavigationViewStyle())
+       
   }
 }
 

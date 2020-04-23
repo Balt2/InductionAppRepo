@@ -23,6 +23,7 @@
 		2F945183244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */; };
 		2F9451852450009D009521F7 /* josh.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 2F9451842450009D009521F7 /* josh.jpeg */; };
 		2F9C109C244F693100A7C6FF /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9C109B244F693100A7C6FF /* AppRootView.swift */; };
+		2FAB7857245149570038DCF4 /* CanvasRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FAB7856245149570038DCF4 /* CanvasRepresentable.swift */; };
 		2FEEE3FF2450B5B0003DE2BD /* AnswerSheetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */; };
 		2FEEE4012450B94C003DE2BD /* AnswerSheetList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEEE4002450B94C003DE2BD /* AnswerSheetList.swift */; };
 		D9DE365D4A1ADBF66FB1DE56 /* Pods_InductionApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7153C925F845E1499489472E /* Pods_InductionApp.framework */; };
@@ -47,6 +48,7 @@
 		2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "pdf_sat-practice-test-1.pdf"; sourceTree = "<group>"; };
 		2F9451842450009D009521F7 /* josh.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = josh.jpeg; sourceTree = "<group>"; };
 		2F9C109B244F693100A7C6FF /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppRootView.swift; path = InductionApp/AppRootView.swift; sourceTree = SOURCE_ROOT; };
+		2FAB7856245149570038DCF4 /* CanvasRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CanvasRepresentable.swift; path = InductionApp/CanvasRepresentable.swift; sourceTree = SOURCE_ROOT; };
 		2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnswerSheetRow.swift; path = InductionApp/AnswerSheetRow.swift; sourceTree = SOURCE_ROOT; };
 		2FEEE4002450B94C003DE2BD /* AnswerSheetList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnswerSheetList.swift; path = InductionApp/AnswerSheetList.swift; sourceTree = SOURCE_ROOT; };
 		7153C925F845E1499489472E /* Pods_InductionApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InductionApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,15 +91,15 @@
 			children = (
 				03BEBC4C244E7B69001576EC /* AppDelegate.swift */,
 				03BEBC4E244E7B69001576EC /* SceneDelegate.swift */,
-				03BEBC50244E7B69001576EC /* ContentView.swift */,
+				2FAB784C245135490038DCF4 /* Login and Signup */,
 				2F945180244FFA33009521F7 /* TestView.swift */,
 				2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */,
+				2FAB7856245149570038DCF4 /* CanvasRepresentable.swift */,
 				2FEEE4002450B94C003DE2BD /* AnswerSheetList.swift */,
 				2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */,
 				2F9C109B244F693100A7C6FF /* AppRootView.swift */,
 				2F0DD2C7244F5F3D00AFFADE /* UserModel.swift */,
 				2F0DD2C9244F5F6300AFFADE /* TestModel.swift */,
-				038753F7244E9AA900F85970 /* LoginView.swift */,
 				038753F9244E9AC800F85970 /* UserHomepageView.swift */,
 				2F9451842450009D009521F7 /* josh.jpeg */,
 				03BEBC52244E7B6A001576EC /* Assets.xcassets */,
@@ -116,6 +118,15 @@
 				038753F5244E923B00F85970 /* UserRegistrationViewModel.swift */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		2FAB784C245135490038DCF4 /* Login and Signup */ = {
+			isa = PBXGroup;
+			children = (
+				03BEBC50244E7B69001576EC /* ContentView.swift */,
+				038753F7244E9AA900F85970 /* LoginView.swift */,
+			);
+			path = "Login and Signup";
 			sourceTree = "<group>";
 		};
 		8AB41C41DEDE2DE06E9D7DE1 /* Frameworks */ = {
@@ -277,6 +288,7 @@
 				2F0DD2CA244F5F6300AFFADE /* TestModel.swift in Sources */,
 				03BEBC4D244E7B69001576EC /* AppDelegate.swift in Sources */,
 				2FEEE4012450B94C003DE2BD /* AnswerSheetList.swift in Sources */,
+				2FAB7857245149570038DCF4 /* CanvasRepresentable.swift in Sources */,
 				2FEEE3FF2450B5B0003DE2BD /* AnswerSheetRow.swift in Sources */,
 				03BEBC4F244E7B69001576EC /* SceneDelegate.swift in Sources */,
 				2F945181244FFA33009521F7 /* TestView.swift in Sources */,

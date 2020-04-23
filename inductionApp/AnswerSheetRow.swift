@@ -16,6 +16,8 @@ struct AnswerSheetRow: View {
     
     var body: some View {
         VStack{
+
+            
             HStack{
                 Text("A")
                 Spacer()
