@@ -19,99 +19,105 @@ struct ContentView: View {
     var db = Firestore.firestore()
     var body: some View {
         NavigationView {
-        VStack {
-            Image("ilLogo").resizable()
-            .aspectRatio(contentMode: .fit)
-                //.padding()
-            
-            FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
-            RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
-                .padding()
-            
-            FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
             VStack {
-                RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordLengthValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 8 characters", isStrikeThrough: userRegistrationViewModel.isPasswordLengthValid)
-                RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "One uppercase letter", isStrikeThrough: userRegistrationViewModel.isPasswordCapitalLetter)
-            }
-            .padding()
-            
-            FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationViewModel.passwordConfirm, isSecure: true)
-            RequirementText(iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "Your confirm password should be the same as password", isStrikeThrough: userRegistrationViewModel.isPasswordConfirmValid)
-                .padding()
-                
-            
-            Button(action: {
-                //Check if email is valid,
-                //check if password is minum 8 characters and has on upercase letter
-                //Check confirm password is equal to password
-                if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
-                    && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordConfirmValid){
-                    let tempEmail = self.userRegistrationViewModel.email
-                    let tempPassword = self.userRegistrationViewModel.password
-                    Auth.auth().createUser(withEmail: tempEmail, password: tempPassword) { authResult, error in
-                        if let error = error {
-                            print("Error creating account: \(error.localizedDescription)")
-                        } else{
-                            //The authResult has user.uid and user.email
-                            print("Sucess creating accouunt: \(authResult!)")
-                            //This creates a user in the database with more information
-                            self.db.collection("users").document("\(authResult!.user.uid)").setData(["firstN": "Josh", "lastN": "Breite", "associationID": "NUTUTORS"]){ error in
+                Image("ilLogo").resizable()
+                .aspectRatio(contentMode: .fit)
+                VStack {
+                    
+                    //.padding()
+                    FormField(fieldName: "First Name", fieldValue: $userRegistrationViewModel.firstName)
+                    
+                    FormField(fieldName: "Last Name", fieldValue: $userRegistrationViewModel.lastName)
+                    
+                    FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
+                    RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
+                        .padding()
+                    
+                    FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
+                    VStack {
+                        RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordLengthValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 8 characters", isStrikeThrough: userRegistrationViewModel.isPasswordLengthValid)
+                        RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "One uppercase letter", isStrikeThrough: userRegistrationViewModel.isPasswordCapitalLetter)
+                    }
+                    .padding()
+                    
+                    FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationViewModel.passwordConfirm, isSecure: true)
+                    RequirementText(iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "Your confirm password should be the same as password", isStrikeThrough: userRegistrationViewModel.isPasswordConfirmValid)
+                        .padding()
+                    
+                    
+                    Button(action: {
+                        //Check if email is valid,
+                        //check if password is minum 8 characters and has on upercase letter
+                        //Check confirm password is equal to password
+                        if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
+                            && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordConfirmValid){
+                            let tempEmail = self.userRegistrationViewModel.email
+                            let tempPassword = self.userRegistrationViewModel.password
+                            Auth.auth().createUser(withEmail: tempEmail, password: tempPassword) { authResult, error in
                                 if let error = error {
-                                    print("Error creating user document: \(error.localizedDescription)")
-                                }else{
-                                    print("Suuccess creating user document")
-                                    //The sceneDelegate automatically changes the rootView to userHompageView because of the EnvirnomentObject currentAuth.
- 
+                                    print("Error creating account: \(error.localizedDescription)")
+                                } else{
+                                    //The authResult has user.uid and user.email
+                                    print("Sucess creating accouunt: \(authResult!)")
+                                    //This creates a user in the database with more information
+                                    self.db.collection("users").document("\(authResult!.user.uid)").setData(["firstN": "Josh", "lastN": "Breite", "associationID": "NUTUTORS"]){ error in
+                                        if let error = error {
+                                            print("Error creating user document: \(error.localizedDescription)")
+                                        }else{
+                                            print("Suuccess creating user document")
+                                            //The sceneDelegate automatically changes the rootView to userHompageView because of the EnvirnomentObject currentAuth.
+                                            
+                                        }
+                                        
+                                    }
                                 }
                                 
                             }
+                        }else{
+                            print("Error on Sign up: Invalid Email and/or password")
+                            
                         }
-
+                        
+                    }) {
+                        Text("Sign Up")
+                            .font(.system(.body, design: .rounded))
+                            .foregroundColor(.white)
+                            .bold()
+                            .padding()
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .background(Color(red: 255/255, green: 126/255, blue: 103/255))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                        
                     }
-                }else{
-                    print("Error on Sign up: Invalid Email and/or password")
-
+                    
+                    HStack {
+                        Text("Already have an account?")
+                            .font(.system(.body, design: .rounded))
+                            .bold().padding(.bottom, 25.0)
+                        NavigationLink(destination: LoginView()){
+                            Text("Sign in")
+                                .font(.system(.body, design: .rounded))
+                                .bold()
+                                .foregroundColor(Color(red: 255/255, green: 126/255, blue: 103/255))
+                        }.padding(.bottom, 25.0)
+                        //                NavigationLink(destination: LoginView()) {
+                        //                    LoginView()
+                        //                }) {
+                        //
+                        //                }
+                    }
                 }
                 
-            }) {
-                Text("Sign Up")
-                    .font(.system(.body, design: .rounded))
-                    .foregroundColor(.white)
-                    .bold()
-                    .padding()
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .background(Color(red: 255/255, green: 126/255, blue: 103/255))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-                    
+                // Spacer()
             }
-            
-            HStack {
-                Text("Already have an account?")
-                    .font(.system(.body, design: .rounded))
-                    .bold().padding(.bottom, 25.0)
-                NavigationLink(destination: LoginView()){
-                     Text("Sign in")
-                        .font(.system(.body, design: .rounded))
-                        .bold()
-                        .foregroundColor(Color(red: 255/255, green: 126/255, blue: 103/255))
-                }.padding(.bottom, 25.0)
-//                NavigationLink(destination: LoginView()) {
-//                    LoginView()
-//                }) {
-//
-//                }
-            }
-            
-           // Spacer()
-        }
-        .padding()
+            .padding()
         }.navigationViewStyle(StackNavigationViewStyle())
             .edgesIgnoringSafeArea(.bottom)
         
     }
     
-
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -139,7 +145,7 @@ struct FormField: View {
                     .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .padding(.horizontal)
             }
-
+            
             Divider()
                 .frame(height: 1)
                 .background(Color(red: 240/255, green: 240/255, blue: 240/255))

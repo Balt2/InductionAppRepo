@@ -15,6 +15,9 @@ class UserRegistrationViewModel: ObservableObject {
     @Published var email = ""
     @Published var password = ""
     @Published var passwordConfirm = ""
+    @Published var firstName = ""
+    @Published var lastName = ""
+    
     
     // Output
     @Published var isemailValid = false
@@ -25,6 +28,10 @@ class UserRegistrationViewModel: ObservableObject {
     private var cancellableSet: Set<AnyCancellable> = []
     
     init() {
+        $firstName
+        
+        $lastName
+        
         $email
             .receive(on: RunLoop.main)
             .map { email in

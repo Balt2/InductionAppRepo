@@ -33,7 +33,7 @@ struct UserHomepageView: View {
                     NavigationLink(destination: TestView()) {
                          HStack {
                               Image(systemName: "folder")
-                               Text("Take TEST!")
+                               Text("Take Test!")
                           }
                         }
                       .buttonStyle(buttonBackgroundStyle())
@@ -86,6 +86,7 @@ struct UserHomepageView: View {
                       .resizable()
                           .aspectRatio(contentMode: .fit)
                           .frame(width: 100)
+                    .padding()
                       
                   }
                   .padding()
@@ -106,12 +107,13 @@ struct UserHomepageView: View {
                       Text("Worst Sub-Category: ")
                           .fontWeight(.bold)
                           .modifier(infoLabelStyle())
+                    Spacer()
                   }
                   Spacer()
               }
           }
         }
-    }.navigationViewStyle(StackNavigationViewStyle())
+    }.navigationViewStyle((StackNavigationViewStyle()))
   }
 }
 
@@ -126,7 +128,7 @@ struct buttonBackgroundStyle: ButtonStyle {
         configuration.label
             .padding()
             .foregroundColor(.white)
-            .background(Color(.red).opacity(0.5))
+            .background(Color("salmon"))
             .cornerRadius(40)
             .padding()
             .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
@@ -139,7 +141,7 @@ struct nameLabelStyle: ViewModifier {
             .font(.system(.body, design: .rounded))
             .foregroundColor(.white)
             .padding()
-            .background(Color(.blue).opacity(0.5))
+            .background(Color("lightBlue"))
             .cornerRadius(20)
     }
 }
@@ -150,8 +152,9 @@ struct infoLabelStyle: ViewModifier {
         return content
             .font(.system(.title, design: .rounded))
             .foregroundColor(.white)
+            .frame(minWidth: 0, maxWidth: .infinity)
             .padding()
-            .background(Color(.blue).opacity(0.5))
+            .background(Color("lightBlue"))
             .cornerRadius(20)
             .padding()
     }

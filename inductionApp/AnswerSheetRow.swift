@@ -15,28 +15,46 @@ struct AnswerSheetRow: View {
    // var answerCell: AnswerCell
     
     var body: some View {
-        VStack{
-            HStack{
-                Text("A")
+        HStack {
+            HStack(alignment: .bottom) {
+                Text("1")
                 Spacer()
-                Text("B")
+                VStack {
+                    Text("A")
+                    Circle()
+                        .stroke()
+                        .frame(width: 20, height: 20)
+                }
                 Spacer()
-                Text("C")
+                VStack {
+                    Text("B")
+                    Circle()
+                        .stroke()
+                        .frame(width: 20, height: 20)
+                }
                 Spacer()
-                Text("D")
-            }.padding()
-            HStack {
-                Circle().stroke().frame(width: 20, height: 20 )
+                VStack {
+                    Text("C")
+                    Circle()
+                        .stroke()
+                        .frame(width: 20, height: 20)
+                }
                 Spacer()
-                Circle().stroke().frame(width: 20, height: 20 )
+                VStack {
+                    Text("D")
+                    Circle()
+                        .stroke()
+                        .frame(width: 20, height: 20)
+                }
                 Spacer()
-                Circle().stroke().frame(width: 20, height: 20 )
-                Spacer()
-                Circle().stroke().frame(width: 20, height: 20 )
-            }.padding()
-        }.frame(height: 70)
+            }
+            Spacer()
+            Image(systemName: "checkmark.circle")
+            Spacer()
+        }
     }
 }
+
 
 struct AnswerSheetRow_Previews: PreviewProvider {
     static var previews: some View {
@@ -46,3 +64,4 @@ struct AnswerSheetRow_Previews: PreviewProvider {
         }
     }
 }
+

@@ -13,13 +13,18 @@ struct TestView: View {
     
             
     var body: some View {
-        HStack{
-            AnswerSheetList().frame(width: 300)
-            ScrollView {
-                VStack {
-                    ForEach(pages, id: \.self){ image in
-                        Image(uiImage: image.uiImage).resizable().aspectRatio(contentMode: .fill)
-                        
+        ZStack {
+            Rectangle()
+                .foregroundColor(Color("salmon"))
+                .edgesIgnoringSafeArea(.all)
+            HStack{
+                AnswerSheetList().frame(width: 300)
+                ScrollView {
+                    VStack {
+                        ForEach(pages, id: \.self){ image in
+                            Image(uiImage: image.uiImage).resizable().aspectRatio(contentMode: .fill)
+                            
+                        }
                     }
                 }
             }

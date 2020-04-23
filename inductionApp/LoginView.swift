@@ -19,7 +19,6 @@ struct LoginView: View {
         VStack {
             Image("ilLogo")
                 .padding()
-            
             userFormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
                 .padding()
             FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
@@ -55,7 +54,7 @@ struct LoginView: View {
                     .bold()
                     .padding()
                     .frame(minWidth: 0, maxWidth: .infinity)
-                    .background(Color(.orange))
+                    .background(Color("salmon"))
                     .cornerRadius(10)
                     .padding(.horizontal)
             }

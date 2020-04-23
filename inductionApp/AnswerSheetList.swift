@@ -11,9 +11,11 @@ import SwiftUI
 struct AnswerSheetList: View {
     var body: some View {
         List {
-            AnswerSheetRow()
-            AnswerSheetRow()
-            AnswerSheetRow()
+            Section(header: Text("Section 1")) {
+                AnswerSheetRow()
+                AnswerSheetRow()
+                AnswerSheetRow()
+            }
         }
     }
 }
