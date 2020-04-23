@@ -16,6 +16,7 @@
 		03BEBC53244E7B6A001576EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03BEBC52244E7B6A001576EC /* Assets.xcassets */; };
 		03BEBC56244E7B6A001576EC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03BEBC55244E7B6A001576EC /* Preview Assets.xcassets */; };
 		03BEBC59244E7B6A001576EC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03BEBC57244E7B6A001576EC /* LaunchScreen.storyboard */; };
+		03EA7F6624516BCF00184BA1 /* CanvasRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EA7F6524516BCF00184BA1 /* CanvasRepresentable.swift */; };
 		2F0DD2C6244F5C9800AFFADE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F0DD2C5244F5C9800AFFADE /* GoogleService-Info.plist */; };
 		2F0DD2C8244F5F3D00AFFADE /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0DD2C7244F5F3D00AFFADE /* UserModel.swift */; };
 		2F0DD2CA244F5F6300AFFADE /* TestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0DD2C9244F5F6300AFFADE /* TestModel.swift */; };
@@ -40,6 +41,7 @@
 		03BEBC55244E7B6A001576EC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		03BEBC58244E7B6A001576EC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		03BEBC5A244E7B6A001576EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		03EA7F6524516BCF00184BA1 /* CanvasRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasRepresentable.swift; sourceTree = "<group>"; };
 		2F0DD2C5244F5C9800AFFADE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2F0DD2C7244F5F3D00AFFADE /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserModel.swift; path = InductionApp/UserModel.swift; sourceTree = SOURCE_ROOT; };
 		2F0DD2C9244F5F6300AFFADE /* TestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestModel.swift; path = InductionApp/TestModel.swift; sourceTree = SOURCE_ROOT; };
@@ -92,6 +94,7 @@
 				03BEBC50244E7B69001576EC /* ContentView.swift */,
 				2F945180244FFA33009521F7 /* TestView.swift */,
 				2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */,
+				03EA7F6524516BCF00184BA1 /* CanvasRepresentable.swift */,
 				2FEEE4002450B94C003DE2BD /* AnswerSheetList.swift */,
 				2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */,
 				2F9C109B244F693100A7C6FF /* AppRootView.swift */,
@@ -276,6 +279,7 @@
 				038753FA244E9AC800F85970 /* UserHomepageView.swift in Sources */,
 				2F0DD2CA244F5F6300AFFADE /* TestModel.swift in Sources */,
 				03BEBC4D244E7B69001576EC /* AppDelegate.swift in Sources */,
+				03EA7F6624516BCF00184BA1 /* CanvasRepresentable.swift in Sources */,
 				2FEEE4012450B94C003DE2BD /* AnswerSheetList.swift in Sources */,
 				2FEEE3FF2450B5B0003DE2BD /* AnswerSheetRow.swift in Sources */,
 				03BEBC4F244E7B69001576EC /* SceneDelegate.swift in Sources */,

@@ -7,27 +7,49 @@
 //
 
 import SwiftUI
+import PencilKit
 
 struct TestView: View {
     let pages = testPDF().pages
-    
+    @Environment(\.undoManager) var undoManager
             
     var body: some View {
         ZStack {
             Rectangle()
-                .foregroundColor(Color("salmon"))
                 .edgesIgnoringSafeArea(.all)
-            HStack{
-                AnswerSheetList().frame(width: 300)
-                ScrollView {
-                    VStack {
-                        ForEach(pages, id: \.self){ image in
-                            Image(uiImage: image.uiImage).resizable().aspectRatio(contentMode: .fill)
-                            
-                        }
+                .foregroundColor(Color("salmon"))
+        HStack{
+            AnswerSheetList().frame(width: 300)
+            ScrollView {
+                VStack {
+                    ForEach(pages, id: \.self){ page in
+                        PageView(model: page)
+                        
                     }
                 }
+                }
             }
+        }
+    }
+}
+
+//struct DrawViewUI: UIViewRepresentable {
+//    @Binding var drawView: DrawView
+//
+//    func makeUIView(context: Context) -> DrawView {
+//        return drawView
+//    }
+//
+//    func updateUIView(_ uiView: PKCanvasView, context: Context) { }
+//}
+struct PageView: View{
+    var model: PageModel
+    @State private var canvas: PKCanvasView = PKCanvasView()
+    
+    var body: some View {
+        ZStack{
+            Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
+            CanvasRepresentable(canvasToDraw: $canvas)
         }
     }
 }
@@ -38,21 +60,23 @@ struct TestView_Previews: PreviewProvider {
     }
 }
 
-struct Page: Hashable {
-    var id: Int
-    var uiImage: UIImage
 
+
+
+struct PageModel: Hashable {
+    var uiImage: UIImage
+    var id: Int
 }
 
 class testPDF {
-    var pages = [Page]()
+    var pages = [PageModel]()
     
     init(){
         var pageCounter = 1
         let path = Bundle.main.path(forResource: "pdf_sat-practice-test-1", ofType: "pdf")
         let url = URL(fileURLWithPath: path!)
         while let pdfImage = createUIImage(url: url, page: pageCounter){
-            pages.append(Page(id: pageCounter - 1, uiImage: pdfImage))
+            pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
             pageCounter = pageCounter + 1
             if (pageCounter>30){ //TODO: Get rid of this. Figure out why the PDF file is corrupted
                 break
