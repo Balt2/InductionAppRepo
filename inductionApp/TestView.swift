@@ -25,12 +25,12 @@ struct TestView: View {
         HStack{
             AnswerSheetList(test: testData).frame(width: 300)
             ScrollView { 
-                VStack {
-                    ForEach(pages, id: \.self){ page in
-                        PageView(model: page)
-                        
+                    VStack {
+                        ForEach(pages, id: \.self){ page in
+                            PageView(model: page)
+                            
+                        }
                     }
-                }
                 }
             }
         }
@@ -46,7 +46,7 @@ struct PageView: View{
         ZStack{
             Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
-            CanvasRepresentable(canvasToDraw: $canvas, question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 0, section: 0)), isAnswerSheet: false)
+            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 0, section: 0)), isAnswerSheet: false)
         }
     }
 }
@@ -108,35 +108,57 @@ class testPDF {
     
 }
 
+//extension UIImage {
+//  func getColor(at location: CGPoint) -> UIColor? {
+//    guard let cgImage = cgImage,
+//      let dataProvider = cgImage.dataProvider,
+//      let pixelData = dataProvider.data else {
+//        return nil
+//    }
+//    let scale = UIScreen.main.scale
+//    let pixelLocation = CGPoint(x: location.x * scale,
+//                                y: location.y * scale)
+//    
+//    let pixel = cgImage.bytesPerRow * Int(pixelLocation.y) +
+//      cgImage.bitsPerPixel / 8 * Int(pixelLocation.x)
+//    guard pixel < CFDataGetLength(pixelData) else {
+//      print("WARNING: mismatch of pixel data")
+//      return nil
+//    }
+//    guard let pointer = CFDataGetBytePtr(pixelData) else {
+//      return nil
+//    }
+//    func convert(_ color: UInt8) -> CGFloat {
+//      return CGFloat(color) / 255.0
+//    }
+//    let red = convert(pointer[pixel])
+//    let green = convert(pointer[pixel + 1])
+//    let blue = convert(pointer[pixel + 2])
+//    let alpha = convert(pointer[pixel + 3])
+//    
+//    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+//  }
+//}
+
 extension UIImage {
-  func getColor(at location: CGPoint) -> UIColor? {
-    guard let cgImage = cgImage,
-      let dataProvider = cgImage.dataProvider,
-      let pixelData = dataProvider.data else {
-        return nil
+    subscript (x: Int, y: Int) -> UIColor? {
+        guard x >= 0 && x < Int(size.width) && y >= 0 && y < Int(size.height),
+            let cgImage = cgImage,
+            let provider = cgImage.dataProvider,
+            let providerData = provider.data,
+            let data = CFDataGetBytePtr(providerData) else {
+            return nil
+        }
+
+        let numberOfComponents = 4
+        let pixelData = ((Int(size.width) * y) + x) * numberOfComponents
+
+        let r = CGFloat(data[pixelData]) / 255.0
+        let g = CGFloat(data[pixelData + 1]) / 255.0
+        let b = CGFloat(data[pixelData + 2]) / 255.0
+        let a = CGFloat(data[pixelData + 3]) / 255.0
+
+        return UIColor(red: r, green: g, blue: b, alpha: a)
     }
-    let scale = UIScreen.main.scale
-    let pixelLocation = CGPoint(x: location.x * scale,
-                                y: location.y * scale)
-    
-    let pixel = cgImage.bytesPerRow * Int(pixelLocation.y) +
-      cgImage.bitsPerPixel / 8 * Int(pixelLocation.x)
-    guard pixel < CFDataGetLength(pixelData) else {
-      print("WARNING: mismatch of pixel data")
-      return nil
-    }
-    guard let pointer = CFDataGetBytePtr(pixelData) else {
-      return nil
-    }
-    func convert(_ color: UInt8) -> CGFloat {
-      return CGFloat(color) / 255.0
-    }
-    let red = convert(pointer[pixel])
-    let green = convert(pointer[pixel + 1])
-    let blue = convert(pointer[pixel + 2])
-    let alpha = convert(pointer[pixel + 3])
-    
-    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
-  }
 }
 

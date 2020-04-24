@@ -33,6 +33,20 @@ struct AnswerSheetList: View {
                     AnswerSheetRow(question:question)
                 }
             }
+        }.navigationBarItems(trailing: CheckButton(test: test))
+    }
+}
+
+struct CheckButton: View{
+    @ObservedObject var test: Test
+    var body: some View {
+        Button(action: {
+            let data = self.test.computeData()
+            print(data)
+            //print(self.test.computeData())
+            //print("WORKIG")
+        }){
+            Text("Check")
         }
     }
 }

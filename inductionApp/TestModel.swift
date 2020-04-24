@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import PencilKit
 
 class TestList: ObservableObject {
     @Published var tests = [Test]()
@@ -211,6 +212,7 @@ class Question: ObservableObject, Hashable {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
     
+    
     var hashValue: Int {
         return ObjectIdentifier(self).hashValue
     }
@@ -225,6 +227,7 @@ class Question: ObservableObject, Hashable {
     @Published var userAnswer: String?
     @Published var currentState = CurrentState.ommited
     @Published var secondsToAnswer = 0.0
+    @Published var canvas: PKCanvasView = PKCanvasView()
     
     init(q: QuestionFromJson, ip: IndexPath) {
         self.id = q.id
@@ -234,6 +237,9 @@ class Question: ObservableObject, Hashable {
         self.reason = q.reason
         
         self.location = ip
+        
+        
+    
         
     }
     
