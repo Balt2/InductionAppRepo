@@ -10,17 +10,21 @@ import SwiftUI
 import PencilKit
 
 struct TestView: View {
+    @EnvironmentObject var tests: TestList
     let pages = testPDF().pages
-    @Environment(\.undoManager) var undoManager
+    @ObservedObject var testData = Test(jsonFile: "test1json")
+    
+    
+    
             
     var body: some View {
         ZStack {
             Rectangle()
                 .edgesIgnoringSafeArea(.all)
-                .foregroundColor(Color("salmon"))
+                .foregroundColor(.black)
         HStack{
-            AnswerSheetList().frame(width: 300)
-            ScrollView {
+            AnswerSheetList(test: testData).frame(width: 300)
+            ScrollView { 
                 VStack {
                     ForEach(pages, id: \.self){ page in
                         PageView(model: page)
@@ -33,30 +37,24 @@ struct TestView: View {
     }
 }
 
-//struct DrawViewUI: UIViewRepresentable {
-//    @Binding var drawView: DrawView
-//
-//    func makeUIView(context: Context) -> DrawView {
-//        return drawView
-//    }
-//
-//    func updateUIView(_ uiView: PKCanvasView, context: Context) { }
-//}
 struct PageView: View{
     var model: PageModel
     @State private var canvas: PKCanvasView = PKCanvasView()
     
     var body: some View {
+        
         ZStack{
             Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
-            CanvasRepresentable(canvasToDraw: $canvas)
+            
+            CanvasRepresentable(canvasToDraw: $canvas, question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 0, section: 0)), isAnswerSheet: false)
         }
     }
 }
 
 struct TestView_Previews: PreviewProvider {
+    static let tests = TestList()
     static var previews: some View {
-        TestView()
+        TestView().environmentObject(tests)
     }
 }
 
@@ -75,18 +73,19 @@ class testPDF {
         var pageCounter = 1
         let path = Bundle.main.path(forResource: "pdf_sat-practice-test-1", ofType: "pdf")
         let url = URL(fileURLWithPath: path!)
-        while let pdfImage = createUIImage(url: url, page: pageCounter){
-            pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
-            pageCounter = pageCounter + 1
-            if (pageCounter>30){ //TODO: Get rid of this. Figure out why the PDF file is corrupted
-                break
+        if let document = CGPDFDocument(url as CFURL) {
+            while let pdfImage = createUIImage(document: document, page: pageCounter){
+                pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
+                pageCounter = pageCounter + 1
+                if (pageCounter>30){ //TODO: Get rid of this. Figure out why the PDF file is corrupted
+                    break
+                }
             }
         }
     }
     
-    func createUIImage(url: URL, page: Int) -> UIImage?{
+    func createUIImage(document: CGPDFDocument, page: Int) -> UIImage?{
         
-        guard let document = CGPDFDocument(url as CFURL) else {return nil}
         guard let page = document.page(at: page) else {return nil}
 
 
@@ -108,3 +107,36 @@ class testPDF {
     
     
 }
+
+extension UIImage {
+  func getColor(at location: CGPoint) -> UIColor? {
+    guard let cgImage = cgImage,
+      let dataProvider = cgImage.dataProvider,
+      let pixelData = dataProvider.data else {
+        return nil
+    }
+    let scale = UIScreen.main.scale
+    let pixelLocation = CGPoint(x: location.x * scale,
+                                y: location.y * scale)
+    
+    let pixel = cgImage.bytesPerRow * Int(pixelLocation.y) +
+      cgImage.bitsPerPixel / 8 * Int(pixelLocation.x)
+    guard pixel < CFDataGetLength(pixelData) else {
+      print("WARNING: mismatch of pixel data")
+      return nil
+    }
+    guard let pointer = CFDataGetBytePtr(pixelData) else {
+      return nil
+    }
+    func convert(_ color: UInt8) -> CGFloat {
+      return CGFloat(color) / 255.0
+    }
+    let red = convert(pointer[pixel])
+    let green = convert(pointer[pixel + 1])
+    let blue = convert(pointer[pixel + 2])
+    let alpha = convert(pointer[pixel + 3])
+    
+    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+  }
+}
+

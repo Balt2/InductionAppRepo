@@ -9,11 +9,19 @@
 import Foundation
 import Firebase
 
-class Test {
-    var taken = false
+class TestList: ObservableObject {
+    @Published var tests = [Test]()
+    
+    func add(test: Test){
+        tests.append(test)
+    }
+}
+
+class Test: ObservableObject {
+    @Published var taken = false
     var testJsonFile: String = ""
     private var questionsFromJson: [QuestionFromJson] = [] //Array Used to initially load the questions into the Test class
-    var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
+    @Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
     var testPDFData: NSData?
     var performanceData: Data {
         return self.createJsonQuestions()
@@ -25,10 +33,12 @@ class Test {
         
     }
     init(jsonFile: String){
+        
         self.testJsonFile = jsonFile
         self.questionsFromJson = readJSONFromFile(fileName: jsonFile)
         self.questions = self.createQuestionsArray(qsFromJson: questionsFromJson)
         self.sendJsonTestPerformanceData()
+        print(questions)
     }
     
     
@@ -47,6 +57,7 @@ class Test {
                 qs[section].append(Question(q: question, ip: IndexPath(row: questionNum-1, section: section)))
             }
         }
+        print(qs)
         return qs
         
     }
@@ -194,16 +205,26 @@ struct QuestionFromJson: Decodable{
 }
 
 
-class Question {
+class Question: ObservableObject, Hashable {
+    
+    static func == (lhs: Question, rhs: Question) -> Bool {
+        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+    }
+    
+    var hashValue: Int {
+        return ObjectIdentifier(self).hashValue
+    }
+    
     let id: String
     let satSub: String
     let sub: String
     let answer: String
     let reason: String
-    var userAnswer = " "
-    var currentState = CurrentState.ommited
-    var secondsToAnswer = 0.0
     let location: IndexPath
+    
+    @Published var userAnswer: String?
+    @Published var currentState = CurrentState.ommited
+    @Published var secondsToAnswer = 0.0
     
     init(q: QuestionFromJson, ip: IndexPath) {
         self.id = q.id
@@ -217,17 +238,34 @@ class Question {
     }
     
     func reset() {
-        userAnswer = ""
-        currentState = .ommited
-        secondsToAnswer = 0.0
+        self.userAnswer = ""
+        self.currentState = .ommited
+        self.secondsToAnswer = 0.0
+    }
+    
+}
+
+class AnswerCell: Question {
+    //These variabels will track if one of the bubbles is selected.
+    var choicesSelected = [false, false, false, false]
+    
+    var isOptionSelected: Bool {
+        get {
+            return choicesSelected[0] || choicesSelected[1] || choicesSelected[2] || choicesSelected[3]
+        }
     }
     
 }
 
 enum CurrentState : String{
-    case right = "R"
-    case wrong = "W"
-    case ommited = "O"
-    case invalidSelection = "I"
+    //Used when checking the answer and creating data
+    case right = "R" //Right
+    case wrong = "W" //Wrong
+    case ommited = "O" //Ommited
+    case invalidSelection = "I" //Invalid Selection
+    
+    //Used when still in test
+    ///.ommited = "O" is used here too
+    case selected = "S" //Selected
 }
 

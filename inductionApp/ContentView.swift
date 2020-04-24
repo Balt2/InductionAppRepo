@@ -101,11 +101,6 @@ struct ContentView: View {
                                 .bold()
                                 .foregroundColor(Color(red: 255/255, green: 126/255, blue: 103/255))
                         }.padding(.bottom, 25.0)
-                        //                NavigationLink(destination: LoginView()) {
-                        //                    LoginView()
-                        //                }) {
-                        //
-                        //                }
                     }
                 }
                 

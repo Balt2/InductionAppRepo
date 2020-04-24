@@ -7,61 +7,75 @@
 //
 
 import SwiftUI
+import PencilKit
 
 
 
 struct AnswerSheetRow: View {
     
-   // var answerCell: AnswerCell
+   @State private var canvas: PKCanvasView = PKCanvasView()
+    @ObservedObject var question: Question
     
     var body: some View {
-        HStack {
-            HStack(alignment: .bottom) {
-                Text("1")
-                Spacer()
-                VStack {
-                    Text("A")
-                    Circle()
-                        .stroke()
-                        .frame(width: 20, height: 20)
+        ZStack{
+           
+           
+            HStack {
+                HStack(alignment: .bottom) {
+                    Text(String(question.location.row + 1))
+                    Spacer()
+                    VStack {
+                        Text("A")
+                        Circle()
+                            .stroke()
+                            .frame(width: 20, height: 20)
+                    }
+                    Spacer()
+                    VStack {
+                        Text("B")
+                        Circle()
+                            .stroke()
+                            .frame(width: 20, height: 20)
+                    }
+                    Spacer()
+                    VStack {
+                        Text("C")
+                        Circle()
+                            .stroke()
+                            .frame(width: 20, height: 20)
+                    }
+                    Spacer()
+                    VStack {
+                        Text("D")
+                        Circle()
+                            .stroke()
+                            .frame(width: 20, height: 20)
+                    }
+                    Spacer()
                 }
                 Spacer()
-                VStack {
-                    Text("B")
-                    Circle()
-                        .stroke()
-                        .frame(width: 20, height: 20)
+                if (question.currentState == .invalidSelection){
+                    Image(systemName: "nosign").foregroundColor(.red)
+                } else if (question.userAnswer != nil){
+                    Text("\(question.userAnswer!)")
                 }
-                Spacer()
-                VStack {
-                    Text("C")
-                    Circle()
-                        .stroke()
-                        .frame(width: 20, height: 20)
-                }
-                Spacer()
-                VStack {
-                    Text("D")
-                    Circle()
-                        .stroke()
-                        .frame(width: 20, height: 20)
-                }
+                //Image(systemName: "checkmark.circle")
                 Spacer()
             }
-            Spacer()
-            Image(systemName: "checkmark.circle")
-            Spacer()
+            CanvasRepresentable(canvasToDraw: $canvas, question: question, isAnswerSheet: true)
         }
     }
 }
 
 
-struct AnswerSheetRow_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            AnswerSheetRow().previewLayout(.fixed(width: 300, height: 70))
-            AnswerSheetRow().previewLayout(.fixed(width: 300, height: 70))
-        }
-    }
-}
+
+
+//struct AnswerSheetRow_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Group {
+////            AnswerSheetRow().previewLayout(.fixed(width: 300, height: 70))
+////            AnswerSheetRow().previewLayout(.fixed(width: 300, height: 70))
+//        }
+//    }
+//}
 
