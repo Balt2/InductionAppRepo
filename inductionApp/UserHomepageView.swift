@@ -91,7 +91,6 @@ struct UserHomepageView: View {
                   }
                   .padding()
                   VStack {
-                      Image("empireEdge")
                       Text("Average Score: ")
                           .fontWeight(.bold)
                           .modifier(infoLabelStyle())
@@ -112,6 +111,7 @@ struct UserHomepageView: View {
                   Spacer()
               }
           }
+          .navigationBarTitle("Home Page", displayMode: .inline)
         }
     }.navigationViewStyle((StackNavigationViewStyle()))
   }
