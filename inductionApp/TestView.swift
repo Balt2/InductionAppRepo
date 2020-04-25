@@ -46,7 +46,7 @@ struct PageView: View{
         ZStack{
             Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
-            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 0, section: 0)), isAnswerSheet: false)
+            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 0, section: 0)), isAnswerSheet: false, protoRect: CGRect())
         }
     }
 }

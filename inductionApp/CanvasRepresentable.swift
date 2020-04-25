@@ -12,19 +12,22 @@ struct CanvasRepresentable: UIViewRepresentable {
     //@Binding var canvasToDraw: PKCanvasView
     @ObservedObject var question: Question
     var isAnswerSheet: Bool
-    
+    var protoRect: CGRect
     
     //This checks to see if this instance of the struct is an answer sheet. If it is we want to check location
     
     class Coordinator: NSObject, PKCanvasViewDelegate {
         
-        var bubbleRects: [CGRect]
+        var bubbleRects = [String: CGRect]()
         var parent: CanvasRepresentable
         
         init(_ parent: CanvasRepresentable) {
             self.parent = parent
-            bubbleRects = [CGRect(x: 44, y: 43.3, width: 20, height: 20), CGRect(x: 99, y: 43.3, width: 20, height: 20), CGRect(x: 153, y: 43.3, width: 20, height: 20), CGRect(x: 207, y: 43.3, width: 20, height: 20)]
             
+            for i in 0..<4 {
+                let rect = CGRect(x: parent.protoRect.width * (CGFloat(i) + 1) - 10, y: parent.protoRect.height - 10, width: parent.protoRect.minX, height: parent.protoRect.minX)
+                self.bubbleRects[parent.question.answerLetters[i]] = rect
+            }
         }
         
         func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
@@ -34,7 +37,8 @@ struct CanvasRepresentable: UIViewRepresentable {
             //UIImageWriteToSavedPhotosAlbum(imageCreated, self.parent, nil, nil)
                         
             if parent.isAnswerSheet {
-                for (index,rec) in bubbleRects.enumerated() {
+                
+                for (question,rec) in bubbleRects {
                     let imageCreated = canvasView.drawing.image(from: rec, scale: UIScreen.main.scale)
                     var numberOfPixels = 0
                     for r in (1..<20){
@@ -56,12 +60,13 @@ struct CanvasRepresentable: UIViewRepresentable {
                     print("After looping through points")
                     if numberOfPixels > 100{
                         if (parent.question.currentState == .ommited) {
-                            parent.question.userAnswer = String(index)
+                            parent.question.userAnswer = question
                             parent.question.currentState = .selected
-                            //UIImageWriteToSavedPhotosAlbum(imageCreated, self, nil, nil)
-                            print("Selected: \(index)")
-                        }else if String(index) != parent.question.userAnswer {
+                            print("Selected: \(question)")
+                            //parent.question.checkAnswer() //This fuunction should only be called when they check their ansnwers.
+                        }else if question != parent.question.userAnswer {
                             parent.question.currentState = .invalidSelection
+                            //parent.question.checkAnswer() //This fuunction should only be called when they check their ansnwers.
                         }
                     }
 
@@ -94,8 +99,9 @@ struct CanvasRepresentable: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
-        print("UPDATE VIEW: \(question.location.row)")
-        //uiView.drawing = canvasToDraw.drawing
+        
+        //When the view is pushed back on too the stack this funciton is called
+        //print("UPDATE VIEW: \(question.location.row)")
     }
     
     

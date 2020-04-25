@@ -15,43 +15,50 @@ struct AnswerSheetRow: View {
     
    //@State private var canvas: PKCanvasView = PKCanvasView()
     @ObservedObject var question: Question
+    //@ObservedObject var test: Test
     
     var body: some View {
         ZStack{
-           
-            Group{
-                Text(String(question.location.row + 1)).frame(width: 20, height: 10, alignment: .center).position(CGPoint(x: 10, y: 40))
-                
-                Text("A").frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 54, y: 18.3))
-                Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 54, y: 53.3))
-                
-                Text("B").frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 109, y: 18.3))
-                Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 109, y: 53.3))
-                
-                Text("C").frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 163, y: 18.3))
-                Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 163, y: 53.3))
-                
-                Text("D").frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 217, y: 18.3))
-                Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 217, y: 53.3))
-            }
-            
-            if(question.currentState == .invalidSelection){
-                Image(systemName: "nosign").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.red)
-            }else if (question.userAnswer != nil){
-                if question.userAnswer == "0" {
-                    Text("A").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
-                }else if question.userAnswer == "1" {
-                    Text("B").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
+            GeometryReader { geo in
+                Group{
+                    
+                    Text(String(self.question.location.row + 1))
+                        .frame(width: 20, height: 10, alignment: .center)
+                        .position(CGPoint(x: 10, y: geo.size.height / 2))
+                    
+//                    ForEach(0..<self.question.answerLetters.count, id: \.self) { letter in
+//
+//                        Group{
+//                            Text(String(letter)).frame(width: 15, height: 10, alignment: .center)
+//                                .position(CGPoint(x: 5, y: geo.size.height / 4.37))
+//
+//                            Circle().stroke().frame(width: 20, height: 20)
+//                                .position(CGPoint(x: 54 , y: geo.size.height/1.5))
+//                        }
+//
+//                    }
+                    
+                    Text(self.question.answerLetters[0]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 54, y: geo.size.height / 4.37))
+                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 54, y: geo.size.height/1.5))
+
+                    Text(self.question.answerLetters[1]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 109, y: geo.size.height / 4.37))
+                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 109, y: geo.size.height/1.5))
+
+                    Text(self.question.answerLetters[2]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 163, y: geo.size.height / 4.37))
+                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 163, y: geo.size.height/1.5))
+
+                    Text(self.question.answerLetters[3]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 217, y: geo.size.height / 4.37))
+                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 217, y: geo.size.height/1.5))
                 }
-                else if question.userAnswer == "2" {
-                    Text("C").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
-                }else{
-                    Text("D").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
+                
+                if(self.question.currentState == .invalidSelection){
+                    Image(systemName: "nosign").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.red)
+                }else if (self.question.userAnswer != nil){
+                    Text(self.question.userAnswer!).frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
                 }
                 
+                CanvasRepresentable(question: self.question, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: 54, height: geo.size.height/1.5))
             }
-            
-            CanvasRepresentable(question: question, isAnswerSheet: true)
 
         }.frame(width: 270, height: 80)
     }
@@ -69,4 +76,19 @@ struct AnswerSheetRow: View {
 //        }
 //    }
 //}
+
+
+extension String{
+    func getQuestionIndex() -> Int{
+        if self == "A" || self == "F" {
+            return 0
+        } else if self == "B" || self == "G" {
+            return 1
+        } else if self == "C" || self == "H" {
+            return 2
+        } else {
+            return 3
+        }
+    }
+}
 

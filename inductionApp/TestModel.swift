@@ -9,6 +9,7 @@
 import Foundation
 import Firebase
 import PencilKit
+import Combine
 
 class TestList: ObservableObject {
     @Published var tests = [Test]()
@@ -19,31 +20,30 @@ class TestList: ObservableObject {
 }
 
 class Test: ObservableObject {
+    @Published var timers = [SectionTimer]()
+    @Published var currentSection = -1
     @Published var taken = false
     var testJsonFile: String = ""
     private var questionsFromJson: [QuestionFromJson] = [] //Array Used to initially load the questions into the Test class
     @Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
     var testPDFData: NSData?
+    
     var performanceData: Data {
         return self.createJsonQuestions()
     }
+    
     var computedData: [[String:(r: Double, w: Double, o: Double)]] {
         get {
             return self.computeData()
         }
-        
     }
     init(jsonFile: String){
         
         self.testJsonFile = jsonFile
         self.questionsFromJson = readJSONFromFile(fileName: jsonFile)
         self.questions = self.createQuestionsArray(qsFromJson: questionsFromJson)
-        self.sendJsonTestPerformanceData()
-        print(questions)
+        //self.sendJsonTestPerformanceData()
     }
-    
-    
-    
     
     func createQuestionsArray(qsFromJson: [QuestionFromJson]) -> [[Question]]{
         var qs: [[Question]] = []
@@ -51,20 +51,20 @@ class Test: ObservableObject {
         for question in qsFromJson{
             let splitArray = question.id.split(separator: "_")
             let questionNum = Int(splitArray[2])!
-            if questionNum == 1{
+            if questionNum == 1{ //New section code
+                timers.append(SectionTimer(timeAllowed: 65*60)) //Adding a new timer for the new section
                 section = section + 1
                 qs.append([Question(q: question, ip: IndexPath(row: questionNum-1, section: section))])
             }else{
                 qs[section].append(Question(q: question, ip: IndexPath(row: questionNum-1, section: section)))
             }
         }
-        print(qs)
+        //print(qs)
         return qs
         
     }
     
-    func readJSONFromFile(fileName: String) -> [QuestionFromJson]
-    {
+    func readJSONFromFile(fileName: String) -> [QuestionFromJson] {
         print("READING FROM JSON")
         var returnArray: [QuestionFromJson] = []
         if let path = Bundle.main.path(forResource: fileName, ofType: "json") {
@@ -86,9 +86,6 @@ class Test: ObservableObject {
         }
         return returnArray
     }
-    
-    
-    
     
     func computeData() -> [[String:(r: Double, w: Double, o: Double)]]{
         var dataForMathCalculator = [String:(r: Double, w: Double, o: Double)]()
@@ -138,7 +135,7 @@ class Test: ObservableObject {
             
             for question in section{
                 var tempQuestionDict: [String: String] = [:]
-                tempQuestionDict["id"] = question.id
+                tempQuestionDict["id"] = question.satID
                 tempQuestionDict["satSub"] = question.satSub
                 tempQuestionDict["answer"] = question.answer
                 tempQuestionDict["reason"] = question.reason
@@ -189,6 +186,38 @@ class Test: ObservableObject {
     }
 }
 
+class SectionTimer: ObservableObject {
+    //All times in seconds
+    //let didChange = PassthroughSubject<SectionTimer, Never>()
+    var timeAllowed: Float
+    @Published var timeLeft: Float //If the section is currently being taken this will count down.
+    var timeNotUsed: Float? //Once the section is finished this will contain the value of time they did not use.
+    @Published var isDone = false //If this is nil then the timer as not started. If it is false the timer is going. If it is true the section is over.
+    @Published var started = false
+    var timeLeftFormated: (min: Int, sec: Int) {
+        get{
+            return ((Int(timeLeft) / 60), Int(timeLeft.truncatingRemainder(dividingBy: 60)))
+        }
+    }
+    
+    init(timeAllowed: Float) {
+        self.timeAllowed = timeAllowed
+        self.timeLeft = timeAllowed
+
+    }
+    
+    func startTimer() {
+        self.started = true
+    }
+    
+    
+    func endTimer() {
+        self.isDone = true
+        self.timeNotUsed = timeLeft
+    }
+    
+}
+
 struct QuestionFromJson: Decodable{
     let id: String
     let satSub: String
@@ -206,7 +235,7 @@ struct QuestionFromJson: Decodable{
 }
 
 
-class Question: ObservableObject, Hashable {
+class Question: ObservableObject, Hashable, Identifiable {
     
     static func == (lhs: Question, rhs: Question) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
@@ -217,12 +246,14 @@ class Question: ObservableObject, Hashable {
         return ObjectIdentifier(self).hashValue
     }
     
-    let id: String
+    var id = UUID()
+    let satID: String
     let satSub: String
     let sub: String
     let answer: String
     let reason: String
     let location: IndexPath
+    var answerLetters = ["A", "B", "C", "D"]
     
     @Published var userAnswer: String?
     @Published var currentState = CurrentState.ommited
@@ -230,7 +261,7 @@ class Question: ObservableObject, Hashable {
     @Published var canvas: PKCanvasView = PKCanvasView()
     
     init(q: QuestionFromJson, ip: IndexPath) {
-        self.id = q.id
+        self.satID = q.id
         self.satSub = q.satSub
         self.sub = q.sub
         self.answer = q.answer
@@ -238,9 +269,22 @@ class Question: ObservableObject, Hashable {
         
         self.location = ip
         
-        
+//        if act && (ip.row + 1) % 2 == 1 {
+//            self.answerLetters = ["A", "B", "C", "D"]
+//        }else if act {
+//            self.answerLetters = ["F", "G", "H", "J"]
+//        }
+      
+    }
     
-        
+    func checkAnswer() {
+        if (currentState == .invalidSelection || currentState == .ommited) {return}
+        else if (userAnswer! == answer) {
+            currentState = .right
+        }else{
+            currentState = .wrong
+        }
+    
     }
     
     func reset() {
@@ -251,17 +295,6 @@ class Question: ObservableObject, Hashable {
     
 }
 
-class AnswerCell: Question {
-    //These variabels will track if one of the bubbles is selected.
-    var choicesSelected = [false, false, false, false]
-    
-    var isOptionSelected: Bool {
-        get {
-            return choicesSelected[0] || choicesSelected[1] || choicesSelected[2] || choicesSelected[3]
-        }
-    }
-    
-}
 
 enum CurrentState : String{
     //Used when checking the answer and creating data

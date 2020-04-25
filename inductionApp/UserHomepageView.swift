@@ -18,11 +18,11 @@ struct UserHomepageView: View {
           VStack {
               HStack {
                
-                Text("Name: \(user.association)")
+                Text("Name: Ben")
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
                   Spacer()
-                  Text("TUTOR GROUP")
+                  Text("On Point Tutors")
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
               }
