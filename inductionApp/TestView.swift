@@ -11,25 +11,28 @@ import PencilKit
 
 struct TestView: View {
     @EnvironmentObject var tests: TestList
-    let pages = testPDF().pages
-    @ObservedObject var testData = Test(jsonFile: "test1json")
-    
-    
-    
-            
+    @ObservedObject var testData = Test(jsonFile: "test1json", pdfFile: "pdf_sat-practice-test-1")
+
     var body: some View {
         ZStack {
             Rectangle()
                 .edgesIgnoringSafeArea(.all)
                 .foregroundColor(.black)
-        HStack{
-            AnswerSheetList(test: testData).frame(width: 300)
-            ScrollView { 
-                    VStack {
-                        ForEach(pages, id: \.self){ page in
-                            PageView(model: page)
-                            
-                        }
+            VStack{
+                HStack{
+                    if testData.showAnswerSheet == true{
+                        AnswerSheetList(test: testData).frame(width: 300)
+                    }
+                    GeometryReader {scrollGeo in
+                        ScrollView {
+                            VStack {
+                                ForEach(self.testData.sections[self.testData.currentSection].pages, id: \.self){ page in
+                                    PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
+                                        .disabled(self.testData.begunTest ? false : true)
+                                }
+                            }
+                        }.navigationBarItems(trailing: TimerNavigationView(test: self.testData, timer: SectionTimer(duration: self.testData.timers[self.testData.currentSection].alottedTime)))
+                            //.offset( y: -scrollGeo.frame(in: .global).minY)
                     }
                 }
             }
@@ -46,7 +49,68 @@ struct PageView: View{
         ZStack{
             Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
-            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 0, section: 0)), isAnswerSheet: false, protoRect: CGRect())
+            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600)), isAnswerSheet: false, protoRect: CGRect())
+        }
+    }
+}
+
+struct TimerNavigationView: View {
+    @ObservedObject var test: Test
+    @ObservedObject var timer: SectionTimer
+
+    var body: some View{
+        HStack{
+            
+            //Answer Sheet button
+            if test.showAnswerSheet == false {
+                Button(action: {
+                    self.test.showAnswerSheet = true
+                }){
+                    Text("Show Answer Sheet")
+                }
+            } else {
+                Button(action: {
+                    self.test.showAnswerSheet = false
+                }){
+                    Text("Hide Answer Sheet")
+                }
+            }
+            
+            
+            //Contrl of test buttons
+            if test.begunTest == false && test.taken == false {
+                Button(action: {
+                    self.timer.startTimer()
+                    self.test.begunTest = true
+                    print("STARTING TIMER")
+                   }){
+                       Text("Start Test")
+                   }
+            } else if test.currentSection < 3 {
+               Button(action: {
+                self.timer.startTimer()
+                self.test.currentSection += 1
+                
+               }) {
+                   Text("Start Next section")
+               }
+            } else if test.currentSection == 3 {
+               Button(action: {
+                self.test.taken = true
+               }){
+                Text("End Test and Check")
+               }
+            } else if self.test.taken == true{
+                Text("Test Over")
+            }
+            
+            Spacer()
+            //Shows time text
+            if self.test.begunTest == true && self.test.taken == false {
+                Text("\(self.timer.timeLeftFormatted) left")
+            }
+
+            Spacer()
         }
     }
 }
@@ -60,105 +124,4 @@ struct TestView_Previews: PreviewProvider {
 
 
 
-
-struct PageModel: Hashable {
-    var uiImage: UIImage
-    var id: Int
-}
-
-class testPDF {
-    var pages = [PageModel]()
-    
-    init(){
-        var pageCounter = 1
-        let path = Bundle.main.path(forResource: "pdf_sat-practice-test-1", ofType: "pdf")
-        let url = URL(fileURLWithPath: path!)
-        if let document = CGPDFDocument(url as CFURL) {
-            while let pdfImage = createUIImage(document: document, page: pageCounter){
-                pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
-                pageCounter = pageCounter + 1
-                if (pageCounter>30){ //TODO: Get rid of this. Figure out why the PDF file is corrupted
-                    break
-                }
-            }
-        }
-    }
-    
-    func createUIImage(document: CGPDFDocument, page: Int) -> UIImage?{
-        
-        guard let page = document.page(at: page) else {return nil}
-
-
-        let pageRect = page.getBoxRect(.mediaBox) //Media box
-        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
-        let img = renderer.image{ ctx in
-            UIColor.white.set()
-            ctx.fill(pageRect)
-
-            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
-            ctx.cgContext.scaleBy(x: 1.0, y : -1.0)
-
-            ctx.cgContext.drawPDFPage(page)
-        }
-        return img
-        
-    }
-    
-    
-    
-}
-
-//extension UIImage {
-//  func getColor(at location: CGPoint) -> UIColor? {
-//    guard let cgImage = cgImage,
-//      let dataProvider = cgImage.dataProvider,
-//      let pixelData = dataProvider.data else {
-//        return nil
-//    }
-//    let scale = UIScreen.main.scale
-//    let pixelLocation = CGPoint(x: location.x * scale,
-//                                y: location.y * scale)
-//    
-//    let pixel = cgImage.bytesPerRow * Int(pixelLocation.y) +
-//      cgImage.bitsPerPixel / 8 * Int(pixelLocation.x)
-//    guard pixel < CFDataGetLength(pixelData) else {
-//      print("WARNING: mismatch of pixel data")
-//      return nil
-//    }
-//    guard let pointer = CFDataGetBytePtr(pixelData) else {
-//      return nil
-//    }
-//    func convert(_ color: UInt8) -> CGFloat {
-//      return CGFloat(color) / 255.0
-//    }
-//    let red = convert(pointer[pixel])
-//    let green = convert(pointer[pixel + 1])
-//    let blue = convert(pointer[pixel + 2])
-//    let alpha = convert(pointer[pixel + 3])
-//    
-//    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
-//  }
-//}
-
-extension UIImage {
-    subscript (x: Int, y: Int) -> UIColor? {
-        guard x >= 0 && x < Int(size.width) && y >= 0 && y < Int(size.height),
-            let cgImage = cgImage,
-            let provider = cgImage.dataProvider,
-            let providerData = provider.data,
-            let data = CFDataGetBytePtr(providerData) else {
-            return nil
-        }
-
-        let numberOfComponents = 4
-        let pixelData = ((Int(size.width) * y) + x) * numberOfComponents
-
-        let r = CGFloat(data[pixelData]) / 255.0
-        let g = CGFloat(data[pixelData + 1]) / 255.0
-        let b = CGFloat(data[pixelData + 2]) / 255.0
-        let a = CGFloat(data[pixelData + 3]) / 255.0
-
-        return UIColor(red: r, green: g, blue: b, alpha: a)
-    }
-}
 

@@ -22,7 +22,7 @@ struct UserHomepageView: View {
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
                   Spacer()
-                  Text("On Point Tutors")
+                  Text("Empire Edge")
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
               }

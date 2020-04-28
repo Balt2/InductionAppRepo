@@ -19,14 +19,99 @@ class TestList: ObservableObject {
     }
 }
 
+struct PageModel: Hashable {
+    var uiImage: UIImage
+    var id: Int
+}
+
+class TestPDF {
+    var pages = [PageModel]()
+    var pdfName: String
+    
+    init(name: String){
+        self.pdfName = name
+        self.createPages(name: name)
+        
+    }
+    
+    func createPages(name: String){
+        var pageCounter = 1
+        let path = Bundle.main.path(forResource: name, ofType: "pdf")
+        print(path)
+        print(name)
+        let url = URL(fileURLWithPath: path!)
+        if let document = CGPDFDocument(url as CFURL) {
+            while let pdfImage = createUIImage(document: document, page: pageCounter){
+                pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
+                pageCounter = pageCounter + 1
+//                if (pageCounter > 5){ //Get rid of this. Figure out why the PDF file is corrupted
+//                    break
+//                }
+            }
+        }
+    }
+    
+    private func createUIImage(document: CGPDFDocument, page: Int) -> UIImage?{
+        
+        guard let page = document.page(at: page) else {return nil}
+
+
+        let pageRect = page.getBoxRect(.mediaBox) //Media box
+        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+        let img = renderer.image{ ctx in
+            UIColor.white.set()
+            ctx.fill(pageRect)
+
+            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
+            ctx.cgContext.scaleBy(x: 1.0, y : -1.0)
+
+            ctx.cgContext.drawPDFPage(page)
+        }
+        return img
+        
+    }
+    
+    
+    
+}
+
+class TestSection {
+    //var name: String
+    var allotedTime: Double
+    var leftOverTime: Double
+    var begunSection = false
+    var sectionOver = false
+    var index: (start: Int, end: Int)
+    var pages = [PageModel]()
+    
+    init(alloted: Double, start: Int, end: Int, pages: [PageModel] ) {
+        self.allotedTime = alloted
+        self.leftOverTime = alloted
+        self.index = (start: start, end: end)
+        self.pages = pages
+    }
+    
+    
+}
+
 class Test: ObservableObject {
-    @Published var timers = [SectionTimer]()
-    @Published var currentSection = -1
+    var timers = [(alottedTime: 30, leftOverTime: 0), (alottedTime: 50, leftOverTime: 0), (alottedTime: 60, leftOverTime: 0), (alottedTime: 10, leftOverTime: 0) ]
+    @Published var currentSection = 0
+    @Published var begunTest = false
     @Published var taken = false
     var testJsonFile: String = ""
+    var testPDFFile: String = ""
     private var questionsFromJson: [QuestionFromJson] = [] //Array Used to initially load the questions into the Test class
     @Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
     var testPDFData: NSData?
+    @Published var showAnswerSheet = true
+    var pdfImages: [PageModel]
+    var sections: [TestSection] = []
+//    var currentSection: TestSection {
+//        get{
+//            return sections[currentSection]
+//        }
+//    }
     
     var performanceData: Data {
         return self.createJsonQuestions()
@@ -37,13 +122,33 @@ class Test: ObservableObject {
             return self.computeData()
         }
     }
-    init(jsonFile: String){
+    init(jsonFile: String, pdfFile: String){
+        
         
         self.testJsonFile = jsonFile
+        self.testPDFFile = pdfFile
+        self.pdfImages = TestPDF(name: pdfFile).pages
+        self.createTestSections()
         self.questionsFromJson = readJSONFromFile(fileName: jsonFile)
-        self.questions = self.createQuestionsArray(qsFromJson: questionsFromJson)
+        self.questions = createQuestionsArray(qsFromJson: questionsFromJson)
+        
+        
         //self.sendJsonTestPerformanceData()
     }
+    
+    func createTestSections(){
+        for i in [(0, 18), (19, 34), (36, 42), (44, 57)] {
+            print("CREATING SECTIONS")
+            print(pdfImages.count)
+            let arraySlice = pdfImages[i.0..<i.1]
+            //let pdfArray = Array(arraySlice) as! [PageModel]
+            let t = TestSection(alloted: 30, start: 0, end: 15, pages: Array(arraySlice))
+            sections.append(t)
+            
+        }
+    }
+    
+
     
     func createQuestionsArray(qsFromJson: [QuestionFromJson]) -> [[Question]]{
         var qs: [[Question]] = []
@@ -52,7 +157,7 @@ class Test: ObservableObject {
             let splitArray = question.id.split(separator: "_")
             let questionNum = Int(splitArray[2])!
             if questionNum == 1{ //New section code
-                timers.append(SectionTimer(timeAllowed: 65*60)) //Adding a new timer for the new section
+                //timers.append(SectionTimer(duration: 30*30)) //Adding a new timer for the new section
                 section = section + 1
                 qs.append([Question(q: question, ip: IndexPath(row: questionNum-1, section: section))])
             }else{
@@ -87,7 +192,7 @@ class Test: ObservableObject {
         return returnArray
     }
     
-    func computeData() -> [[String:(r: Double, w: Double, o: Double)]]{
+    func computeData() -> [[String:(r: Double, w: Double, o: Double)]] {
         var dataForMathCalculator = [String:(r: Double, w: Double, o: Double)]()
         var dataForReading = [String:(r: Double, w: Double, o: Double)]()
         var dataForWriting = [String:(r: Double, w: Double, o: Double)]()
@@ -100,6 +205,9 @@ class Test: ObservableObject {
                 print(question.secondsToAnswer)
                 switch question.currentState {
                 case .right:
+                    if question.location.row == 0 {
+                        
+                    }
                     if data[question.location.section][question.sub] != nil{
                         data[question.location.section][question.sub]?.r+=1
                     }else{
@@ -187,36 +295,55 @@ class Test: ObservableObject {
 }
 
 class SectionTimer: ObservableObject {
-    //All times in seconds
-    //let didChange = PassthroughSubject<SectionTimer, Never>()
-    var timeAllowed: Float
-    @Published var timeLeft: Float //If the section is currently being taken this will count down.
-    var timeNotUsed: Float? //Once the section is finished this will contain the value of time they did not use.
-    @Published var isDone = false //If this is nil then the timer as not started. If it is false the timer is going. If it is true the section is over.
-    @Published var started = false
-    var timeLeftFormated: (min: Int, sec: Int) {
-        get{
-            return ((Int(timeLeft) / 60), Int(timeLeft.truncatingRemainder(dividingBy: 60)))
+    private var endDate: Date?
+    private var timer: Timer?
+    var timeRemaining: Double {
+        didSet {
+            self.setRemaining()
         }
     }
+    @Published var timeLeftFormatted = ""
     
-    init(timeAllowed: Float) {
-        self.timeAllowed = timeAllowed
-        self.timeLeft = timeAllowed
+    init(duration: Int) {
+        self.timeRemaining = Double(duration)
+        self.endDate = Date().advanced(by: Double(self.timeRemaining))
+
+        self.startTimer()
 
     }
     
+
     func startTimer() {
-        self.started = true
+        
+        guard self.timer == nil else {
+            return
+        }
+        
+        self.timer = Timer(timeInterval: 0.2, repeats: true) { (timer) in
+            self.timeRemaining = self.endDate!.timeIntervalSince(Date())
+            print(self.timeRemaining)
+            if self.timeRemaining < 0 {
+                timer.invalidate()
+                self.timer = nil
+            }
+        }
+        RunLoop.current.add(self.timer!, forMode: .common)
     }
-    
-    
+
+    private func setRemaining() {
+        let min = max(floor(self.timeRemaining / 60),0)
+        let sec = max(floor((self.timeRemaining - min*60).truncatingRemainder(dividingBy:60)),0)
+        self.timeLeftFormatted = "\(Int(min)):\(Int(sec))"
+        print(self.timeLeftFormatted)
+        
+    }
+
     func endTimer() {
-        self.isDone = true
-        self.timeNotUsed = timeLeft
+        self.timer?.invalidate()
+        self.timer = nil
     }
-    
 }
+
 
 struct QuestionFromJson: Decodable{
     let id: String
@@ -255,7 +382,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     let location: IndexPath
     var answerLetters = ["A", "B", "C", "D"]
     
-    @Published var userAnswer: String?
+    @Published var userAnswer = ""
     @Published var currentState = CurrentState.ommited
     @Published var secondsToAnswer = 0.0
     @Published var canvas: PKCanvasView = PKCanvasView()
@@ -279,7 +406,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     
     func checkAnswer() {
         if (currentState == .invalidSelection || currentState == .ommited) {return}
-        else if (userAnswer! == answer) {
+        else if (userAnswer == answer) {
             currentState = .right
         }else{
             currentState = .wrong

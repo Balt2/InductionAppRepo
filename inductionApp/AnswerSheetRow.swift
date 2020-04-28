@@ -15,15 +15,17 @@ struct AnswerSheetRow: View {
     
    //@State private var canvas: PKCanvasView = PKCanvasView()
     @ObservedObject var question: Question
+    @State private var isEraserEnabled = false
     //@ObservedObject var test: Test
     
     var body: some View {
+        
         ZStack{
             GeometryReader { geo in
                 Group{
-                    
+                   
                     Text(String(self.question.location.row + 1))
-                        .frame(width: 20, height: 10, alignment: .center)
+                        .frame(width: 25, height: 10, alignment: .trailing)
                         .position(CGPoint(x: 10, y: geo.size.height / 2))
                     
 //                    ForEach(0..<self.question.answerLetters.count, id: \.self) { letter in
@@ -53,11 +55,18 @@ struct AnswerSheetRow: View {
                 
                 if(self.question.currentState == .invalidSelection){
                     Image(systemName: "nosign").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.red)
-                }else if (self.question.userAnswer != nil){
-                    Text(self.question.userAnswer!).frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
+                }else {
+                    Text(self.question.userAnswer).frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
                 }
                 
                 CanvasRepresentable(question: self.question, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: 54, height: geo.size.height/1.5))
+                
+                Button(action: {
+                    self.isEraserEnabled.toggle()
+                    self.question.canvas.tool = self.isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
+                }){
+                   Image(systemName: "delete.right")
+                }
             }
 
         }.frame(width: 270, height: 80)
