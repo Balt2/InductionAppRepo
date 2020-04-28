@@ -3,7 +3,7 @@
 //  InductionApp
 //
 //  Created by Ben Altschuler on 4/22/20.
-//  Copyright © 2020 Josh Breite. All rights reserved.
+//  Copyright © 2020 Ben Altschuler. All rights reserved.
 //
 
 import SwiftUI

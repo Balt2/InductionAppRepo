@@ -2,8 +2,8 @@
 //  ListLibrary.swift
 //  InductionApp
 //
-//  Created by Josh Breite on 4/24/20.
-//  Copyright © 2020 Josh Breite. All rights reserved.
+//  Created by Ben Altschuler on 4/24/20.
+//  Copyright © 2020 Ben Altschuler. All rights reserved.
 //
 
 import SwiftUI
