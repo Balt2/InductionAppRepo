@@ -11,7 +11,7 @@ import PencilKit
 
 struct TestView: View {
     @EnvironmentObject var tests: TestList
-    @ObservedObject var testData = Test(jsonFile: "test1json", pdfFile: "pdf_sat-practice-test-1")
+    @ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "pdf_sat-practice-test-1")
 
     var body: some View {
         ZStack {
@@ -26,12 +26,12 @@ struct TestView: View {
                     GeometryReader {scrollGeo in
                         ScrollView {
                             VStack {
-                                ForEach(self.testData.sections[self.testData.currentSection].pages, id: \.self){ page in
+                                ForEach(self.testData.currentSection.pages, id: \.self){ page in
                                     PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
                                         .disabled(self.testData.begunTest ? false : true)
                                 }
                             }
-                        }.navigationBarItems(trailing: TimerNavigationView(test: self.testData, timer: SectionTimer(duration: self.testData.timers[self.testData.currentSection].alottedTime)))
+                        }.navigationBarItems(trailing: TimerNavigationView(test: self.testData, timer: SectionTimer(duration: Int(self.testData.currentSection.allotedTime))))
                             //.offset( y: -scrollGeo.frame(in: .global).minY)
                     }
                 }
@@ -49,7 +49,7 @@ struct PageView: View{
         ZStack{
             Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
-            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600)), isAnswerSheet: false, protoRect: CGRect())
+            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), isAnswerSheet: false, protoRect: CGRect())
         }
     }
 }
@@ -82,21 +82,26 @@ struct TimerNavigationView: View {
                 Button(action: {
                     self.timer.startTimer()
                     self.test.begunTest = true
+                    self.test.currentSection.begunSection = true
                     print("STARTING TIMER")
                    }){
                        Text("Start Test")
                    }
-            } else if test.currentSection < 3 {
+            } else if test.currentSectionIndex < 3 {
                Button(action: {
+                self.test.currentSection.sectionOver = true
                 self.timer.startTimer()
-                self.test.currentSection += 1
+                self.test.currentSectionIndex += 1
+                self.test.currentSection.begunSection = true
                 
                }) {
                    Text("Start Next section")
                }
-            } else if test.currentSection == 3 {
+            } else if test.currentSectionIndex == 3 {
                Button(action: {
                 self.test.taken = true
+                self.test.currentSection.sectionOver = true
+                //TODO: SEND DATA
                }){
                 Text("End Test and Check")
                }

@@ -14,28 +14,43 @@ struct AnswerSheetList: View {
     var body: some View {
         GeometryReader { g in
             List {
-                Section(header: Text("Section 1")) {
-                    ForEach(self.test.questions[0], id: \.self){ question in
-                        AnswerSheetRow(question: question)
-                    }
+                
+                ForEach(self.test.sections, id: \.self){ section in
+                    Section(header: Text("Section \(section.sectionIndex + 1)")){
+                        ForEach(section.questions, id: \.self){ question in
+                            AnswerSheetRow(question: question)
+                        }
+                    }.disabled( self.test.begunTest == false
+                        || self.test.taken == true
+                        || self.test.currentSection.begunSection == false
+                        || self.test.currentSection.sectionOver == true
+                        || self.test.currentSection != section) //If any of these conditions are true we disable
                     
-                }.disabled( self.test.currentSection != 0 || self.test.begunTest == false )
-                Section(header: Text("Section 2")) { //Section(header: TimerHeader(timer: self.test.timers[1], text: "Section 2")){
-                    ForEach(self.test.questions[1], id: \.self){ question in
-                        AnswerSheetRow(question:question)
-                    }
-                }.disabled(self.test.currentSection != 1)
-                Section(header: Text("Section 3")) {// Section(header: TimerHeader(timer: self.test.timers[2], text: "Section 3")){
-                    ForEach(self.test.questions[2], id: \.self){ question in
-                        AnswerSheetRow(question:question)
-                    }
-                }.disabled(self.test.currentSection != 2)
-                Section(header: Text("Section 4")) {//Section(header: TimerHeader(timer: self.test.timers[3], text: "Section 4")){
-                    ForEach(self.test.questions[3], id: \.self){ question in
-                        AnswerSheetRow(question:question)
-                        
-                    }
-                }.disabled(self.test.currentSection != 3)
+                } 
+                
+                
+//                Section(header: Text("Section 1")) {
+//                    ForEach(self.test.questions[0], id: \.self){ question in
+//                        AnswerSheetRow(question: question)
+//                    }
+//
+//                }.disabled( self.test.currentSectionIndex != 0 || self.test.begunTest == false )
+//                Section(header: Text("Section 2")) { //Section(header: TimerHeader(timer: self.test.timers[1], text: "Section 2")){
+//                    ForEach(self.test.questions[1], id: \.self){ question in
+//                        AnswerSheetRow(question:question)
+//                    }
+//                }.disabled(self.test.currentSectionIndex != 1)
+//                Section(header: Text("Section 3")) {// Section(header: TimerHeader(timer: self.test.timers[2], text: "Section 3")){
+//                    ForEach(self.test.questions[2], id: \.self){ question in
+//                        AnswerSheetRow(question:question)
+//                    }
+//                }.disabled(self.test.currentSectionIndex != 2)
+//                Section(header: Text("Section 4")) {//Section(header: TimerHeader(timer: self.test.timers[3], text: "Section 4")){
+//                    ForEach(self.test.questions[3], id: \.self){ question in
+//                        AnswerSheetRow(question:question)
+//
+//                    }
+//                }.disabled(self.test.currentSectionIndex != 3)
             }
         }
     }
@@ -48,6 +63,6 @@ struct AnswerSheetList: View {
 
 struct AnswerSheetList_Previews: PreviewProvider {
     static var previews: some View {
-        AnswerSheetList(test: Test(jsonFile: "test1json", pdfFile: "pdf_sat-practice-test-1"))
+        AnswerSheetList(test: Test(jsonFile: "satPracticeTest1", pdfFile: "pdf_sat-practice-test-1"))
     }
 }
