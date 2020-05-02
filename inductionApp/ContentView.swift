@@ -15,8 +15,12 @@ struct ContentView: View {
     
     //Observable object that contains data that the user puts in when creating a class
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
-    @EnvironmentObject var currentAuth: UserAuth
+    @EnvironmentObject var currentAuth: FirebaseManager
     var db = Firestore.firestore()
+    
+//    func signUp(tempEmail: String, tempPassword: String) {
+//        
+//    }
     var body: some View {
         NavigationView {
             VStack {
@@ -46,36 +50,19 @@ struct ContentView: View {
                     
                     
                     Button(action: {
-                        //Check if email is valid,
-                        //check if password is minum 8 characters and has on upercase letter
-                        //Check confirm password is equal to password
+                        //Check if email is valid, check if password is minum 8 characters and has on upercase letter, Check confirm password is equal to password
                         if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
                             && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordConfirmValid){
-                            let tempEmail = self.userRegistrationViewModel.email
-                            let tempPassword = self.userRegistrationViewModel.password
-                            Auth.auth().createUser(withEmail: tempEmail, password: tempPassword) { authResult, error in
-                                if let error = error {
-                                    print("Error creating account: \(error.localizedDescription)")
-                                } else{
-                                    //The authResult has user.uid and user.email
-                                    print("Sucess creating accouunt: \(authResult!)")
-                                    //This creates a user in the database with more information
-                                    self.db.collection("users").document("\(authResult!.user.uid)").setData(["firstN": "Josh", "lastN": "Breite", "associationID": "NUTUTORS"]){ error in
-                                        if let error = error {
-                                            print("Error creating user document: \(error.localizedDescription)")
-                                        }else{
-                                            print("Suuccess creating user document")
-                                            //The sceneDelegate automatically changes the rootView to userHompageView because of the EnvirnomentObject currentAuth.
-                                            
-                                        }
-                                        
-                                    }
-                                }
                                 
+                            self.currentAuth.signUp(userRegModel: self.userRegistrationViewModel) { succsess in
+                                if succsess == true{
+                                    print("Signed UP and loged in")
+                                }else{
+                                    print("ERROR Signing up")
+                                }
                             }
                         }else{
                             print("Error on Sign up: Invalid Email and/or password")
-                            
                         }
                         
                     }) {

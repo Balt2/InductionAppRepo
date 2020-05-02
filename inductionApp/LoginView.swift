@@ -13,8 +13,18 @@ struct LoginView: View {
     
     
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
-    @EnvironmentObject var currentAuth: UserAuth
+    @EnvironmentObject var currentAuth: FirebaseManager
     
+    func signIn () {
+        currentAuth.signIn(email: userRegistrationViewModel.email, password: userRegistrationViewModel.password){ (result, error) in
+            if error != nil{
+                print("ERROR Logging in")
+            } else{
+                print("Succsess logging in")
+            }
+            
+        }
+    }
     var body: some View {
         VStack {
             Image("ilLogo")
@@ -26,26 +36,19 @@ struct LoginView: View {
             Button(action: {
                 if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
                 && self.userRegistrationViewModel.isPasswordCapitalLetter){
-                    Auth.auth().signIn(withEmail: self.userRegistrationViewModel.email, password: self.userRegistrationViewModel.password) { authResult, error in
-                        if let error = error {
-                            print(self.userRegistrationViewModel.email)
-                            print(self.userRegistrationViewModel.password)
-                            print("Error logging in: \(error.localizedDescription)")
-                        }else{
-                            //Create User here
-//                            guard let strongSelf = self else { return }
-//
-//                            strongSelf.createUser(id: authResult!.user.uid, completionHandler: { (success) -> Void in
-//                                if success {
-//                                    strongSelf.performSegue(withIdentifier: "logInSuccsessFromLogin", sender: strongSelf)
-//                                }else{
-//                                    //ERROR
-//                                }
-//                            })
-//                            //Segue to user profile
-                        }
+                    self.signIn()
+//                    Auth.auth().signIn(withEmail: self.userRegistrationViewModel.email, password: self.userRegistrationViewModel.password) { authResult, error in
+//                        if let error = error {
+//                            print(self.userRegistrationViewModel.email)
+//                            print(self.userRegistrationViewModel.password)
+//                            print("Error logging in: \(error.localizedDescription)")
+//                        }else{
+//                            //Create User here
+//                        }
 
-                    }
+                    //}
+                }else{
+                    print("Login Failed")
                 }
             }) {
                 Text("Sign In")

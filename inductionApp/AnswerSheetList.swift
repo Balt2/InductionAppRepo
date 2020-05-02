@@ -29,7 +29,7 @@ struct AnswerSheetList: View {
                     ForEach(self.test.questions[2], id: \.self){ question in
                         AnswerSheetRow(question:question)
                     }
-                } .disabled(self.test.currentSection != 2)
+                }.disabled(self.test.currentSection != 2)
                 Section(header: Text("Section 4")) {//Section(header: TimerHeader(timer: self.test.timers[3], text: "Section 4")){
                     ForEach(self.test.questions[3], id: \.self){ question in
                         AnswerSheetRow(question:question)

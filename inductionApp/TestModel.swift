@@ -107,21 +107,17 @@ class Test: ObservableObject {
     @Published var showAnswerSheet = true
     var pdfImages: [PageModel]
     var sections: [TestSection] = []
-//    var currentSection: TestSection {
-//        get{
-//            return sections[currentSection]
-//        }
-//    }
-    
+    var currentSeection: TestSection{
+        return sections[currentSection]
+    }
     var performanceData: Data {
         return self.createJsonQuestions()
     }
-    
     var computedData: [[String:(r: Double, w: Double, o: Double)]] {
-        get {
-            return self.computeData()
-        }
+        return self.computeData()
     }
+    
+    
     init(jsonFile: String, pdfFile: String){
         
         

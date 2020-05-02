@@ -10,19 +10,18 @@ import SwiftUI
 import Firebase
 
 struct UserHomepageView: View {
-    var user: User
-    @EnvironmentObject var currentAuth: UserAuth
+    @EnvironmentObject var currentAuth: FirebaseManager
   var body: some View {
     NavigationView{
       HStack {
           VStack {
               HStack {
                
-                Text("Name: Ben")
+                Text("Name: \(currentAuth.currentUser!.firstName)")
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
                   Spacer()
-                  Text("Empire Edge")
+                Text("Empire Edge: \(currentAuth.currentUser!.id)")
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
               }
@@ -65,13 +64,10 @@ struct UserHomepageView: View {
                       }
                       .buttonStyle(buttonBackgroundStyle())
                         Button(action: {
-                            do {
-                                print("BEN")
-                                try Auth.auth().signOut()
-//                                 let sceneDelegate: SceneDelegate? = UIApplication.shared.delegate as? SceneDelegate
-//                                 sceneDelegate!.updateSceneDelegate(manager: self.currentAuth)
-                            } catch{
-                                print("ERROR logging out")
+                            if self.currentAuth.signOut() == true {
+                                print("Sucsess Logging out!")
+                            } else {
+                                print("Failed to log out")
                             }
                         }) {
                             HStack {
@@ -119,7 +115,7 @@ struct UserHomepageView: View {
 
 struct UserHomepageView_Previews: PreviewProvider {
     static var previews: some View {
-        UserHomepageView(user: User(fn: "B", ln: "L", id: "D"))
+        UserHomepageView()
     }
 }
 
