@@ -1,0 +1,1121 @@
+{
+    "act": true,
+    "numberOfSections": 4,
+    "sections": [
+        {
+            "name": "reading",
+            "orderInTest": 0,
+            "timeAllowed": 90,
+            "startIndex": 0,
+            "endIndex": 18,
+            "questions": [
+                {
+                "id": "CB1_Read_1",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_2",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_3",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_4",
+                "satSub": "N/A",
+                "sub": "Specifics",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_5",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_6",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_7",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_8",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_9",
+                "satSub": "N/A",
+                "sub": "Specifics",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_10",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_11",
+                "satSub": "N/A",
+                "sub": "Specifics",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_12",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_13",
+                "satSub": "N/A",
+                "sub": "Specifics",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_14",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_15",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_16",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_17",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_18",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_19",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_20",
+                "satSub": "N/A",
+                "sub": "Evidence",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_21",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_22",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_23",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_24",
+                "satSub": "N/A",
+                "sub": "Specifics",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_25",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_26",
+                "satSub": "N/A",
+                "sub": "Specifics",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_27",
+                "satSub": "Words in Context",
+                "sub": "Interpretation",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_28",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_29",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_30",
+                "satSub": "N/A",
+                "sub": "Evidence",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_31",
+                "satSub": "N/A",
+                "sub": "Evidence",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_32",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_33",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_34",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_35",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_36",
+                "satSub": "N/A",
+                "sub": "Evidence",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_37",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_38",
+                "satSub": "N/A",
+                "sub": "Evidence",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_39",
+                "satSub": "Command of Evidence",
+                "sub": "Evidence",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_40",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_41",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_42",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_43",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_44",
+                "satSub": "N/A",
+                "sub": "Evidence",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_45",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_46",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_47",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_48",
+                "satSub": "Words in Context",
+                "sub": "Vocabulary",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_49",
+                "satSub": "N/A",
+                "sub": "Big Ideas",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_50",
+                "satSub": "N/A",
+                "sub": "Interpretation",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_51",
+                "satSub": "N/A",
+                "sub": "Evidence",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_Read_52",
+                "satSub": "N/A",
+                "sub": "Specifics",
+                "answer": "A",
+                "reason": "N/A"
+                }
+            ] 
+        },
+        {
+            "name": "writing",
+            "orderInTest": 1,
+            "timeAllowed": 90,
+            "startIndex": 19,
+            "endIndex": 34,
+            "questions": [
+                {
+                "id": "CB1_WL_1",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_2",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_3",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Conventions",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_4",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Conventions",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_5",
+                "satSub": "Expression of Ideas",
+                "sub": "Structure",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_6",
+                "satSub": "Expression of Ideas",
+                "sub": "Enhancing the Passage",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_7",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_8",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Conventions",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_9",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_10",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_11",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_12",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_13",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_14",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_15",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_16",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_17",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_18",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_19",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_20",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_21",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_22",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_23",
+                "satSub": "N/A",
+                "sub": "Standard English Conventions",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_24",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_25",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_26",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_27",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_28",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_29",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_30",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_31",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_32",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_33",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_34",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_35",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_36",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_37",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_38",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_39",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_40",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_41",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_42",
+                "satSub": "Expression of Ideas",
+                "sub": "Expression of Ideas",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_43",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_WL_44",
+                "satSub": "Standard English Convetions",
+                "sub": "Standard English Convetions",
+                "answer": "D",
+                "reason": "N/A"
+                }
+            ]
+        },
+        {
+           "name": "mathNoCalc",
+            "orderInTest": 2,
+            "timeAllowed": 90,
+            "startIndex": 36,
+            "endIndex": 42,
+            "questions": [
+                {
+                "id": "CB1_MNC_1",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_2",
+                "satSub": "N/A",
+                "sub": "Exponents",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_3",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_4",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_5",
+                "satSub": "N/A",
+                "sub": "Polynomials",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_6",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_7",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Quadratic Equations",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_8",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Algebraic Expressions",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_9",
+                "satSub": "Heart of Algebra",
+                "sub": "System of Equations",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_10",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Functions",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_11",
+                "satSub": "Heart of Algebra",
+                "sub": "System of Equations",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_12",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_13",
+                "satSub": "Passport to Advanced Math",
+                "sub": "???",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_14",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Nonlinear Equations",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_15",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Quadratic Equations",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_16",
+                "satSub": "Passport to Advanced Math",
+                "sub": "???",
+                "answer": "2",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_17",
+                "satSub": "N/A",
+                "sub": "Geometry",
+                "answer": "1600",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_18",
+                "satSub": "Heart of Algebra",
+                "sub": "System of Equations",
+                "answer": "7",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_19",
+                "satSub": "N/A",
+                "sub": "Trigonmetry",
+                "answer": "4/5 or 0.8",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MNC_20",
+                "satSub": "Passport to Advanced Math",
+                "sub": "???",
+                "answer": "100",
+                "reason": "N/A"
+                }
+            ]
+        },
+        {
+            "name": "mathCalc",
+            "orderInTest": 3,
+            "timeAllowed": 90,
+            "startIndex": 44,
+            "endIndex": 57,
+            "questions":[
+                {
+                "id": "CB1_MC_1",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_2",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Proportional Relationships",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_3",
+                "satSub": "N/A",
+                "sub": "Geometry",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_4",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_5",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_6",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Proportional Relationships",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_7",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_8",
+                "satSub": "Heart of Algebra",
+                "sub": "???",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_9",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Equivalent Expressions",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_10",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_11",
+                "satSub": "Heart of Algebra",
+                "sub": "Inequalities",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_12",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_13",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_14",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_15",
+                "satSub": "Heart of Algebra",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_16",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_17",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_18",
+                "satSub": "Heart of Algebra",
+                "sub": "System of Equations",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_19",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_20",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Equivalent Expressions",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_21",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_22",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_23",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_24",
+                "satSub": "N/A",
+                "sub": "Nonlinear Equations",
+                "answer": "A",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_25",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Nonlinear Equations",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_26",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "???",
+                "answer": "B",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_27",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_28",
+                "satSub": "Heart of Algebra",
+                "sub": "Inequalities",
+                "answer": "C",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_29",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Functions",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_30",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Quadratic Equations",
+                "answer": "D",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_31",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "Any number between 4-6, inclusive",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_32",
+                "satSub": "Heart of Algebra",
+                "sub": "Linear Equations",
+                "answer": "107",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_33",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Analyzing Graphs and Charts",
+                "answer": "5/8 or 0.625",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_34",
+                "satSub": "Problem Solving and Data Analysis",
+                "sub": "Proportional Relationships",
+                "answer": "96",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_35",
+                "satSub": "N/A",
+                "sub": "Geometry",
+                "answer": "6",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_36",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Functions",
+                "answer": "3",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_37",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Nonlinear Equations",
+                "answer": "1.02",
+                "reason": "N/A"
+                },
+                {
+                "id": "CB1_MC_38",
+                "satSub": "Passport to Advanced Math",
+                "sub": "Nonlinear Equations",
+                "answer": "6.11",
+                "reason": "N/A"
+                }
+            ]
+        }
+    ]
+}
+
