@@ -76,6 +76,7 @@ class TestPDF {
 struct TestFromJson: Codable {
     var numberOfSections: Int
     var act: Bool
+    var name: String
     var sections: [TestSectionFromJson]
 }
 
@@ -156,6 +157,7 @@ class Test: ObservableObject {
     
     var pdfImages: [PageModel]
     var sections: [TestSection] = []
+    var name: String?
     var currentSection: TestSection{
         return sections[currentSectionIndex]
     }
@@ -178,6 +180,8 @@ class Test: ObservableObject {
         self.pdfImages = TestPDF(name: pdfFile).pages
         self.readJsonFile(fileName: jsonFile) //TODO: Make sure this is optional
         self.createTestData(testFromJson: self.testFromJson!)
+        self.name = self.testFromJson?.name
+        
         
         
         
@@ -185,7 +189,6 @@ class Test: ObservableObject {
     }
 
     func readJsonFile(fileName: String) {
-        print("HELLO WORLD")
         if let path = Bundle.main.path(forResource: fileName, ofType: "json"){
             do{
                 let fileUrl = URL(fileURLWithPath: path)

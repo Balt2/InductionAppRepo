@@ -18,9 +18,6 @@ struct ContentView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     var db = Firestore.firestore()
     
-//    func signUp(tempEmail: String, tempPassword: String) {
-//        
-//    }
     var body: some View {
         NavigationView {
             VStack {
@@ -30,7 +27,6 @@ struct ContentView: View {
                     
                     //.padding()
                     FormField(fieldName: "First Name", fieldValue: $userRegistrationViewModel.firstName)
-                    
                     FormField(fieldName: "Last Name", fieldValue: $userRegistrationViewModel.lastName)
                     
                     FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)

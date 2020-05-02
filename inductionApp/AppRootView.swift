@@ -62,7 +62,11 @@ class FirebaseManager: ObservableObject {
         docRef.getDocument {(document, error) in
             if let document = document, document.exists{
                 let dataDescription = document.data()
-                self.currentUser = User(fn: dataDescription!["firstN"] as! String, ln: dataDescription!["lastN"] as! String, id: document.documentID)
+                self.currentUser = User(fn: dataDescription!["firstN"] as! String,
+                                        ln: dataDescription!["lastN"] as! String,
+                                        id: document.documentID,
+                                        aID: dataDescription!["associationID"] as! String,
+                                        testRefs: dataDescription!["testRefs"] as! [String])
                 completionHandler(true)
             }else{
                 print("Document was not retrieved")

@@ -90,6 +90,7 @@ struct TimerNavigationView: View {
             } else if test.currentSectionIndex < 3 {
                Button(action: {
                 self.test.currentSection.sectionOver = true
+                self.test.currentSection.leftOverTime = self.timer.timeRemaining
                 self.timer.startTimer()
                 self.test.currentSectionIndex += 1
                 self.test.currentSection.begunSection = true
@@ -101,7 +102,8 @@ struct TimerNavigationView: View {
                Button(action: {
                 self.test.taken = true
                 self.test.currentSection.sectionOver = true
-                //TODO: SEND DATA
+                self.test.currentSection.leftOverTime = self.timer.timeRemaining
+                //TODO: SEND DATAs
                }){
                 Text("End Test and Check")
                }
