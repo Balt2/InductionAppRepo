@@ -26,12 +26,14 @@ struct PageModel: Hashable {
 
 class TestPDF {
     var pages = [PageModel]()
-    var pdfName: String
+    var pdfName = ""
     
     init(name: String){
         self.pdfName = name
         self.createPages(name: name)
-        
+    }
+    init(data: Data){
+        self.createPages(data: data)
     }
     
     func createPages(name: String){
@@ -45,6 +47,17 @@ class TestPDF {
 //                if (pageCounter > 5){ //Get rid of this. Figure out why the PDF file is corrupted
 //                    break
 //                }
+            }
+        }
+    }
+    
+    func createPages(data: Data){
+        var pageCounter = 1
+        let dataProvider = CGDataProvider(data: data as CFData)
+        if let document = CGPDFDocument(dataProvider!){
+            while let pdfImage = createUIImage(document: document, page: pageCounter){
+                pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
+                pageCounter = pageCounter + 1
             }
         }
     }
@@ -181,12 +194,17 @@ class Test: ObservableObject {
         self.readJsonFile(fileName: jsonFile) //TODO: Make sure this is optional
         self.createTestData(testFromJson: self.testFromJson!)
         self.name = self.testFromJson?.name
-        
-        
-        
-        
+
         //self.sendJsonTestPerformanceData()
     }
+    
+    init(jsonData: Data, pdfData: Data){
+        self.pdfImages = TestPDF(data: pdfData).pages
+        self.readJsonFile(data: jsonData)
+        self.createTestData(testFromJson: self.testFromJson!)
+        self.name = self.testFromJson?.name
+    }
+    
 
     func readJsonFile(fileName: String) {
         if let path = Bundle.main.path(forResource: fileName, ofType: "json"){
@@ -201,10 +219,23 @@ class Test: ObservableObject {
                 self.testFromJson = nil
             }
         }else{
-            print("WTTF")
+            print("Failure reading JSON from File")
             self.testFromJson = nil
         }
     }
+    
+    func readJsonFile(data: Data) {
+        do{
+            let decoder = JSONDecoder()
+            let testFromJson = try decoder.decode(TestFromJson.self, from: data)
+            self.testFromJson = testFromJson
+        }catch {
+            print("Error loading IN Test from DATA")
+            self.testFromJson = nil
+        }
+            
+    }
+    
     
     func createTestData(testFromJson: TestFromJson){
         var sections: [TestSection] = []

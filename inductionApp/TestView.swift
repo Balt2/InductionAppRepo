@@ -11,8 +11,10 @@ import PencilKit
 
 struct TestView: View {
     @EnvironmentObject var tests: TestList
-    @ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "pdf_sat-practice-test-1")
-
+    //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile:
+    //    "pdf_sat-practice-test-1")
+    @ObservedObject var testData: Test
+    
     var body: some View {
         ZStack {
             Rectangle()
@@ -122,12 +124,12 @@ struct TimerNavigationView: View {
     }
 }
 
-struct TestView_Previews: PreviewProvider {
-    static let tests = TestList()
-    static var previews: some View {
-        TestView().environmentObject(tests)
-    }
-}
+//struct TestView_Previews: PreviewProvider {
+//    static let tests = TestList()
+//    static var previews: some View {
+//        TestView(, testData: <#Test#>).environmentObject(tests)
+//    }
+//}
 
 
 

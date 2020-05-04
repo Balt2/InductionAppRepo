@@ -16,7 +16,8 @@ struct AppRootView: View {
     
     var body: some View {
         Group {
-            if authManager.currentUser != nil {
+            if authManager.currentUser != nil && authManager.currentUser?.isLoggedIn == true {
+                
                 UserHomepageView() //user: authManager.currentUser!
               
             } else {
@@ -32,7 +33,6 @@ struct AppRootView: View {
 class FirebaseManager: ObservableObject {
     //Helpful link
     //https://benmcmahen.com/authentication-with-swiftui-and-firebase/
-    
     @Published var currentUser: User?
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
     var db: Firestore!
@@ -47,6 +47,7 @@ class FirebaseManager: ObservableObject {
                 self.getUser(id: user.uid, completionHandler: { (success) -> Void in //Sets the current user
                     if success {
                         print("Set USer succsessfully")
+                        //self.currentUser!.updateFiles()
                     }else{
                         //ERROR
                         print("Failed to set user")
@@ -66,8 +67,10 @@ class FirebaseManager: ObservableObject {
                                         ln: dataDescription!["lastN"] as! String,
                                         id: document.documentID,
                                         aID: dataDescription!["associationID"] as! String,
-                                        testRefs: dataDescription!["testRefs"] as! [String])
-                completionHandler(true)
+                                        testRefs: ["BEN"]) { b in //dataDescription!["testRefs"] as! [String] {
+                                        completionHandler(true)
+                }
+
             }else{
                 print("Document was not retrieved")
                 self.currentUser = nil
@@ -102,7 +105,7 @@ class FirebaseManager: ObservableObject {
                 //The authResult has user.uid and user.email
                 print("Sucess creating authenticated account: \(authResult!)")
                 //We now want to create this user in our database
-                self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: "NUTUT", handler: {(success) -> Void in
+                self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, handler: {(success) -> Void in
                     if success {
                         self.getUser(id: (authResult?.user.uid)!, completionHandler: { (success) -> Void in //Sets the current user
                             if success {

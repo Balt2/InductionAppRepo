@@ -21,7 +21,7 @@ struct UserHomepageView: View {
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
                   Spacer()
-                Text("Empire Edge: \(currentAuth.currentUser!.id)")
+                Text("Tutor ID: \(currentAuth.currentUser!.associationID)")
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
               }
@@ -29,7 +29,7 @@ struct UserHomepageView: View {
               HStack(alignment: .top) {
                   VStack (alignment: .leading) {
                     
-                    NavigationLink(destination: TestView()) {
+                    NavigationLink(destination: TestView(testData: (currentAuth.currentUser?.tests[0])!)) {
                          HStack {
                               Image(systemName: "folder")
                                Text("Take Test!")
