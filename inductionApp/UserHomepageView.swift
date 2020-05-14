@@ -83,23 +83,9 @@ struct UserHomepageView: View {
                       
                   }
                   .padding()
-                BarContentView()
+    
                   VStack {
-                      Text("Average Score: ")
-                          .fontWeight(.bold)
-                          .modifier(infoLabelStyle())
-                      Text("Best Section:")
-                          .fontWeight(.bold)
-                          .modifier(infoLabelStyle())
-                      Text("Worst Section: ")
-                          .fontWeight(.bold)
-                          .modifier(infoLabelStyle())
-                      Text("Best Sub-Category ")
-                          .fontWeight(.bold)
-                          .modifier(infoLabelStyle())
-                      Text("Worst Sub-Category: ")
-                          .fontWeight(.bold)
-                          .modifier(infoLabelStyle())
+                      BarContentView()
                     Spacer()
                   }
                   Spacer()
