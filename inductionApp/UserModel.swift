@@ -64,6 +64,7 @@ class User: ObservableObject {
     func getTestsFromFolder(completionHandler: @escaping (_ testList: [Test]) -> ()) {
         print("BENDa")
         var testListFromDB: [Test] = []
+        print(associationID)
         let storageRef = Storage.storage().reference().child("\(associationID)Files/")
          storageRef.listAll { (result, error) in
             if let error = error {
@@ -94,6 +95,7 @@ class User: ObservableObject {
     func getTestJsons(completionHandler: @escaping (_ jsons: [(Data, String)]) -> ()) {
         print("GETTING JSONS...")
         var jsonDataList: [(Data, String)] = []
+        print(associationID)
         let storageRef = Storage.storage().reference().child("\(associationID)Files/testJSONS")
         storageRef.listAll { (result, error) in
             
@@ -124,6 +126,9 @@ class User: ObservableObject {
                 }
             }
           }
+            if result.items.count == 0 {
+                completionHandler(jsonDataList)
+            }
         }
     }
     
@@ -164,6 +169,9 @@ class User: ObservableObject {
            
 
           }
+            if result.items.count == 0 {
+                completionHandler(pdfDataList)
+            }
         }
         
         //let storageRef = Storage.storage().reference(withPath: "\(associationID)Files")
