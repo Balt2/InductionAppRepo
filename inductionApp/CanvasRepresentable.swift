@@ -36,11 +36,10 @@ struct CanvasRepresentable: UIViewRepresentable {
             //This function is called by the PKCanvasView when it is done being edited
 
             //UIImageWriteToSavedPhotosAlbum(imageCreated, self.parent, nil, nil)
-                        
+            
             if parent.isAnswerSheet == true {
                 checkAnswerSheet(canvasView: canvasView)
             }
-            
         }
         //TODO: When there are too many canvases on the screen...this is an issue
         func checkAnswerSheet(canvasView: PKCanvasView){
@@ -100,29 +99,45 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func makeCoordinator() -> Coordinator {
         print("Make Coordinator")
+        print(question.location)
+        //question.coordinator =
         return Coordinator(self)
         
     }
     
     func makeUIView(context: Context) -> PKCanvasView {
-        if isAnswerSheet {
-            print("Make UIVIEW")
-            let c = question.canvas
-            c.isOpaque = false
-            c.allowsFingerDrawing = true
-            c.delegate = context.coordinator
-            return c
-        }else{
+        //if isAnswerSheet {
+        if question.canvas == nil {
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
+            print(context.coordinator)
             c.delegate = context.coordinator
+            question.canvas = c
+            return c
+        }else{
+            let c = question.canvas!
+            c.delegate = context.coordinator
+            question.canvas = c
             return c
         }
+            print("Make UIVIEW")
+            
+        //}
+        
+//        else{
+//            let c = PKCanvasView()
+//            c.isOpaque = false
+//            c.allowsFingerDrawing = true
+//            c.delegate = context.coordinator
+//            return c
+//        }
     }
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         print("UPDATE VIEW: \(question.location.row)")
+        
+        //context.coordinator =
 
     }
     

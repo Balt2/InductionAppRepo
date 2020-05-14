@@ -63,7 +63,7 @@ struct AnswerSheetRow: View {
                 
                 Button(action: {
                     self.isEraserEnabled.toggle()
-                    self.question.canvas.tool = self.isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
+                    self.question.canvas!.tool = self.isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
                 }){
                    Image(systemName: "delete.right")
                 }

@@ -8,11 +8,11 @@
 
 import SwiftUI
 import PencilKit
+import Combine
 
 struct TestView: View {
     @EnvironmentObject var tests: TestList
-    //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile:
-    //    "pdf_sat-practice-test-1")
+    //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "pdf_sat-practice-test-1")
     @ObservedObject var testData: Test
     
     var body: some View {
@@ -33,7 +33,7 @@ struct TestView: View {
                                         .disabled(self.testData.begunTest ? false : true)
                                 }
                             }
-                        }.navigationBarItems(trailing: TimerNavigationView(test: self.testData, timer: SectionTimer(duration: Int(self.testData.currentSection.allotedTime))))
+                        }.navigationBarItems(trailing: TimerNavigationView(test: self.testData))
                             //.offset( y: -scrollGeo.frame(in: .global).minY)
                     }
                 }
@@ -51,14 +51,15 @@ struct PageView: View{
         ZStack{
             Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
-            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", satSub: "", sub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), isAnswerSheet: false, protoRect: CGRect())
+            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), isAnswerSheet: false, protoRect: CGRect())
         }
     }
 }
 
 struct TimerNavigationView: View {
     @ObservedObject var test: Test
-    @ObservedObject var timer: SectionTimer
+    @State private var now = ""
+    let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
 
     var body: some View{
         HStack{
@@ -82,9 +83,10 @@ struct TimerNavigationView: View {
             //Contrl of test buttons
             if test.begunTest == false && test.taken == false {
                 Button(action: {
-                    self.timer.startTimer()
+                    self.test.currentSection.sectionTimer.startTimer()
                     self.test.begunTest = true
                     self.test.currentSection.begunSection = true
+                    
                     print("STARTING TIMER")
                    }){
                        Text("Start Test")
@@ -92,10 +94,13 @@ struct TimerNavigationView: View {
             } else if test.currentSectionIndex < 3 {
                Button(action: {
                 self.test.currentSection.sectionOver = true
-                self.test.currentSection.leftOverTime = self.timer.timeRemaining
-                self.timer.startTimer()
+                self.test.currentSection.sectionTimer.endTimer()
+                self.test.currentSection.leftOverTime = self.test.currentSection.sectionTimer.timeRemaining
+                
                 self.test.currentSectionIndex += 1
+                self.test.currentSection.sectionTimer.startTimer()
                 self.test.currentSection.begunSection = true
+                self.now = self.test.currentSection.sectionTimer.timeLeftFormatted
                 
                }) {
                    Text("Start Next section")
@@ -104,7 +109,7 @@ struct TimerNavigationView: View {
                Button(action: {
                 self.test.taken = true
                 self.test.currentSection.sectionOver = true
-                self.test.currentSection.leftOverTime = self.timer.timeRemaining
+                self.test.currentSection.leftOverTime = self.test.currentSection.sectionTimer.timeRemaining
                 //TODO: SEND DATAs
                }){
                 Text("End Test and Check")
@@ -116,11 +121,27 @@ struct TimerNavigationView: View {
             Spacer()
             //Shows time text
             if self.test.begunTest == true && self.test.taken == false {
-                Text("\(self.timer.timeLeftFormatted) left")
+            
+                Text("\(now) left")
+                    .onReceive(timer) { _ in
+                        self.now = self.test.currentSection.sectionTimer.timeLeftFormatted
+                    }
             }
 
             Spacer()
         }
+    }
+}
+
+struct TestTable: View {
+    @EnvironmentObject var currentAuth: FirebaseManager
+    var body: some View {
+        List(currentAuth.currentUser!.tests){test in
+            NavigationLink(destination: TestView(testData: test)){
+                Text(test.name!)
+            }.frame(height: 90)
+        }.navigationBarTitle(Text("Choose Test to Take"))
+        
     }
 }
 

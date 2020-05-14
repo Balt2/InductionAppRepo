@@ -91,6 +91,7 @@ struct TestFromJson: Codable {
     var act: Bool
     var name: String
     var sections: [TestSectionFromJson]
+    var answerConverter: [ScoreConverter]
 }
 
 struct TestSectionFromJson: Codable {
@@ -100,20 +101,27 @@ struct TestSectionFromJson: Codable {
     var endIndex: Int
     var orderInTest: Int
     var questions: [QuestionFromJson]
-    
+}
+
+struct ScoreConverter: Codable {
+    var rawScore: Int
+    var readingSectionTestScore: Int
+    var mathSectionTestScore: Int
+    var writingAndLanguageTestScore: Int
+    var scienceTestScore: Int
 }
 
 struct QuestionFromJson: Codable{
     let id: String
-    let satSub: String
-    let sub: String
+    let officialSub: String
+    let tutorSub: String
     let answer: String
     let reason: String
     
-    init(id: String, satSub: String, sub: String, answer: String, reason: String) {
+    init(id: String, officialSub: String, tutorSub: String, answer: String, reason: String) {
         self.id = id
-        self.satSub = satSub
-        self.sub = sub
+        self.officialSub = officialSub
+        self.tutorSub = tutorSub
         self.answer = answer
         self.reason = answer
     }
@@ -134,6 +142,7 @@ class TestSection: Hashable {
     var leftOverTime: Double
     var begunSection = false
     var sectionOver = false
+    var sectionTimer: SectionTimer
     
     var name: String
     var sectionIndex: Int
@@ -149,6 +158,8 @@ class TestSection: Hashable {
         self.name = sectionFromJson.name
         self.sectionIndex = sectionFromJson.orderInTest
         self.questions = questions
+        
+        self.sectionTimer = SectionTimer(duration: Int(allotedTime))
     }
     
     
@@ -156,7 +167,16 @@ class TestSection: Hashable {
 
 
 
-class Test: ObservableObject {
+class Test: ObservableObject, Hashable, Identifiable {
+    
+    static func == (lhs: Test, rhs: Test) -> Bool {
+        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+    }
+    
+    var hashValue: Int {
+        return ObjectIdentifier(self).hashValue
+    }
+    var id = UUID()
     @Published var currentSectionIndex = 0
     @Published var begunTest = false
     @Published var taken = false
@@ -251,7 +271,7 @@ class Test: ObservableObject {
                 questionList.append(tempQuestion)
             }
             
-            let arraySlice = pdfImages[section.startIndex..<section.endIndex]
+            let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
 
             let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList)
             sections.append(tempSection)
@@ -277,22 +297,22 @@ class Test: ObservableObject {
                     if question.location.row == 0 {
                         
                     }
-                    if data[question.location.section][question.sub] != nil{
-                        data[question.location.section][question.sub]?.r+=1
+                    if data[question.location.section][question.tutorSub] != nil{
+                        data[question.location.section][question.tutorSub]?.r+=1
                     }else{
-                        data[question.location.section][question.sub] = (r:1, w: 0, o: 0)
+                        data[question.location.section][question.tutorSub] = (r:1, w: 0, o: 0)
                     }
                 case .wrong:
-                    if data[question.location.section][question.sub] != nil{
-                        data[question.location.section][question.sub]?.w+=1
+                    if data[question.location.section][question.tutorSub] != nil{
+                        data[question.location.section][question.tutorSub]?.w+=1
                     }else{
-                        data[question.location.section][question.sub] = (r:0, w: 1, o: 0)
+                        data[question.location.section][question.tutorSub] = (r:0, w: 1, o: 0)
                     }
                 default:
-                    if data[question.location.section][question.sub] != nil{
-                        data[question.location.section][question.sub]?.o+=1
+                    if data[question.location.section][question.tutorSub] != nil{
+                        data[question.location.section][question.tutorSub]?.o+=1
                     }else{
-                        data[question.location.section][question.sub] = (r:0, w: 0, o: 1)
+                        data[question.location.section][question.tutorSub] = (r:0, w: 0, o: 1)
                     }
                 }
             }
@@ -312,8 +332,8 @@ class Test: ObservableObject {
             
             for question in section{
                 var tempQuestionDict: [String: String] = [:]
-                tempQuestionDict["id"] = question.satID
-                tempQuestionDict["satSub"] = question.satSub
+                tempQuestionDict["id"] = question.officialID
+                tempQuestionDict["officialSub"] = question.officialSub
                 tempQuestionDict["answer"] = question.answer
                 tempQuestionDict["reason"] = question.reason
                 tempQuestionDict["currentState"] = question.currentState.rawValue
@@ -375,14 +395,13 @@ class SectionTimer: ObservableObject {
     
     init(duration: Int) {
         self.timeRemaining = Double(duration)
-        self.endDate = Date().advanced(by: Double(self.timeRemaining))
-
-        self.startTimer()
+        //self.startTimer()
 
     }
     
 
     func startTimer() {
+        self.endDate = Date().advanced(by: Double(self.timeRemaining))
         
         guard self.timer == nil else {
             return
@@ -390,7 +409,6 @@ class SectionTimer: ObservableObject {
         
         self.timer = Timer(timeInterval: 0.2, repeats: true) { (timer) in
             self.timeRemaining = self.endDate!.timeIntervalSince(Date())
-            print(self.timeRemaining)
             if self.timeRemaining < 0 {
                 timer.invalidate()
                 self.timer = nil
@@ -403,7 +421,7 @@ class SectionTimer: ObservableObject {
         let min = max(floor(self.timeRemaining / 60),0)
         let sec = max(floor((self.timeRemaining - min*60).truncatingRemainder(dividingBy:60)),0)
         self.timeLeftFormatted = "\(Int(min)):\(Int(sec))"
-        print(self.timeLeftFormatted)
+       // print(self.timeLeftFormatted)
         
     }
 
@@ -429,9 +447,9 @@ class Question: ObservableObject, Hashable, Identifiable {
     }
     
     var id = UUID()
-    let satID: String
-    let satSub: String
-    let sub: String
+    let officialID: String
+    let officialSub: String
+    let tutorSub: String
     let answer: String
     let reason: String
     let location: IndexPath
@@ -441,12 +459,12 @@ class Question: ObservableObject, Hashable, Identifiable {
     @Published var userAnswer = ""
     @Published var currentState = CurrentState.ommited
     @Published var secondsToAnswer = 0.0
-    @Published var canvas: PKCanvasView = PKCanvasView()
+    @Published var canvas: PKCanvasView?
     
     init(q: QuestionFromJson, ip: IndexPath, act: Bool) {
-        self.satID = q.id
-        self.satSub = q.satSub
-        self.sub = q.sub
+        self.officialID = q.id
+        self.officialSub = q.officialSub
+        self.tutorSub = q.tutorSub
         self.answer = q.answer
         self.reason = q.reason
         self.isACT = act

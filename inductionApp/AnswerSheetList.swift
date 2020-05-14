@@ -25,28 +25,28 @@ struct AnswerSheetList: View {
                         || self.test.currentSection.begunSection == false
                         || self.test.currentSection.sectionOver == true
                         || self.test.currentSection != section) //If any of these conditions are true we disable
-                    
-                } 
+
+                }
                 
                 
 //                Section(header: Text("Section 1")) {
-//                    ForEach(self.test.questions[0], id: \.self){ question in
+//                    ForEach(self.test.sections[0].questions, id: \.self){ question in
 //                        AnswerSheetRow(question: question)
 //                    }
 //
 //                }.disabled( self.test.currentSectionIndex != 0 || self.test.begunTest == false )
 //                Section(header: Text("Section 2")) { //Section(header: TimerHeader(timer: self.test.timers[1], text: "Section 2")){
-//                    ForEach(self.test.questions[1], id: \.self){ question in
+//                    ForEach(self.test.sections[1].questions, id: \.self){ question in
 //                        AnswerSheetRow(question:question)
 //                    }
 //                }.disabled(self.test.currentSectionIndex != 1)
 //                Section(header: Text("Section 3")) {// Section(header: TimerHeader(timer: self.test.timers[2], text: "Section 3")){
-//                    ForEach(self.test.questions[2], id: \.self){ question in
+//                    ForEach(self.test.sections[2].questions, id: \.self){ question in
 //                        AnswerSheetRow(question:question)
 //                    }
 //                }.disabled(self.test.currentSectionIndex != 2)
 //                Section(header: Text("Section 4")) {//Section(header: TimerHeader(timer: self.test.timers[3], text: "Section 4")){
-//                    ForEach(self.test.questions[3], id: \.self){ question in
+//                    ForEach(self.test.sections[3].questions, id: \.self){ question in
 //                        AnswerSheetRow(question:question)
 //
 //                    }

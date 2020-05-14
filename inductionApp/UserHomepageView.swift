@@ -28,14 +28,20 @@ struct UserHomepageView: View {
               .padding()
               HStack(alignment: .top) {
                   VStack (alignment: .leading) {
-                    
-                    NavigationLink(destination: TestView(testData: (currentAuth.currentUser?.tests[0])!)) {
-                         HStack {
-                              Image(systemName: "folder")
-                               Text("Take Test!")
-                          }
+                    NavigationLink(destination: TestTable()){
+                        HStack{
+                            Image(systemName: "folder")
+                            Text("Choose Test!")
                         }
-                      .buttonStyle(buttonBackgroundStyle())
+                    }.buttonStyle(buttonBackgroundStyle())
+//                    NavigationLink(destination: TestView()) {
+//                         HStack {
+//                              Image(systemName: "folder")
+//                               Text("Take Test!")
+//                          }
+//                        }
+//                      .buttonStyle(buttonBackgroundStyle())
+
                       Button(action: {
                           //What the button does
                       }) {

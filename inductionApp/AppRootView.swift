@@ -16,7 +16,7 @@ struct AppRootView: View {
     
     var body: some View {
         Group {
-            if authManager.currentUser != nil && authManager.currentUser?.isLoggedIn == true {
+            if authManager.currentUser != nil {
                 
                 UserHomepageView() //user: authManager.currentUser!
               
@@ -67,9 +67,8 @@ class FirebaseManager: ObservableObject {
                                         ln: dataDescription!["lastN"] as! String,
                                         id: document.documentID,
                                         aID: dataDescription!["associationID"] as! String,
-                                        testRefs: ["BEN"]) { b in //dataDescription!["testRefs"] as! [String] {
-                                        completionHandler(true)
-                }
+                                        testRefs: ["BEN"])
+                completionHandler(true)
 
             }else{
                 print("Document was not retrieved")
