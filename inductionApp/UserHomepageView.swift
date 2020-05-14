@@ -34,23 +34,14 @@ struct UserHomepageView: View {
                             Text("Choose Test!")
                         }
                     }.buttonStyle(buttonBackgroundStyle())
-//                    NavigationLink(destination: TestView()) {
-//                         HStack {
-//                              Image(systemName: "folder")
-//                               Text("Take Test!")
-//                          }
-//                        }
-//                      .buttonStyle(buttonBackgroundStyle())
 
-                      Button(action: {
-                          //What the button does
-                      }) {
-                          HStack {
+                      NavigationLink(destination: StudyTable()){
+                          HStack{
                               Image(systemName: "folder")
                               Text("Study Library")
                           }
-                      }
-                      .buttonStyle(buttonBackgroundStyle())
+                      }.buttonStyle(buttonBackgroundStyle())
+                    
                       Button(action: {
                           //what the button does
                       }) {
@@ -92,6 +83,7 @@ struct UserHomepageView: View {
                       
                   }
                   .padding()
+                BarContentView()
                   VStack {
                       Text("Average Score: ")
                           .fontWeight(.bold)
@@ -159,5 +151,175 @@ struct infoLabelStyle: ViewModifier {
             .background(Color("lightBlue"))
             .cornerRadius(20)
             .padding()
+    }
+}
+
+enum SectionName: Int, CaseIterable, Hashable, Identifiable {
+    case overall = 0
+    case reading
+    case writing
+    case math
+    case science
+    
+    var name: String {
+        return "\(self)".capitalized
+    }
+
+    var id: SectionName {self}
+}
+
+
+enum Days: CaseIterable, Hashable, Identifiable {
+    
+    case sunday
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    
+    var shortName: String {
+        return String("\(self)".prefix(2)).capitalized
+    }
+    var id: Days {self}
+    
+}
+
+
+
+struct BarContentView: View {
+    
+    @State var pickerSelectedItem = 0
+    
+    @State var data: [(dayPart: SectionName, caloriesByDay: [(day:Days, calories:Int)])] =
+        [
+                (
+                    SectionName.overall,
+                        [
+                            (Days.sunday,28),
+                            (Days.monday, 29),
+                            (Days.tuesday, 28),
+                            (Days.wednesday,33),
+                            (Days.thursday, 31),
+                            (Days.friday, 34),
+                            (Days.saturday, 36)
+                        ]
+                ),
+                (
+                    SectionName.reading,
+                        [
+                            (Days.sunday, 29),
+                            (Days.monday, 30),
+                            (Days.tuesday, 34),
+                            (Days.wednesday, 31),
+                            (Days.thursday, 34),
+                            (Days.friday, 35),
+                            (Days.saturday, 35)
+                        ]
+                ),
+                (
+                    SectionName.writing,
+                        [
+                            (Days.sunday, 29),
+                            (Days.monday, 30),
+                            (Days.tuesday, 29),
+                            (Days.wednesday, 31),
+                            (Days.thursday, 34),
+                            (Days.friday, 35),
+                            (Days.saturday, 35)
+                        ]
+                ),
+                (
+                    SectionName.math,
+                        [
+                            (Days.sunday, 29),
+                            (Days.monday, 30),
+                            (Days.tuesday, 29),
+                            (Days.wednesday, 32),
+                            (Days.thursday, 36),
+                            (Days.friday, 31),
+                            (Days.saturday, 36)
+                        ]
+                ),
+                (
+                    SectionName.science,
+                        [
+                            (Days.sunday, 29),
+                            (Days.monday, 30),
+                            (Days.tuesday, 29),
+                            (Days.wednesday, 33),
+                            (Days.thursday, 32),
+                            (Days.friday, 36),
+                            (Days.saturday, 32)
+                        ]
+                )
+                
+        ]
+
+    
+    
+    
+    var body: some View {
+        ZStack {
+            
+            Color("background").edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                
+                Text("Quick Data")
+                    .foregroundColor(Color.blue)
+                    .font(.system(size: 34))
+                    .fontWeight(.heavy)
+                
+                Picker(selection: $pickerSelectedItem.animation(), label: Text("")) {
+                   ForEach(SectionName.allCases) { dp in
+                        Text(dp.name).tag(dp.rawValue)
+                    }
+                    
+                    
+                }.pickerStyle(SegmentedPickerStyle())
+                    .padding(.horizontal, 24)
+                    .animation(.default)
+                
+                 
+              HStack (spacing: 10) {
+                     ForEach(0..<self.data[pickerSelectedItem].caloriesByDay.count, id: \.self)
+                     { i in
+                      
+                        BarView(
+                            value: self.data[self.pickerSelectedItem].caloriesByDay[i].calories,
+                            label: self.data[self.pickerSelectedItem].caloriesByDay[i].day.shortName
+                        )
+                     
+                     }
+                
+              }.padding(.top, 24)
+               .animation(.default)
+                
+                
+            }//vs
+        }//zs
+        
+    }
+}
+
+
+struct BarView:  View {
+    
+    var value: Int
+    var label: String
+    
+    var body: some View {
+        VStack {
+            ZStack(alignment: .bottom) {
+                Capsule().frame(width: 30, height: 216)
+                    .foregroundColor(Color(#colorLiteral(red: 0.160164088, green: 0.2815363109, blue: 0.3686951399, alpha: 1)))
+                Capsule().frame(width: 30, height: CGFloat(value*6))
+                    .foregroundColor(.orange)
+            }
+            Text(label)
+                .padding(.top,8)
+        }
     }
 }

@@ -127,7 +127,7 @@ struct QuestionFromJson: Codable{
     }
 }
 
-class TestSection: Hashable {
+class TestSection: Hashable, Identifiable {
     
     static func == (lhs: TestSection, rhs: TestSection) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
@@ -223,6 +223,14 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.readJsonFile(data: jsonData)
         self.createTestData(testFromJson: self.testFromJson!)
         self.name = self.testFromJson?.name
+    }
+    
+    //Creates a test from a section
+    init(testSection: TestSection, test: Test) {
+        self.sections = [testSection]
+        self.name = testSection.name
+        self.pdfImages = testSection.pages
+        self.questions = [testSection.questions]
     }
     
 

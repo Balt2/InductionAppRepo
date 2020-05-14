@@ -42,6 +42,8 @@ struct TestView: View {
     }
 }
 
+
+
 struct PageView: View{
     var model: PageModel
     @State private var canvas: PKCanvasView = PKCanvasView()
@@ -91,7 +93,10 @@ struct TimerNavigationView: View {
                    }){
                        Text("Start Test")
                    }
-            } else if test.currentSectionIndex < 3 {
+            }else if self.test.taken == true{
+                Text("Test Over")
+            }
+            else if test.currentSectionIndex < 3 {
                Button(action: {
                 self.test.currentSection.sectionOver = true
                 self.test.currentSection.sectionTimer.endTimer()
@@ -114,8 +119,6 @@ struct TimerNavigationView: View {
                }){
                 Text("End Test and Check")
                }
-            } else if self.test.taken == true{
-                Text("Test Over")
             }
             
             Spacer()
@@ -142,6 +145,21 @@ struct TestTable: View {
             }.frame(height: 90)
         }.navigationBarTitle(Text("Choose Test to Take"))
         
+    }
+}
+
+struct StudyTable: View {
+    @EnvironmentObject var currentAuth: FirebaseManager
+    var body: some View {
+        List{
+            ForEach(currentAuth.currentUser?.tests ?? [], id: \.self){test in
+                ForEach(test.sections, id: \.self){section in
+                    NavigationLink(destination: TestView(testData: Test(testSection: section, test: test))){
+                           Text(" \(section.name) from \(test.name!)")
+                       }.frame(height: 90)
+                }
+            }
+        }.navigationBarTitle(Text("Choose Section to Study"))
     }
 }
 

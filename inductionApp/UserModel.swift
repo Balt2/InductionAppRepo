@@ -47,11 +47,9 @@ class User: ObservableObject {
         
         self.getTestPDFs { pdfs in
             self.getTestJsons { jsons in
-                print("THIS SHOULD NOT HAPPEN MORE THANONCE")
                 for (index, json) in jsons.enumerated() {
                     let searchString = json.1.prefix(4)
                     let correctPdf = pdfs.filter {$0.1.contains(searchString)}
-                    print("AGAIN?!")
                     let test = Test(jsonData: json.0 , pdfData: correctPdf[0].0)
                     testListFromDB.append(test)
                 }
