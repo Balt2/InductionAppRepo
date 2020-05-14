@@ -263,12 +263,11 @@ struct BarContentView: View {
     var body: some View {
         ZStack {
             
-            Color("background").edgesIgnoringSafeArea(.all)
             
             VStack {
                 
                 Text("Quick Data")
-                    .foregroundColor(Color.blue)
+                    .foregroundColor(Color("lightBlue"))
                     .font(.system(size: 34))
                     .fontWeight(.heavy)
                 
@@ -314,9 +313,9 @@ struct BarView:  View {
         VStack {
             ZStack(alignment: .bottom) {
                 Capsule().frame(width: 30, height: 216)
-                    .foregroundColor(Color(#colorLiteral(red: 0.160164088, green: 0.2815363109, blue: 0.3686951399, alpha: 1)))
+                    .foregroundColor(Color("lightBlue"))
                 Capsule().frame(width: 30, height: CGFloat(value*6))
-                    .foregroundColor(.orange)
+                    .foregroundColor( Color("salmon"))
             }
             Text(label)
                 .padding(.top,8)
