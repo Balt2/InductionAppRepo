@@ -171,16 +171,32 @@ enum SectionName: Int, CaseIterable, Hashable, Identifiable {
 
 enum Days: CaseIterable, Hashable, Identifiable {
     
-    case sunday
-    case monday
-    case tuesday
-    case wednesday
-    case thursday
-    case friday
-    case saturday
+    case CSE
+    case POW
+    case KOL
+    
+    case KID
+    case IK
+    case CS
+    
+    case IES
+    case Alg
+    case Geom
+    case Func
+    case Modeling
+    case NQ
+    
+    case IOD
+    case SI
+    case EM
+    
+    case ACT1
+    case ACT2
+    case ACT3
+    
     
     var shortName: String {
-        return String("\(self)".prefix(2)).capitalized
+        return String("\(self)".prefix(4)).capitalized
     }
     var id: Days {self}
     
@@ -197,61 +213,41 @@ struct BarContentView: View {
                 (
                     SectionName.overall,
                         [
-                            (Days.sunday,28),
-                            (Days.monday, 29),
-                            (Days.tuesday, 28),
-                            (Days.wednesday,33),
-                            (Days.thursday, 31),
-                            (Days.friday, 34),
-                            (Days.saturday, 36)
+                            (Days.ACT1, 28),
+                            (Days.ACT2, 34),
+                            (Days.ACT3, 36)
                         ]
                 ),
                 (
                     SectionName.reading,
                         [
-                            (Days.sunday, 29),
-                            (Days.monday, 30),
-                            (Days.tuesday, 34),
-                            (Days.wednesday, 31),
-                            (Days.thursday, 34),
-                            (Days.friday, 35),
-                            (Days.saturday, 35)
+                            (Days.ACT1, 28),
+                            (Days.ACT2, 32),
+                            (Days.ACT3, 35)
                         ]
                 ),
                 (
                     SectionName.writing,
                         [
-                            (Days.sunday, 29),
-                            (Days.monday, 30),
-                            (Days.tuesday, 29),
-                            (Days.wednesday, 31),
-                            (Days.thursday, 34),
-                            (Days.friday, 35),
-                            (Days.saturday, 35)
+                            (Days.ACT1, 26),
+                            (Days.ACT2, 33),
+                            (Days.ACT3, 36)
                         ]
                 ),
                 (
                     SectionName.math,
                         [
-                            (Days.sunday, 29),
-                            (Days.monday, 30),
-                            (Days.tuesday, 29),
-                            (Days.wednesday, 32),
-                            (Days.thursday, 36),
-                            (Days.friday, 31),
-                            (Days.saturday, 36)
+                            (Days.ACT1, 25),
+                            (Days.ACT2, 34),
+                            (Days.ACT3, 36)
                         ]
                 ),
                 (
                     SectionName.science,
                         [
-                            (Days.sunday, 29),
-                            (Days.monday, 30),
-                            (Days.tuesday, 29),
-                            (Days.wednesday, 33),
-                            (Days.thursday, 32),
-                            (Days.friday, 36),
-                            (Days.saturday, 32)
+                            (Days.ACT1, 30),
+                            (Days.ACT2, 32),
+                            (Days.ACT3, 36)
                         ]
                 )
                 
