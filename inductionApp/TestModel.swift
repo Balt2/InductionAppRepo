@@ -142,7 +142,9 @@ class TestSection: Hashable, Identifiable {
     var leftOverTime: Double
     var begunSection = false{
         didSet{
-            sectionTimer.startTimer()
+            if begunSection == true{
+                sectionTimer.startTimer()
+            }
         }
     }
     var sectionOver = false{
@@ -174,6 +176,24 @@ class TestSection: Hashable, Identifiable {
         self.sectionTimer = SectionTimer(duration: Int(allotedTime))
     }
     
+    init(testSection: TestSection){
+        self.allotedTime = testSection.allotedTime
+        self.leftOverTime = testSection.allotedTime
+        self.index = testSection.index
+        self.pages = testSection.pages
+        self.name = testSection.name
+        self.sectionIndex = testSection.sectionIndex
+        self.questions = testSection.questions.map {Question(question: $0)}
+        self.sectionTimer = SectionTimer(duration: Int(allotedTime))
+    }
+    
+    func reset(){
+        leftOverTime = allotedTime
+        begunSection = false
+        sectionOver = false
+        questions.forEach {$0.reset() }
+    }
+    
     
 }
 
@@ -189,15 +209,12 @@ class Test: ObservableObject, Hashable, Identifiable {
         return ObjectIdentifier(self).hashValue
     }
     var id = UUID()
-    @Published var currentSectionIndex = 0 //{
-//        didSet{
-//            currentSection = sections[currentSectionIndex]
-//        }
-  // }
+    @Published var currentSectionIndex = 0
     @Published var begunTest = false
     @Published var taken = false
     @Published var showAnswerSheet = true
     @Published var testState: TestState = .notStarted
+    var isFullTest = true
     
     var testJsonFile: String = ""
     var testPDFFile: String = ""
@@ -207,10 +224,10 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     var testPDFData: NSData?
     
-    var pdfImages: [PageModel]
+    var pdfImages: [PageModel] = []
     var sections: [TestSection] = []
     var numberOfSections: Int?
-    var name: String?
+    var name: String = ""
     var currentSection: TestSection?
     {
         return sections[currentSectionIndex]
@@ -235,7 +252,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.testFromJson = self.createTestFromJson(fileName: jsonFile)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
         self.numberOfSections = self.sections.count
-        self.name = self.testFromJson?.name
+        self.name = self.testFromJson?.name as! String
      
         
 
@@ -247,18 +264,22 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.testFromJson = self.createTestFromJson(data: jsonData)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
         self.numberOfSections = self.sections.count
-        self.name = self.testFromJson?.name
+        self.name = self.testFromJson?.name as! String
     }
     
-    //Creates a test from a section
-    init(testSection: TestSection, test: Test) {
-        self.sections = [testSection]
-        self.name = testSection.name
-        self.pdfImages = testSection.pages
-        self.questions = [testSection.questions]
+    //Creates a test from a section (or multiple ones) from a test
+    init(testSections: [TestSection], test: Test) {
+        for testSection in testSections{
+            let newSection = TestSection(testSection: testSection)
+            self.pdfImages.append(contentsOf: newSection.pages)
+            self.questions.append(newSection.questions)
+            self.sections.append(newSection)
+            self.name = self.name + ": \(newSection.name)"
+            
+        }
         self.testFromJson = test.testFromJson
         self.numberOfSections = self.sections.count
-
+        self.isFullTest = false
         
     }
     
@@ -278,7 +299,8 @@ class Test: ObservableObject, Hashable, Identifiable {
     //This is called when the user wants to begin the next section
     //The from start detemrines if we should incriment the currentSectionInndex
     func nextSection(fromStart: Bool){
-        if currentSectionIndex == numberOfSections! - 2  {
+         //Greater than or equal ensures if there is only one section
+        if currentSectionIndex >= numberOfSections! - 2  {
             if fromStart == false {
                 currentSectionIndex += 1
             }
@@ -302,6 +324,12 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func reset() {
         questions.forEach { $0.forEach {$0.reset() } }
+        sections.forEach {$0.reset() }
+        testState = .notStarted
+        currentSectionIndex = 0
+        begunTest = false
+        taken = false
+        showAnswerSheet = true
     }
     
     
@@ -559,6 +587,22 @@ class Question: ObservableObject, Hashable, Identifiable {
       
     }
     
+    init(question: Question){
+        self.officialID = question.officialID
+        self.officialSub = question.officialSub
+        self.tutorSub = question.tutorSub
+        self.answer = question.answer
+        self.reason = question.reason
+        self.isACT = question.isACT
+        self.location = question.location
+        
+        if isACT && (question.location.row + 1) % 2 == 1 {
+            self.answerLetters = ["A", "B", "C", "D"]
+        }else if isACT {
+            self.answerLetters = ["F", "G", "H", "J"]
+        }
+    }
+    
     func checkAnswer() {
         if (currentState == .invalidSelection || currentState == .ommited) {return}
         else if (userAnswer == answer) {
@@ -573,6 +617,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.userAnswer = ""
         self.currentState = .ommited
         self.secondsToAnswer = 0.0
+        self.canvas = nil
     }
     
 }

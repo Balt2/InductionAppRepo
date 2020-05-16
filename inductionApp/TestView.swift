@@ -102,6 +102,7 @@ struct TimerNavigationView: View {
             }
             
             //Shows time text
+            
             if self.test.testState == .inSection
             || self.test.testState == .lastSection {
                 Text("\(now) left")
@@ -115,12 +116,26 @@ struct TimerNavigationView: View {
     }
     func getControlButton() -> Text {
         switch self.test.testState{
-        case .notStarted: return Text("Start Test")
+        case .notStarted:
+            if test.isFullTest == true {
+                return Text("Start Test")
+            }else{
+                return Text("Start Section")
+            }
         case .inSection: return Text("End Section")
         case .betweenSection: return Text("Start Next Section")
-        case .lastSection: return Text("End Test")
-        case .testOver: return Text("Test Over")
-            
+        case .lastSection:
+            if test.isFullTest == true {
+                return Text("End Test")
+            }else{
+                return Text("End Study Section")
+            }
+        case .testOver:
+            if test.isFullTest == true {
+                return Text("Test Over")
+            }else{
+                return Text("Study Section Over")
+            }
         }
     }
 }
@@ -130,7 +145,7 @@ struct TestTable: View {
     var body: some View {
         List(currentAuth.currentUser!.tests){test in
             NavigationLink(destination: TestView(testData: test)){
-                Text(test.name!)
+                Text(test.name)
             }.frame(height: 90)
         }.navigationBarTitle(Text("Choose Test to Take"))
         
@@ -143,8 +158,8 @@ struct StudyTable: View {
         List{
             ForEach(currentAuth.currentUser?.tests ?? [], id: \.self){test in
                 ForEach(test.sections, id: \.self){section in
-                    NavigationLink(destination: TestView(testData: Test(testSection: section, test: test))){
-                           Text(" \(section.name) from \(test.name!)")
+                    NavigationLink(destination: TestView(testData: Test(testSections: [section], test: test))){
+                        Text(" \(section.name) from \(test.name)")
                        }.frame(height: 90)
                 }
             }

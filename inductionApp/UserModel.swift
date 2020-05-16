@@ -99,7 +99,6 @@ class User: ObservableObject {
     func getTestJsons(completionHandler: @escaping (_ jsons: [(Data, String)]) -> ()) {
         print("GETTING JSONS...")
         var jsonDataList: [(Data, String)] = []
-        print(associationID)
         let storageRef = Storage.storage().reference().child("\(associationID)Files/testJSONS")
         storageRef.listAll { (result, error) in
             

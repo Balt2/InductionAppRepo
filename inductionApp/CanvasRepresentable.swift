@@ -44,7 +44,6 @@ struct CanvasRepresentable: UIViewRepresentable {
         //TODO: When there are too many canvases on the screen...this is an issue
         func checkAnswerSheet(canvasView: PKCanvasView){
             for (question,rec) in bubbleRects {
-                print(rec)
                 //print(canvasView.drawing.bounds
                 let imageCreated = canvasView.drawing.image(from: rec, scale: UIScreen.main.scale)
                 var numberOfPixels = 0
@@ -89,11 +88,7 @@ struct CanvasRepresentable: UIViewRepresentable {
 
             }
         }
-        
-        
     }
-    
-    
     
     
     func makeCoordinator() -> Coordinator {
@@ -108,7 +103,6 @@ struct CanvasRepresentable: UIViewRepresentable {
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
-            print(context.coordinator)
             c.delegate = context.coordinator
             question.canvas = c
             return c
@@ -118,21 +112,10 @@ struct CanvasRepresentable: UIViewRepresentable {
             question.canvas = c
             return c
         }
-            
-        //}
-        
-//        else{
-//            let c = PKCanvasView()
-//            c.isOpaque = false
-//            c.allowsFingerDrawing = true
-//            c.delegate = context.coordinator
-//            return c
-//        }
     }
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         print("UPDATE VIEW: \(question.location.row)")
-        
         //context.coordinator =
 
     }
