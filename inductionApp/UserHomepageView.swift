@@ -17,7 +17,7 @@ struct UserHomepageView: View {
           VStack {
               HStack {
                
-                Text("Name: \(currentAuth.currentUser!.firstName)")
+                Text("Name: Ben") //currentAuth.currentUser!.firstName
                       .fontWeight(.bold)
                       .modifier(nameLabelStyle())
                   Spacer()
@@ -42,15 +42,13 @@ struct UserHomepageView: View {
                           }
                       }.buttonStyle(buttonBackgroundStyle())
                     
-                      Button(action: {
-                          //what the button does
-                      }) {
-                          HStack {
-                              Image(systemName: "archivebox")
-                              Text("Past Performance")
-                          }
-                      }
-                      .buttonStyle(buttonBackgroundStyle())
+                    NavigationLink(destination: PastPerformanceTable()){
+                     HStack{
+                         Image(systemName: "archivebox")
+                         Text("Past Performance")
+                        }
+                    }.buttonStyle(buttonBackgroundStyle())
+                      
                       Button(action: {
                           //what the button does
                       }) {

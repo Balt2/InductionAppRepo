@@ -140,8 +140,20 @@ class TestSection: Hashable, Identifiable {
     var id = UUID()
     var allotedTime: Double
     var leftOverTime: Double
-    var begunSection = false
-    var sectionOver = false
+    var begunSection = false{
+        didSet{
+            sectionTimer.startTimer()
+        }
+    }
+    var sectionOver = false{
+        didSet{
+            if sectionOver == true{
+                sectionTimer.endTimer()
+                self.leftOverTime = sectionTimer.timeRemaining
+                print("Section OVER")
+            }
+        }
+    }
     var sectionTimer: SectionTimer
     
     var name: String
@@ -177,21 +189,30 @@ class Test: ObservableObject, Hashable, Identifiable {
         return ObjectIdentifier(self).hashValue
     }
     var id = UUID()
-    @Published var currentSectionIndex = 0
+    @Published var currentSectionIndex = 0 //{
+//        didSet{
+//            currentSection = sections[currentSectionIndex]
+//        }
+  // }
     @Published var begunTest = false
     @Published var taken = false
+    @Published var showAnswerSheet = true
+    @Published var testState: TestState = .notStarted
+    
     var testJsonFile: String = ""
     var testPDFFile: String = ""
     private var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
-    @Published var showAnswerSheet = true
+    
     
     
     var testPDFData: NSData?
     
     var pdfImages: [PageModel]
     var sections: [TestSection] = []
+    var numberOfSections: Int?
     var name: String?
-    var currentSection: TestSection{
+    var currentSection: TestSection?
+    {
         return sections[currentSectionIndex]
     }
     var performanceData: Data {
@@ -204,24 +225,28 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     @Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
 
-    
+    //Create a test from Files on the computer
     init(jsonFile: String, pdfFile: String){
         
         
         self.testJsonFile = jsonFile
         self.testPDFFile = pdfFile
         self.pdfImages = TestPDF(name: pdfFile).pages
-        self.readJsonFile(fileName: jsonFile) //TODO: Make sure this is optional
-        self.createTestData(testFromJson: self.testFromJson!)
+        self.testFromJson = self.createTestFromJson(fileName: jsonFile)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
+        self.numberOfSections = self.sections.count
         self.name = self.testFromJson?.name
+     
+        
 
         //self.sendJsonTestPerformanceData()
     }
-    
+    //Create a test fromo Data (coming from database mostly)
     init(jsonData: Data, pdfData: Data){
         self.pdfImages = TestPDF(data: pdfData).pages
-        self.readJsonFile(data: jsonData)
-        self.createTestData(testFromJson: self.testFromJson!)
+        self.testFromJson = self.createTestFromJson(data: jsonData)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
+        self.numberOfSections = self.sections.count
         self.name = self.testFromJson?.name
     }
     
@@ -231,41 +256,93 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.name = testSection.name
         self.pdfImages = testSection.pages
         self.questions = [testSection.questions]
+        self.testFromJson = test.testFromJson
+        self.numberOfSections = self.sections.count
+
+        
     }
     
-
-    func readJsonFile(fileName: String) {
+    //Called when the test has not begun yet
+    func startTest(){
+        begunTest = true
+        nextSection(fromStart: true)
+        
+    }
+    
+    //Called onnly if in an intermediaary section is over
+    func endSection(){
+        currentSection?.sectionOver = true
+        testState = .betweenSection
+    }
+    
+    //This is called when the user wants to begin the next section
+    //The from start detemrines if we should incriment the currentSectionInndex
+    func nextSection(fromStart: Bool){
+        if currentSectionIndex == numberOfSections! - 2  {
+            if fromStart == false {
+                currentSectionIndex += 1
+            }
+            testState = .lastSection
+        }else if currentSectionIndex < numberOfSections! - 2{
+            if fromStart == false {
+                currentSectionIndex += 1
+            }
+            testState = .inSection
+        }
+        currentSection?.begunSection = true
+    }
+    
+    //Called when test (or section should be ended)
+    func endTest(){
+        taken = true
+        endSection()
+        testState = .testOver
+    }
+   
+    
+    func reset() {
+        questions.forEach { $0.forEach {$0.reset() } }
+    }
+    
+    
+    //Initalization Functions
+    func createTestFromJson(fileName: String) -> TestFromJson? {
         if let path = Bundle.main.path(forResource: fileName, ofType: "json"){
             do{
                 let fileUrl = URL(fileURLWithPath: path)
                 let decoder = JSONDecoder()
                 let data = try Data(contentsOf: fileUrl, options: .mappedIfSafe)
                 let testFromJson = try decoder.decode(TestFromJson.self, from: data)
-                self.testFromJson = testFromJson
+                return testFromJson
             }catch {
                 print("ERROR loading IN TEST JSON")
-                self.testFromJson = nil
+                return nil
+                //self.testFromJson = nil
             }
         }else{
             print("Failure reading JSON from File")
-            self.testFromJson = nil
+            return nil
+            //self.testFromJson = nil
         }
+        return nil
     }
     
-    func readJsonFile(data: Data) {
+    func createTestFromJson(data: Data) -> TestFromJson? {
         do{
             let decoder = JSONDecoder()
             let testFromJson = try decoder.decode(TestFromJson.self, from: data)
-            self.testFromJson = testFromJson
+            return testFromJson
+            //self.testFromJson = testFromJson
         }catch {
             print("Error loading IN Test from DATA")
-            self.testFromJson = nil
+            return nil
+            //self.testFromJson = nil
         }
-            
+        return nil
     }
     
     
-    func createTestData(testFromJson: TestFromJson){
+    func createSectionArray(testFromJson: TestFromJson) -> [TestSection]{
         var sections: [TestSection] = []
         
         for section in testFromJson.sections {
@@ -284,11 +361,11 @@ class Test: ObservableObject, Hashable, Identifiable {
             let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList)
             sections.append(tempSection)
         }
-        self.sections = sections
+        return sections
     }
     
     
-    
+    //Create Data to send from Test
     func computeData() -> [[String:(r: Double, w: Double, o: Double)]] {
         var dataForMathCalculator = [String:(r: Double, w: Double, o: Double)]()
         var dataForReading = [String:(r: Double, w: Double, o: Double)]()
@@ -386,9 +463,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         
     }
     
-    func reset() {
-        questions.forEach { $0.forEach {$0.reset() } }
-    }
+    
 }
 
 class SectionTimer: ObservableObject {
@@ -403,13 +478,11 @@ class SectionTimer: ObservableObject {
     
     init(duration: Int) {
         self.timeRemaining = Double(duration)
-        //self.startTimer()
-
     }
     
 
     func startTimer() {
-        self.endDate = Date().advanced(by: Double(self.timeRemaining))
+        self.endDate = Date().advanced(by: self.timeRemaining)
         
         guard self.timer == nil else {
             return
@@ -517,3 +590,10 @@ enum CurrentState : String{
     case selected = "S" //Selected
 }
 
+enum TestState{
+    case notStarted
+    case inSection
+    case betweenSection
+    case lastSection
+    case testOver
+}

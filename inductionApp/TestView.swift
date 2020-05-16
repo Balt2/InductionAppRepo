@@ -28,7 +28,7 @@ struct TestView: View {
                     GeometryReader {scrollGeo in
                         ScrollView {
                             VStack {
-                                ForEach(self.testData.currentSection.pages, id: \.self){ page in
+                                ForEach(self.testData.currentSection!.pages, id: \.self){ page in
                                     PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
                                         .disabled(self.testData.begunTest ? false : true)
                                 }
@@ -81,57 +81,46 @@ struct TimerNavigationView: View {
                 }
             }
             
-            
-            //Contrl of test buttons
-            if test.begunTest == false && test.taken == false {
-                Button(action: {
-                    self.test.currentSection.sectionTimer.startTimer()
-                    self.test.begunTest = true
-                    self.test.currentSection.begunSection = true
-                    
-                    print("STARTING TIMER")
-                   }){
-                       Text("Start Test")
-                   }
-            }else if self.test.taken == true{
-                Text("Test Over")
-            }
-            else if test.currentSectionIndex < 3 {
-               Button(action: {
-                self.test.currentSection.sectionOver = true
-                self.test.currentSection.sectionTimer.endTimer()
-                self.test.currentSection.leftOverTime = self.test.currentSection.sectionTimer.timeRemaining
-                
-                self.test.currentSectionIndex += 1
-                self.test.currentSection.sectionTimer.startTimer()
-                self.test.currentSection.begunSection = true
-                self.now = self.test.currentSection.sectionTimer.timeLeftFormatted
-                
-               }) {
-                   Text("Start Next section")
-               }
-            } else if test.currentSectionIndex == 3 {
-               Button(action: {
-                self.test.taken = true
-                self.test.currentSection.sectionOver = true
-                self.test.currentSection.leftOverTime = self.test.currentSection.sectionTimer.timeRemaining
-                //TODO: SEND DATAs
-               }){
-                Text("End Test and Check")
-               }
+            Button(action: {
+                switch self.test.testState{
+                case .notStarted:
+                    self.test.startTest()
+                case .inSection:
+                    self.test.endSection()
+                case .betweenSection:
+                    self.test.nextSection(fromStart: false)
+                case .lastSection:
+                    self.test.endTest()
+                    //TODO: SEND DATAs
+                case .testOver:
+                    print("Should never get here")
+                }
+            }){
+                HStack{
+                   getControlButton()
+                }
             }
             
-            Spacer()
             //Shows time text
-            if self.test.begunTest == true && self.test.taken == false {
-            
+            if self.test.testState == .inSection
+            || self.test.testState == .lastSection {
                 Text("\(now) left")
                     .onReceive(timer) { _ in
-                        self.now = self.test.currentSection.sectionTimer.timeLeftFormatted
-                    }
+                        self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
+                }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
             }
 
             Spacer()
+        }
+    }
+    func getControlButton() -> Text {
+        switch self.test.testState{
+        case .notStarted: return Text("Start Test")
+        case .inSection: return Text("End Section")
+        case .betweenSection: return Text("Start Next Section")
+        case .lastSection: return Text("End Test")
+        case .testOver: return Text("Test Over")
+            
         }
     }
 }
@@ -162,6 +151,20 @@ struct StudyTable: View {
         }.navigationBarTitle(Text("Choose Section to Study"))
     }
 }
+
+struct PastPerformanceTable: View {
+    @EnvironmentObject var currentAuth: FirebaseManager
+        var body: some View {
+            ScrollView {
+                VStack {
+                    ForEach(self.currentAuth.currentUser!.performancePDF, id: \.self){ page in
+                        PageView(model: page)
+                    }
+                }
+            }
+    }
+}
+
 
 //struct TestView_Previews: PreviewProvider {
 //    static let tests = TestList()

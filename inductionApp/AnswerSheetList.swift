@@ -22,8 +22,8 @@ struct AnswerSheetList: View {
                         }
                     }.disabled( self.test.begunTest == false
                         || self.test.taken == true
-                        || self.test.currentSection.begunSection == false
-                        || self.test.currentSection.sectionOver == true
+                        || self.test.currentSection!.begunSection == false
+                        || self.test.currentSection!.sectionOver == true
                         || self.test.currentSection != section) //If any of these conditions are true we disable
 
                 }

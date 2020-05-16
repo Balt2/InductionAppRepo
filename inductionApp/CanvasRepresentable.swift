@@ -66,7 +66,6 @@ struct CanvasRepresentable: UIViewRepresentable {
                 }
                 print("After looping through points: \(numberOfPixels)")
                 if numberOfPixels > 100{
-                    print("LOTS OF PIXELS")
                     if (parent.question.currentState == .ommited) {
                         parent.question.userAnswer = question
                         parent.question.currentState = .selected
@@ -98,8 +97,6 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     
     func makeCoordinator() -> Coordinator {
-        print("Make Coordinator")
-        print(question.location)
         //question.coordinator =
         return Coordinator(self)
         
@@ -121,7 +118,6 @@ struct CanvasRepresentable: UIViewRepresentable {
             question.canvas = c
             return c
         }
-            print("Make UIVIEW")
             
         //}
         

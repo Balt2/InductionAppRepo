@@ -20,6 +20,7 @@ class User: ObservableObject {
     let associationID: String
     let testRefs: [String]
     var tests: [Test] = []
+    var performancePDF = [PageModel]()
     
     init(fn: String, ln: String, id: String, aID: String, testRefs: [String]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
         print("INIT USER")
@@ -35,6 +36,9 @@ class User: ObservableObject {
             self.tests.append(contentsOf: testList)
             self.isLoggedIn = true
             //completionHandler(true)
+        }
+        self.getPerformancePdf { pdf in
+            self.performancePDF = TestPDF(data: pdf).pages
         }
     }
     
@@ -175,6 +179,31 @@ class User: ObservableObject {
         }
         
         //let storageRef = Storage.storage().reference(withPath: "\(associationID)Files")
+    }
+    
+    func getPerformancePdf(completionHandler: @escaping (_ pdf: Data) -> ()) {
+        print("Getting PDF Perforamce...")
+        var pdfD = Data()
+        let storageRef = Storage.storage().reference().child("\(associationID)Files/performancePdfs")
+        storageRef.listAll { (result, error) in
+            
+          if let error = error {
+            print("ERROR RETRIVEVING PDF's FROM DATABASE")
+            completionHandler(pdfD)
+          }
+
+            print("PDFS ARRAY: \(result.items)")
+            result.items[0].getData(maxSize: 40 * 1024 * 1024){data, error in
+                if let error = error {
+                    print("Error retriving PDF")
+                }else{
+                    print("PDF DATA: \(data)")
+                    pdfD = data!
+                    completionHandler(pdfD)
+                }
+            }
+        }
+        
     }
     
 }
