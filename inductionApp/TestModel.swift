@@ -39,6 +39,16 @@ class TestSection: Hashable, Identifiable {
             }
         }
     }
+    var rawScore: Int{
+        var score = 0
+        for question in questions {
+            if question.currentState == .right{
+                score += 1
+            }
+        }
+        return score
+    }
+    
     var sectionOver = false{
         didSet{
             if sectionOver == true{
@@ -79,12 +89,28 @@ class TestSection: Hashable, Identifiable {
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
     }
     
+    func makeTestSectionForJson() -> TestSectionFromJson{
+        var questionsForJson = [QuestionFromJson]()
+        for question in self.questions{
+            question.checkAnswer()
+            let temp = QuestionFromJson(id: question.officialID, officialSub: question.officialSub, tutorSub: question.tutorSub, answer: question.answer, reason: question.reason, studentAnswer: question.userAnswer, secondsToAnswer: Int(question.secondsToAnswer), finalState: question.finalState.rawValue) //Missing order in test
+            
+            questionsForJson.append(temp)
+        }
+        //This is a var because we will be giving it a scaled score
+        var sectionForJson = TestSectionFromJson(name: self.name, timeAllowed:  Int(self.allotedTime), startIndex: self.index.start, endIndex: self.index.end, orderInTest: self.sectionIndex, questions: questionsForJson, rawScore: self.rawScore, timeLeft: Int(self.leftOverTime))
+        
+        return sectionForJson
+    }
+    
     func reset(){
         leftOverTime = allotedTime
         begunSection = false
         sectionOver = false
         questions.forEach {$0.reset() }
     }
+    
+    
     
 }
 
@@ -130,16 +156,20 @@ class Test: ObservableObject, Hashable, Identifiable {
     var sections: [TestSection] = []
     var numberOfSections: Int?
     var name: String = ""
+    var act: Bool?
     var currentSection: TestSection?
     {
         return sections[currentSectionIndex]
     }
-    var performanceData: Data {
-        return self.createJsonQuestions()
+
+    var resultJson: Data{
+        return self.createResultJson()
     }
     var computedData: [[String:(r: Double, w: Double, o: Double)]] {
         return self.computeData()
     }
+    
+    var scoreConvertDict = [Int: (readingSectionTestScore: Int, mathSectionTestScore: Int, writingAndLanguageTestScore: Int, scienceTestScore: Int)]()
     
     
     @Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
@@ -154,7 +184,15 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.testFromJson = self.createTestFromJson(fileName: jsonFile)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
         self.numberOfSections = self.sections.count
-        self.name = self.testFromJson?.name as! String
+        if self.testFromJson != nil {
+            self.act = self.testFromJson?.act
+            self.name = self.testFromJson!.name
+            for convertEach in testFromJson!.answerConverter! {
+                scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore)
+            }
+        }
+                
+        
      
         
 
@@ -166,7 +204,13 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.testFromJson = self.createTestFromJson(data: jsonData)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
         self.numberOfSections = self.sections.count
-        self.name = self.testFromJson?.name as! String
+        if self.testFromJson != nil {
+            self.act = self.testFromJson?.act
+            self.name = self.testFromJson!.name
+            for convertEach in testFromJson!.answerConverter! {
+                scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore)
+            }
+        }
     }
     
     //Creates a test from a section (or multiple ones) from a test
@@ -179,9 +223,11 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.name = self.name + ": \(newSection.name)"
             
         }
+        self.act = test.act
         self.testFromJson = test.testFromJson
         self.numberOfSections = self.sections.count
         self.isFullTest = false
+        self.scoreConvertDict = test.scoreConvertDict
         
     }
     
@@ -189,6 +235,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     func startTest(){
         begunTest = true
         nextSection(fromStart: true)
+        
         
     }
     
@@ -221,6 +268,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         taken = true
         endSection()
         testState = .testOver
+        sendResultJson()
     }
    
     
@@ -332,53 +380,52 @@ class Test: ObservableObject, Hashable, Identifiable {
         return data
     }
     
-    func createJsonQuestions() -> Data {
-        let tempData = Data()
-        print("creating result json file")
-
-        var questionArray: [String : [[String: String]]] = [:]
-        for (index, section) in self.questions.enumerated() {
-            let indexString = String(index)
-            questionArray[indexString] = []
-            
-            for question in section{
-                var tempQuestionDict: [String: String] = [:]
-                tempQuestionDict["id"] = question.officialID
-                tempQuestionDict["officialSub"] = question.officialSub
-                tempQuestionDict["answer"] = question.answer
-                tempQuestionDict["reason"] = question.reason
-                tempQuestionDict["currentState"] = question.currentState.rawValue
-                tempQuestionDict["secondsToAnswer"] = String(question.secondsToAnswer)
-                tempQuestionDict["row"] = String(question.location.row)
-                tempQuestionDict["section"] = String(question.location.section)
-                
-                questionArray[indexString]?.append(tempQuestionDict)
-            }
+    func createResultJson() -> Data {
+        //Creating encodable object from test
+        var sectionsForJson = [TestSectionFromJson]()
+        for section in sections {
+            var temp = section.makeTestSectionForJson()
+            temp.scaledScore = scaleScoreHelper(section: temp)
+            sectionsForJson.append(temp)
         }
-        print(questionArray)
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson)
         
-        guard let documentDirectoryUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return tempData }
-        let fileUrl = documentDirectoryUrl.appendingPathComponent("refl.json")
-        do {
-            let data = try JSONSerialization.data(withJSONObject: questionArray, options: [])
-            try data.write(to: fileUrl, options: [])
-            print("SUCCSESS CREATING JSON ARRAY")
-            print(data)
-            return data
-        } catch {
-            print("ERROR CREATING JSON ARRAY")
-            print(error)
+        //Encoding information
+        let encoder = JSONEncoder()
+        do{
+            let tempData = try encoder.encode(testForJson)
             return tempData
+            
+        } catch let error {
+            print("ERROR CREATING RESULT JSON: \(error)")
         }
-
+        print("ERROR in crj")
+        return Data() //ERROR
     }
     
-    func sendJsonTestPerformanceData() {
-        let uploadRef = Storage.storage().reference(withPath: "performanceJSONS/cb1takenTestExample.json")
+    func scaleScoreHelper(section: TestSectionFromJson) -> Int{
+        //ACT
+        if section.name == "English"{
+            return scoreConvertDict[section.rawScore!]!.writingAndLanguageTestScore
+        }else if section.name == "Science"{
+            return scoreConvertDict[section.rawScore!]!.scienceTestScore
+        }else if section.name == "Math"{
+            return scoreConvertDict[section.rawScore!]!.mathSectionTestScore
+        }else if section.name == "Reading"{
+            return scoreConvertDict[section.rawScore!]!.readingSectionTestScore
+        }else{
+            //TODO: SAT
+            return 0
+        }
+        
+    }
+    
+    func sendResultJson() {
+        let uploadRef = Storage.storage().reference(withPath: "performanceJSONS/newResultData.json")
         let uploadMetadata = StorageMetadata.init()
         uploadMetadata.contentType = "application/json"
 
-        uploadRef.putData(performanceData, metadata: uploadMetadata){ (downloadMetadata, error) in
+        uploadRef.putData(resultJson, metadata: uploadMetadata){ (downloadMetadata, error) in
             if let error = error {
                 print("Error uploading JSON data \(error.localizedDescription)")
                 return
@@ -386,7 +433,6 @@ class Test: ObservableObject, Hashable, Identifiable {
             print("Upload of JSON Success: \(String(describing: downloadMetadata))")
 
         }
-        
     }
     
 }
@@ -457,4 +503,7 @@ struct ScoreConverter: Codable {
     var writingAndLanguageTestScore: Int
     var scienceTestScore: Int
 }
+
+
+
 

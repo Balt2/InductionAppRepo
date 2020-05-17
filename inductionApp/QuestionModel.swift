@@ -31,6 +31,10 @@ class Question: ObservableObject, Hashable, Identifiable {
     let location: IndexPath
     let isACT: Bool
     var answerLetters = ["A", "B", "C", "D"]
+    var finalState: QuestionState{
+        self.checkAnswer()
+        return self.currentState
+    }
     
     @Published var userAnswer = ""
     @Published var currentState = QuestionState.ommited
