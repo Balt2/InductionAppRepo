@@ -19,135 +19,6 @@ class TestList: ObservableObject {
     }
 }
 
-class PageModel: ObservableObject, Hashable, Identifiable {
-    static func == (lhs: PageModel, rhs: PageModel) -> Bool {
-        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
-    }
-    
-    var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
-    }
-    
-    var id = UUID()
-    
-    @Published var canvas: PKCanvasView?
-    var uiImage: UIImage
-    var pageID: Int
-    
-    init(image: UIImage, pageID: Int){
-        self.uiImage = image
-        self.pageID = pageID
-    }
-    init(page: PageModel){
-        self.uiImage = page.uiImage
-        self.pageID = page.pageID
-    }
-    
-}
-
-class TestPDF {
-    var pages = [PageModel]()
-    var pdfName = ""
-    
-    init(name: String){
-        self.pdfName = name
-        self.createPages(name: name)
-    }
-    init(data: Data){
-        self.createPages(data: data)
-    }
-    
-    func createPages(name: String){
-        var pageCounter = 1
-        let path = Bundle.main.path(forResource: name, ofType: "pdf")
-        let url = URL(fileURLWithPath: path!)
-        if let document = CGPDFDocument(url as CFURL) {
-            while let pdfImage = createUIImage(document: document, page: pageCounter){
-                pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
-                pageCounter = pageCounter + 1
-//                if (pageCounter > 5){ //Get rid of this. Figure out why the PDF file is corrupted
-//                    break
-//                }
-            }
-        }
-    }
-    
-    func createPages(data: Data){
-        var pageCounter = 1
-        let dataProvider = CGDataProvider(data: data as CFData)
-        if let document = CGPDFDocument(dataProvider!){
-            while let pdfImage = createUIImage(document: document, page: pageCounter){
-                pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
-                pageCounter = pageCounter + 1
-            }
-        }
-    }
-    
-    private func createUIImage(document: CGPDFDocument, page: Int) -> UIImage?{
-        
-        guard let page = document.page(at: page) else {return nil}
-
-
-        let pageRect = page.getBoxRect(.mediaBox) //Media box
-        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
-        let img = renderer.image{ ctx in
-            UIColor.white.set()
-            ctx.fill(pageRect)
-
-            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
-            ctx.cgContext.scaleBy(x: 1.0, y : -1.0)
-
-            ctx.cgContext.drawPDFPage(page)
-        }
-        return img
-        
-    }
-    
-    
-    
-}
-
-struct TestFromJson: Codable {
-    var numberOfSections: Int
-    var act: Bool
-    var name: String
-    var sections: [TestSectionFromJson]
-    var answerConverter: [ScoreConverter]
-}
-
-struct TestSectionFromJson: Codable {
-    var name: String
-    var timeAllowed: Int
-    var startIndex: Int
-    var endIndex: Int
-    var orderInTest: Int
-    var questions: [QuestionFromJson]
-}
-
-struct ScoreConverter: Codable {
-    var rawScore: Int
-    var readingSectionTestScore: Int
-    var mathSectionTestScore: Int
-    var writingAndLanguageTestScore: Int
-    var scienceTestScore: Int
-}
-
-struct QuestionFromJson: Codable{
-    let id: String
-    let officialSub: String
-    let tutorSub: String
-    let answer: String
-    let reason: String
-    
-    init(id: String, officialSub: String, tutorSub: String, answer: String, reason: String) {
-        self.id = id
-        self.officialSub = officialSub
-        self.tutorSub = tutorSub
-        self.answer = answer
-        self.reason = answer
-    }
-}
-
 class TestSection: Hashable, Identifiable {
     
     static func == (lhs: TestSection, rhs: TestSection) -> Bool {
@@ -177,7 +48,7 @@ class TestSection: Hashable, Identifiable {
             }
         }
     }
-    var sectionTimer: SectionTimer
+    var sectionTimer: CustomTimer
     
     var name: String
     var sectionIndex: Int
@@ -194,7 +65,7 @@ class TestSection: Hashable, Identifiable {
         self.sectionIndex = sectionFromJson.orderInTest
         self.questions = questions
         
-        self.sectionTimer = SectionTimer(duration: Int(allotedTime))
+        self.sectionTimer = CustomTimer(duration: Int(allotedTime))
     }
     
     init(testSection: TestSection){
@@ -205,7 +76,7 @@ class TestSection: Hashable, Identifiable {
         self.sectionIndex = testSection.sectionIndex
         self.pages = testSection.pages.map {PageModel(page: $0)}
         self.questions = testSection.questions.map {Question(question: $0)}
-        self.sectionTimer = SectionTimer(duration: Int(allotedTime))
+        self.sectionTimer = CustomTimer(duration: Int(allotedTime))
     }
     
     func reset(){
@@ -214,7 +85,6 @@ class TestSection: Hashable, Identifiable {
         sectionOver = false
         questions.forEach {$0.reset() }
     }
-    
     
 }
 
@@ -252,7 +122,6 @@ class Test: ObservableObject, Hashable, Identifiable {
     var testJsonFile: String = ""
     var testPDFFile: String = ""
     private var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
-    
     
     
     var testPDFData: NSData?
@@ -524,148 +393,6 @@ class Test: ObservableObject, Hashable, Identifiable {
         
     }
     
-    
-}
-
-class SectionTimer: ObservableObject {
-    private var endDate: Date?
-    private var timer: Timer?
-    var timeRemaining: Double {
-        didSet {
-            self.setRemaining()
-        }
-    }
-    @Published var timeLeftFormatted = ""
-    
-    init(duration: Int) {
-        self.timeRemaining = Double(duration)
-    }
-    
-
-    func startTimer() {
-        self.endDate = Date().advanced(by: self.timeRemaining)
-        
-        guard self.timer == nil else {
-            return
-        }
-        
-        self.timer = Timer(timeInterval: 0.2, repeats: true) { (timer) in
-            self.timeRemaining = self.endDate!.timeIntervalSince(Date())
-            if self.timeRemaining < 0 {
-                timer.invalidate()
-                self.timer = nil
-            }
-        }
-        RunLoop.current.add(self.timer!, forMode: .common)
-    }
-
-    private func setRemaining() {
-        let min = max(floor(self.timeRemaining / 60),0)
-        let sec = max(floor((self.timeRemaining - min*60).truncatingRemainder(dividingBy:60)),0)
-        self.timeLeftFormatted = "\(Int(min)):\(Int(sec))"
-       // print(self.timeLeftFormatted)
-        
-    }
-
-    func endTimer() {
-        self.timer?.invalidate()
-        self.timer = nil
-    }
-}
-
-
-
-
-
-class Question: ObservableObject, Hashable, Identifiable {
-    
-    static func == (lhs: Question, rhs: Question) -> Bool {
-        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
-    }
-    
-    
-    var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
-    }
-    
-    var id = UUID()
-    let officialID: String
-    let officialSub: String
-    let tutorSub: String
-    let answer: String
-    let reason: String
-    let location: IndexPath
-    let isACT: Bool
-    var answerLetters = ["A", "B", "C", "D"]
-    
-    @Published var userAnswer = ""
-    @Published var currentState = CurrentState.ommited
-    @Published var secondsToAnswer = 0.0
-    @Published var canvas: PKCanvasView?
-    
-    init(q: QuestionFromJson, ip: IndexPath, act: Bool) {
-        self.officialID = q.id
-        self.officialSub = q.officialSub
-        self.tutorSub = q.tutorSub
-        self.answer = q.answer
-        self.reason = q.reason
-        self.isACT = act
-        self.location = ip
-        
-        if isACT && (ip.row + 1) % 2 == 1 {
-            self.answerLetters = ["A", "B", "C", "D"]
-        }else if isACT {
-            self.answerLetters = ["F", "G", "H", "J"]
-        }
-      
-    }
-    
-    init(question: Question){
-        self.officialID = question.officialID
-        self.officialSub = question.officialSub
-        self.tutorSub = question.tutorSub
-        self.answer = question.answer
-        self.reason = question.reason
-        self.isACT = question.isACT
-        self.location = question.location
-        
-        if isACT && (question.location.row + 1) % 2 == 1 {
-            self.answerLetters = ["A", "B", "C", "D"]
-        }else if isACT {
-            self.answerLetters = ["F", "G", "H", "J"]
-        }
-    }
-    
-    func checkAnswer() {
-        if (currentState == .invalidSelection || currentState == .ommited) {return}
-        else if (userAnswer == answer) {
-            currentState = .right
-        }else{
-            currentState = .wrong
-        }
-    
-    }
-    
-    func reset() {
-        self.userAnswer = ""
-        self.currentState = .ommited
-        self.secondsToAnswer = 0.0
-        self.canvas = nil
-    }
-    
-}
-
-
-enum CurrentState : String{
-    //Used when checking the answer and creating data
-    case right = "R" //Right
-    case wrong = "W" //Wrong
-    case ommited = "O" //Ommited
-    case invalidSelection = "I" //Invalid Selection
-    
-    //Used when still in test
-    ///.ommited = "O" is used here too
-    case selected = "S" //Selected
 }
 
 enum TestState{
@@ -674,4 +401,47 @@ enum TestState{
     case betweenSection
     case lastSection
     case testOver
+}
+
+
+//Reading a Test JSON IN
+struct TestFromJson: Codable {
+    var numberOfSections: Int
+    var act: Bool
+    var name: String
+    var sections: [TestSectionFromJson]
+    var answerConverter: [ScoreConverter]
+}
+
+struct TestSectionFromJson: Codable {
+    var name: String
+    var timeAllowed: Int
+    var startIndex: Int
+    var endIndex: Int
+    var orderInTest: Int
+    var questions: [QuestionFromJson]
+}
+
+struct ScoreConverter: Codable {
+    var rawScore: Int
+    var readingSectionTestScore: Int
+    var mathSectionTestScore: Int
+    var writingAndLanguageTestScore: Int
+    var scienceTestScore: Int
+}
+
+struct QuestionFromJson: Codable{
+    let id: String
+    let officialSub: String
+    let tutorSub: String
+    let answer: String
+    let reason: String
+    
+    init(id: String, officialSub: String, tutorSub: String, answer: String, reason: String) {
+        self.id = id
+        self.officialSub = officialSub
+        self.tutorSub = tutorSub
+        self.answer = answer
+        self.reason = answer
+    }
 }
