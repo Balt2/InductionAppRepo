@@ -53,7 +53,7 @@ struct PageView: View{
         ZStack{
             Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
-            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), isAnswerSheet: false, protoRect: CGRect())
+            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), page: model, isAnswerSheet: false, protoRect: CGRect())
         }
     }
 }
@@ -65,6 +65,20 @@ struct TimerNavigationView: View {
 
     var body: some View{
         HStack{
+            
+            //Universal Eraser
+            Button(action: {
+                //This toggle changes the tool on all canves within the test
+                self.test.isEraserEnabled.toggle()
+                print("Toggle Eraser")
+            }){
+                if self.test.isEraserEnabled == true{
+                    Image(systemName: "pencil").frame(width: 40, height: 40)
+                }else{
+                    Image(systemName: "minus.circle").frame(width: 40, height: 40)
+                }
+            }
+            Spacer()
             
             //Answer Sheet button
             if test.showAnswerSheet == false {
@@ -140,6 +154,7 @@ struct TimerNavigationView: View {
     }
 }
 
+//Tables that are presented before the TestView
 struct TestTable: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     var body: some View {

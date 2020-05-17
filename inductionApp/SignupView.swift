@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  SignupView.swift
 //  inductionApp
 //
 //  Created by Ben Altschuler on 4/20/20.
@@ -10,7 +10,7 @@ import SwiftUI
 import Firebase
 import FirebaseUI
 
-struct ContentView: View {
+struct SignupView: View {
     
     
     //Observable object that contains data that the user puts in when creating a class
@@ -101,9 +101,9 @@ struct ContentView: View {
     
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
+        SignupView().previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
     }
 }
 

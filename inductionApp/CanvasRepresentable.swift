@@ -11,6 +11,7 @@ struct CanvasRepresentable: UIViewRepresentable {
     //This is the canvas that we are passed from the initailzer and what we draw on
     //@Binding var canvasToDraw: PKCanvasView
     @ObservedObject var question: Question
+    @ObservedObject var page: PageModel
     var isAnswerSheet: Bool
     var protoRect: CGRect
     
@@ -99,17 +100,29 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func makeUIView(context: Context) -> PKCanvasView {
         //if isAnswerSheet {
-        if question.canvas == nil {
+        if question.canvas == nil && isAnswerSheet == true {
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
             c.delegate = context.coordinator
             question.canvas = c
             return c
-        }else{
+        }else if isAnswerSheet == true{
             let c = question.canvas!
             c.delegate = context.coordinator
             question.canvas = c
+            return c
+        }else if page.canvas == nil {
+            let c = PKCanvasView()
+            c.isOpaque = false
+            c.allowsFingerDrawing = true
+            c.delegate = context.coordinator
+            page.canvas = c
+            return c
+        }else{
+            let c = page.canvas!
+            c.delegate = context.coordinator
+            page.canvas = c
             return c
         }
     }

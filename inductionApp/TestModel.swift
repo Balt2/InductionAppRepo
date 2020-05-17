@@ -19,9 +19,30 @@ class TestList: ObservableObject {
     }
 }
 
-struct PageModel: Hashable {
+class PageModel: ObservableObject, Hashable, Identifiable {
+    static func == (lhs: PageModel, rhs: PageModel) -> Bool {
+        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+    }
+    
+    var hashValue: Int {
+        return ObjectIdentifier(self).hashValue
+    }
+    
+    var id = UUID()
+    
+    @Published var canvas: PKCanvasView?
     var uiImage: UIImage
-    var id: Int
+    var pageID: Int
+    
+    init(image: UIImage, pageID: Int){
+        self.uiImage = image
+        self.pageID = pageID
+    }
+    init(page: PageModel){
+        self.uiImage = page.uiImage
+        self.pageID = page.pageID
+    }
+    
 }
 
 class TestPDF {
@@ -42,7 +63,7 @@ class TestPDF {
         let url = URL(fileURLWithPath: path!)
         if let document = CGPDFDocument(url as CFURL) {
             while let pdfImage = createUIImage(document: document, page: pageCounter){
-                pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
+                pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
                 pageCounter = pageCounter + 1
 //                if (pageCounter > 5){ //Get rid of this. Figure out why the PDF file is corrupted
 //                    break
@@ -56,7 +77,7 @@ class TestPDF {
         let dataProvider = CGDataProvider(data: data as CFData)
         if let document = CGPDFDocument(dataProvider!){
             while let pdfImage = createUIImage(document: document, page: pageCounter){
-                pages.append(PageModel(uiImage: pdfImage, id: pageCounter - 1))
+                pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
                 pageCounter = pageCounter + 1
             }
         }
@@ -180,9 +201,9 @@ class TestSection: Hashable, Identifiable {
         self.allotedTime = testSection.allotedTime
         self.leftOverTime = testSection.allotedTime
         self.index = testSection.index
-        self.pages = testSection.pages
         self.name = testSection.name
         self.sectionIndex = testSection.sectionIndex
+        self.pages = testSection.pages.map {PageModel(page: $0)}
         self.questions = testSection.questions.map {Question(question: $0)}
         self.sectionTimer = SectionTimer(duration: Int(allotedTime))
     }
@@ -214,6 +235,18 @@ class Test: ObservableObject, Hashable, Identifiable {
     @Published var taken = false
     @Published var showAnswerSheet = true
     @Published var testState: TestState = .notStarted
+    var isEraserEnabled = false{
+        didSet{
+            for section in sections{
+                for question in section.questions{
+                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
+                }
+                for page in section.pages{
+                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
+                }
+            }
+        }
+    }
     var isFullTest = true
     
     var testJsonFile: String = ""

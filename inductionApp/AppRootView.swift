@@ -22,7 +22,7 @@ struct AppRootView: View {
               
             } else {
               // No user is signed in.
-              ContentView()
+              SignupView()
             }
             
            
