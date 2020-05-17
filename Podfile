@@ -7,7 +7,6 @@ target 'InductionApp' do
 
   # Pods for InductionApp
 pod 'Charts'
-pod 'SwiftDataTables'
 pod 'Firebase/Analytics'
 pod 'Firebase/Firestore'
 pod 'FirebaseUI'

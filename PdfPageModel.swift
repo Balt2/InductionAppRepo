@@ -92,7 +92,5 @@ class TestPDF {
             ctx.cgContext.drawPDFPage(page)
         }
         return img
-        
     }
-    
 }

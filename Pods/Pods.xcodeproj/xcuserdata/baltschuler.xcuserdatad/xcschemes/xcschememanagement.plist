@@ -242,19 +242,12 @@
 			<key>orderHint</key>
 			<integer>39</integer>
 		</dict>
-		<key>SwiftDataTables.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-			<key>orderHint</key>
-			<integer>40</integer>
-		</dict>
 		<key>SwiftyJSON.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
-			<integer>41</integer>
+			<integer>40</integer>
 		</dict>
 		<key>abseil.xcscheme</key>
 		<dict>

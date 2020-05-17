@@ -247,12 +247,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             }catch {
                 print("ERROR loading IN TEST JSON")
                 return nil
-                //self.testFromJson = nil
             }
         }else{
             print("Failure reading JSON from File")
             return nil
-            //self.testFromJson = nil
         }
         return nil
     }
@@ -262,11 +260,9 @@ class Test: ObservableObject, Hashable, Identifiable {
             let decoder = JSONDecoder()
             let testFromJson = try decoder.decode(TestFromJson.self, from: data)
             return testFromJson
-            //self.testFromJson = testFromJson
         }catch {
             print("Error loading IN Test from DATA")
             return nil
-            //self.testFromJson = nil
         }
         return nil
     }
@@ -338,7 +334,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func createJsonQuestions() -> Data {
         let tempData = Data()
-        print("creating json file")
+        print("creating result json file")
 
         var questionArray: [String : [[String: String]]] = [:]
         for (index, section) in self.questions.enumerated() {
@@ -410,7 +406,16 @@ struct TestFromJson: Codable {
     var act: Bool
     var name: String
     var sections: [TestSectionFromJson]
-    var answerConverter: [ScoreConverter]
+    
+    //Values only in template json
+    var answerConverter: [ScoreConverter]?
+    
+    //Values only in the test result JSON
+    var overallScore: Int? //SAT and ACT
+    var math: Int? //SAT
+    var science: Int? //SAT
+    
+    
 }
 
 struct TestSectionFromJson: Codable {
@@ -420,7 +425,30 @@ struct TestSectionFromJson: Codable {
     var endIndex: Int
     var orderInTest: Int
     var questions: [QuestionFromJson]
+    
+    //Values only in the test result JSON
+    var rawScore: Int?
+    var timeLeft: Int?
+    
+    //Only ACT (scale scores for SAT will at the top level bc only 2 subscores are reported)
+    var scaledScore: Int?
+    
 }
+
+struct QuestionFromJson: Codable{
+    var id: String
+    var officialSub: String
+    var tutorSub: String
+    var answer: String
+    var reason: String
+    
+    //Values only in the test result JSON
+    var studentAnswer: String?
+    var secondsToAnswer: Int?
+    var finalState: String? //"R" for right, "W" for wrong, "O" for ommited
+    var orderAnsweredInSection: Int?
+}
+
 
 struct ScoreConverter: Codable {
     var rawScore: Int
@@ -430,18 +458,3 @@ struct ScoreConverter: Codable {
     var scienceTestScore: Int
 }
 
-struct QuestionFromJson: Codable{
-    let id: String
-    let officialSub: String
-    let tutorSub: String
-    let answer: String
-    let reason: String
-    
-    init(id: String, officialSub: String, tutorSub: String, answer: String, reason: String) {
-        self.id = id
-        self.officialSub = officialSub
-        self.tutorSub = tutorSub
-        self.answer = answer
-        self.reason = answer
-    }
-}
