@@ -10,10 +10,13 @@ import PencilKit
 struct CanvasRepresentable: UIViewRepresentable {
     //This is the canvas that we are passed from the initailzer and what we draw on
     //@Binding var canvasToDraw: PKCanvasView
+    
     @ObservedObject var question: Question
     @ObservedObject var page: PageModel
+    var section: TestSection? //TODO: Should be observed Object?
     var isAnswerSheet: Bool
     var protoRect: CGRect
+    
     
     //This checks to see if this instance of the struct is an answer sheet. If it is we want to check location
     
@@ -69,18 +72,23 @@ struct CanvasRepresentable: UIViewRepresentable {
                     if (parent.question.currentState == .ommited) {
                         parent.question.userAnswer = question
                         parent.question.currentState = .selected
+                        parent.question.secondsToAnswer += parent.section!.sectionTimer.timeDelta
                         print("Selected: \(question)")
                         
+                    //They are trying to answer more than one values
                     }else if !parent.question.userAnswer.contains(question){
                         parent.question.userAnswer.insert(contentsOf: question, at: parent.question.userAnswer.startIndex)
                         parent.question.currentState = .invalidSelection
                         
                     }
+                //Maybe using eraser
                 }else if (parent.question.userAnswer.contains(question)) {
                     parent.question.userAnswer = parent.question.userAnswer.replacingOccurrences(of: question, with: "")
                     if parent.question.userAnswer.count > 1 { //There are more than one still selected
                         parent.question.currentState = .invalidSelection
                     } else if parent.question.userAnswer.count == 1 { //There is one selected
+                        //We want to add time becuase they have indicated an answer to the question
+                        parent.question.secondsToAnswer += parent.section!.sectionTimer.timeDelta
                         parent.question.currentState = .selected
                     } else{ //There are non selected
                         parent.question.currentState = .ommited

@@ -9,17 +9,29 @@
 import Foundation
 
 class CustomTimer: ObservableObject {
+    //TODO: May have to take a section or test object to alert when the timer runs out.
     private var endDate: Date?
     private var timer: Timer?
+    private var remainingTimeAtLastAnswer: Double
+    
     var timeRemaining: Double {
         didSet {
             self.setRemaining()
         }
     }
+    
     @Published var timeLeftFormatted = ""
+    
+    // gets the time delta between the last question answered and the current one
+    var timeDelta: Double{
+        let td = remainingTimeAtLastAnswer - timeRemaining
+        remainingTimeAtLastAnswer = timeRemaining
+        return td
+    }
     
     init(duration: Int) {
         self.timeRemaining = Double(duration)
+        self.remainingTimeAtLastAnswer = Double(duration)
     }
     
 

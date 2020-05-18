@@ -19,7 +19,7 @@ class TestList: ObservableObject {
     }
 }
 
-class TestSection: Hashable, Identifiable {
+class TestSection: ObservableObject, Hashable, Identifiable {
     
     static func == (lhs: TestSection, rhs: TestSection) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
@@ -29,16 +29,28 @@ class TestSection: Hashable, Identifiable {
         return ObjectIdentifier(self).hashValue
     }
     
-    var id = UUID()
-    var allotedTime: Double
-    var leftOverTime: Double
-    var begunSection = false{
+    @Published var leftOverTime: Double
+    @Published var sectionOver = false{
+        didSet{
+            if sectionOver == true{
+                sectionTimer.endTimer()
+                self.leftOverTime = sectionTimer.timeRemaining
+                print("Section OVER")
+            }
+        }
+    }
+    @Published var begunSection = false{
         didSet{
             if begunSection == true{
                 sectionTimer.startTimer()
             }
         }
     }
+    
+    var id = UUID()
+    var allotedTime: Double
+    var sectionTimer: CustomTimer
+    
     var rawScore: Int{
         var score = 0
         for question in questions {
@@ -50,16 +62,8 @@ class TestSection: Hashable, Identifiable {
     }
     var scaledScore:Int? //Only has a value after a test is taken
     
-    var sectionOver = false{
-        didSet{
-            if sectionOver == true{
-                sectionTimer.endTimer()
-                self.leftOverTime = sectionTimer.timeRemaining
-                print("Section OVER")
-            }
-        }
-    }
-    var sectionTimer: CustomTimer
+    
+    
     
     var name: String
     var sectionIndex: Int

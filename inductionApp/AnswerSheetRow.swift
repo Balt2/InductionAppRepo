@@ -15,7 +15,9 @@ struct AnswerSheetRow: View {
     
    //@State private var canvas: PKCanvasView = PKCanvasView()
     @ObservedObject var question: Question
+    @ObservedObject var section: TestSection
     @State private var isEraserEnabled = false
+    
     //@ObservedObject var test: Test
     
     var body: some View {
@@ -59,7 +61,7 @@ struct AnswerSheetRow: View {
                     Text(self.question.userAnswer).frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
                 }
                 
-                CanvasRepresentable(question: self.question, page: PageModel(image: UIImage(), pageID: -1), isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: 54, height: geo.size.height/1.5))
+                CanvasRepresentable(question: self.question, page: PageModel(image: UIImage(), pageID: -1), section: self.section, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: 54, height: geo.size.height/1.5))
                 
             }
 
