@@ -6,12 +6,10 @@ target 'InductionApp' do
   use_frameworks!
 
   # Pods for InductionApp
-pod 'Charts'
 pod 'Firebase/Analytics'
 pod 'Firebase/Firestore'
 pod 'FirebaseUI'
 pod 'Firebase/Auth'
 pod 'Firebase/Storage'
-pod 'SwiftyJSON', '~> 4.0'
 
 end
