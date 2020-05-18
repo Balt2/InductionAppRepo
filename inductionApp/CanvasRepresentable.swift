@@ -42,7 +42,7 @@ struct CanvasRepresentable: UIViewRepresentable {
                 checkAnswerSheet(canvasView: canvasView)
             }
         }
-        //TODO: When there are too many canvases on the screen...this is an issue
+        
         func checkAnswerSheet(canvasView: PKCanvasView){
             for (question,rec) in bubbleRects {
                 //print(canvasView.drawing.bounds

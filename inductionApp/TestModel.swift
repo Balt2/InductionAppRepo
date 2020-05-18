@@ -48,6 +48,7 @@ class TestSection: Hashable, Identifiable {
         }
         return score
     }
+    var scaledScore:Int? //Only has a value after a test is taken
     
     var sectionOver = false{
         didSet{
@@ -93,14 +94,39 @@ class TestSection: Hashable, Identifiable {
         var questionsForJson = [QuestionFromJson]()
         for question in self.questions{
             question.checkAnswer()
-            let temp = QuestionFromJson(id: question.officialID, officialSub: question.officialSub, tutorSub: question.tutorSub, answer: question.answer, reason: question.reason, studentAnswer: question.userAnswer, secondsToAnswer: Int(question.secondsToAnswer), finalState: question.finalState.rawValue) //Missing order in test
+            let temp = QuestionFromJson(id: question.officialID,
+                                        officialSub: question.officialSub, tutorSub: question.tutorSub,
+                                        answer: question.answer, reason: question.reason,
+                                        studentAnswer: question.userAnswer, secondsToAnswer: Int(question.secondsToAnswer),
+                                        finalState: question.finalState.rawValue) //TODO: Missing order in test
             
             questionsForJson.append(temp)
         }
         //This is a var because we will be giving it a scaled score
-        var sectionForJson = TestSectionFromJson(name: self.name, timeAllowed:  Int(self.allotedTime), startIndex: self.index.start, endIndex: self.index.end, orderInTest: self.sectionIndex, questions: questionsForJson, rawScore: self.rawScore, timeLeft: Int(self.leftOverTime))
+        let sectionForJson = TestSectionFromJson(name: self.name,
+                                                 timeAllowed:  Int(self.allotedTime), startIndex: self.index.start,
+                                                 endIndex: self.index.end, orderInTest: self.sectionIndex,
+                                                 questions: questionsForJson, rawScore: self.rawScore,
+                                                 timeLeft: Int(self.leftOverTime), scaledScore: self.scaledScore!)
         
         return sectionForJson
+    }
+    
+    func setScaledScore(test: Test){
+        //ACT
+        if name == "English"{
+            scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
+        }else if name == "Science"{
+            scaledScore = test.scoreConvertDict[rawScore]?.scienceTestScore
+        }else if name == "Math"{
+            scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
+        }else if name == "Reading"{
+            scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
+        }else{
+            //TODO: SAT
+            
+        }
+        
     }
     
     func reset(){
@@ -172,9 +198,23 @@ class Test: ObservableObject, Hashable, Identifiable {
         if act == true{
             var sum = 0
             for section in sections{
-                //sum += section.
+                sum += section.scaledScore!
             }
+            return sum / numberOfSections!
+        }else{
+            
+            //TODO: SAT
+            return 0
         }
+    }
+    var mathScore: Int?{
+        //TODO: SAT
+        return nil
+    }
+    
+    var scienceScore: Int?{
+        //TODO: SAT
+        return nil
     }
     
     var scoreConvertDict = [Int: (readingSectionTestScore: Int, mathSectionTestScore: Int, writingAndLanguageTestScore: Int, scienceTestScore: Int)]()
@@ -392,12 +432,12 @@ class Test: ObservableObject, Hashable, Identifiable {
         //Creating encodable object from test
         var sectionsForJson = [TestSectionFromJson]()
         for section in sections {
-            var temp = section.makeTestSectionForJson()
-            temp.scaledScore = scaleScoreHelper(section: temp)
+            section.setScaledScore(test: self)
+            let temp = section.makeTestSectionForJson()
             sectionsForJson.append(temp)
         }
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson)
-        TestFromJson(numberOfSections: <#T##Int#>, act: <#T##Bool#>, name: <#T##String#>, sections: <#T##[TestSectionFromJson]#>, answerConverter: <#T##[ScoreConverter]?#>, overallScore: <#T##Int?#>, math: <#T##Int?#>, science: <#T##Int?#>)
+        //Todo: SAT
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore)
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -411,22 +451,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         return Data() //ERROR
     }
     
-    func scaleScoreHelper(section: TestSectionFromJson) -> Int{
-        //ACT
-        if section.name == "English"{
-            return scoreConvertDict[section.rawScore!]!.writingAndLanguageTestScore
-        }else if section.name == "Science"{
-            return scoreConvertDict[section.rawScore!]!.scienceTestScore
-        }else if section.name == "Math"{
-            return scoreConvertDict[section.rawScore!]!.mathSectionTestScore
-        }else if section.name == "Reading"{
-            return scoreConvertDict[section.rawScore!]!.readingSectionTestScore
-        }else{
-            //TODO: SAT
-            return 0
-        }
-        
-    }
+    
     
     func sendResultJson() {
         let uploadRef = Storage.storage().reference(withPath: "performanceJSONS/newResultData.json")
