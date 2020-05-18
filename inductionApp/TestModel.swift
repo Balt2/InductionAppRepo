@@ -118,15 +118,20 @@ class TestSection: Hashable, Identifiable {
 
 class Test: ObservableObject, Hashable, Identifiable {
     
+    //Conform to protocal helpers
     static func == (lhs: Test, rhs: Test) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
-    
     var hashValue: Int {
         return ObjectIdentifier(self).hashValue
     }
     var id = UUID()
+    
+    //Variables used in UI
     @Published var currentSectionIndex = 0
+    var currentSection: TestSection?{
+        return sections[currentSectionIndex]
+    }
     @Published var begunTest = false
     @Published var taken = false
     @Published var showAnswerSheet = true
@@ -143,30 +148,33 @@ class Test: ObservableObject, Hashable, Identifiable {
             }
         }
     }
-    var isFullTest = true
+    var name: String = ""
     
+    //Model Variables
+    var isFullTest = true
     var testJsonFile: String = ""
     var testPDFFile: String = ""
-    private var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
-    
-    
     var testPDFData: NSData?
-    
     var pdfImages: [PageModel] = []
     var sections: [TestSection] = []
     var numberOfSections: Int?
-    var name: String = ""
     var act: Bool?
-    var currentSection: TestSection?
-    {
-        return sections[currentSectionIndex]
-    }
-
+    private var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
+    
+    //Data about a test (probably just taken)
     var resultJson: Data{
         return self.createResultJson()
     }
     var computedData: [[String:(r: Double, w: Double, o: Double)]] {
         return self.computeData()
+    }
+    var overallScore: Int{
+        if act == true{
+            var sum = 0
+            for section in sections{
+                //sum += section.
+            }
+        }
     }
     
     var scoreConvertDict = [Int: (readingSectionTestScore: Int, mathSectionTestScore: Int, writingAndLanguageTestScore: Int, scienceTestScore: Int)]()
@@ -389,7 +397,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             sectionsForJson.append(temp)
         }
         let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson)
-        
+        TestFromJson(numberOfSections: <#T##Int#>, act: <#T##Bool#>, name: <#T##String#>, sections: <#T##[TestSectionFromJson]#>, answerConverter: <#T##[ScoreConverter]?#>, overallScore: <#T##Int?#>, math: <#T##Int?#>, science: <#T##Int?#>)
         //Encoding information
         let encoder = JSONEncoder()
         do{

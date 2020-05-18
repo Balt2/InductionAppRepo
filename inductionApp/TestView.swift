@@ -68,7 +68,7 @@ struct TimerNavigationView: View {
         HStack (spacing: 200){
             HStack {
                 
-                //Pencil Button
+                //Pencil Button - Enables the pencil
                 Button(action: {
                     if self.test.isEraserEnabled == true{
                         self.test.isEraserEnabled = false
@@ -77,8 +77,9 @@ struct TimerNavigationView: View {
                     Image(systemName: "pencil")
                         .foregroundColor(self.test.isEraserEnabled == false ? .orange : .blue)
                 }.disabled(self.test.isEraserEnabled == false)
+
                 
-                //Eraser Button
+                //Eraser Button - Enables the eraser
                 Button(action: {
                     if self.test.isEraserEnabled == false{
                         self.test.isEraserEnabled = true
@@ -88,7 +89,8 @@ struct TimerNavigationView: View {
                         .foregroundColor(self.test.isEraserEnabled == true ? .orange : .blue)
                 }.disabled(self.test.isEraserEnabled == true)
                 
-                //Plus Magnifying glass
+                
+                //Plus Magnifying glass - Makes test larger
                 Button(action: {
                     if self.test.showAnswerSheet == true {
                         self.test.showAnswerSheet.toggle()
@@ -98,7 +100,8 @@ struct TimerNavigationView: View {
                         .foregroundColor(self.test.showAnswerSheet == false ? .orange : .blue)
                 }.disabled(self.test.showAnswerSheet == false)
                 
-                //Minus Magnifying glass
+                
+                //Minus Magnifying glass - Shows Answer Sheet
                 Button(action: {
                     if self.test.showAnswerSheet == false {
                         self.test.showAnswerSheet.toggle()
@@ -120,7 +123,6 @@ struct TimerNavigationView: View {
                         self.test.nextSection(fromStart: false)
                     case .lastSection:
                         self.test.endTest()
-                    //TODO: SEND DATAs
                     case .testOver:
                         print("Should never get here")
                     }
