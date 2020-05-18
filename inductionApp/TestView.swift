@@ -63,69 +63,84 @@ struct TimerNavigationView: View {
     @State private var now = ""
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
 
-    var body: some View{
-        HStack{
-            
-            //Universal Eraser
-            Button(action: {
-                //This toggle changes the tool on all canves within the test
-                self.test.isEraserEnabled.toggle()
-                print("Toggle Eraser")
-            }){
-                if self.test.isEraserEnabled == true{
-                    Image(systemName: "pencil").frame(width: 40, height: 40)
-                }else{
-                    Image(systemName: "minus.circle").frame(width: 40, height: 40)
-                }
-            }
-            Spacer()
-            
-            //Answer Sheet button
-            if test.showAnswerSheet == false {
+    var body: some View {
+        
+        HStack (spacing: 200){
+            HStack {
+                
+                //Pencil Button
                 Button(action: {
-                    self.test.showAnswerSheet = true
+                    if self.test.isEraserEnabled == true{
+                        self.test.isEraserEnabled = false
+                    }
                 }){
-                    Text("Show Answer Sheet")
-                }
-            } else {
+                    Image(systemName: "pencil")
+                        .foregroundColor(self.test.isEraserEnabled == false ? .orange : .blue)
+                }.disabled(self.test.isEraserEnabled == false)
+                
+                //Eraser Button
                 Button(action: {
-                    self.test.showAnswerSheet = false
+                    if self.test.isEraserEnabled == false{
+                        self.test.isEraserEnabled = true
+                    }
                 }){
-                    Text("Hide Answer Sheet")
-                }
+                    Image(systemName: "trash")
+                        .foregroundColor(self.test.isEraserEnabled == true ? .orange : .blue)
+                }.disabled(self.test.isEraserEnabled == true)
+                
+                //Plus Magnifying glass
+                Button(action: {
+                    if self.test.showAnswerSheet == true {
+                        self.test.showAnswerSheet.toggle()
+                    }
+                }){
+                    Image(systemName: "plus.magnifyingglass")
+                        .foregroundColor(self.test.showAnswerSheet == false ? .orange : .blue)
+                }.disabled(self.test.showAnswerSheet == false)
+                
+                //Minus Magnifying glass
+                Button(action: {
+                    if self.test.showAnswerSheet == false {
+                        self.test.showAnswerSheet.toggle()
+                    }
+                }){
+                    Image(systemName: "minus.magnifyingglass")
+                        .foregroundColor(self.test.showAnswerSheet == true ? .orange : .blue)
+                }.disabled(self.test.showAnswerSheet == true)
+                
             }
-            
-            Button(action: {
-                switch self.test.testState{
-                case .notStarted:
-                    self.test.startTest()
-                case .inSection:
-                    self.test.endSection()
-                case .betweenSection:
-                    self.test.nextSection(fromStart: false)
-                case .lastSection:
-                    self.test.endTest()
+            HStack {
+                Button(action: {
+                    switch self.test.testState{
+                    case .notStarted:
+                        self.test.startTest()
+                    case .inSection:
+                        self.test.endSection()
+                    case .betweenSection:
+                        self.test.nextSection(fromStart: false)
+                    case .lastSection:
+                        self.test.endTest()
                     //TODO: SEND DATAs
-                case .testOver:
-                    print("Should never get here")
+                    case .testOver:
+                        print("Should never get here")
+                    }
+                }){
+                    HStack{
+                        getControlButton()
+                    }
                 }
-            }){
-                HStack{
-                   getControlButton()
+                
+                //Shows time text
+                
+                if self.test.testState == .inSection
+                    || self.test.testState == .lastSection {
+                    Text("\(now) left")
+                        .onReceive(timer) { _ in
+                            self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
+                    }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
                 }
+                
             }
-            
-            //Shows time text
-            
-            if self.test.testState == .inSection
-            || self.test.testState == .lastSection {
-                Text("\(now) left")
-                    .onReceive(timer) { _ in
-                        self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
-                }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
-            }
-
-            Spacer()
         }
     }
     func getControlButton() -> Text {

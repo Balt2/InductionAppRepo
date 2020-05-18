@@ -131,7 +131,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     @Published var taken = false
     @Published var showAnswerSheet = true
     @Published var testState: TestState = .notStarted
-    var isEraserEnabled = false{
+    @Published var isEraserEnabled = false{
         didSet{
             for section in sections{
                 for question in section.questions{
@@ -460,7 +460,6 @@ struct TestFromJson: Codable {
     var overallScore: Int? //SAT and ACT
     var math: Int? //SAT
     var science: Int? //SAT
-    
     
 }
 
