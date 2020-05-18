@@ -3,13 +3,16 @@
 
 target 'InductionApp' do
   # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+  # use_frameworks!
 
   # Pods for InductionApp
-pod 'Firebase/Analytics'
-pod 'Firebase/Firestore'
-pod 'FirebaseUI'
-pod 'Firebase/Auth'
-pod 'Firebase/Storage'
+pod 'Firebase/Analytics', :modular_headers => true
+pod 'Firebase/Firestore', :modular_headers => true
+pod 'FirebaseUI', :modular_headers => true
+pod 'Firebase/Auth', :modular_headers => true
+pod 'Firebase/Storage', :modular_headers => true
+
+pod 'FBSDKCoreKit', :modular_headers => true
+pod 'FBSDKLoginKit', :modular_headers => true
 
 end

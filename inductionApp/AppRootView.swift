@@ -31,8 +31,9 @@ struct AppRootView: View {
 }
 
 class FirebaseManager: ObservableObject {
-    //Helpful link
+    //Helpful links
     //https://benmcmahen.com/authentication-with-swiftui-and-firebase/
+    //https://github.com/invertase/react-native-firebase/issues/1166 --Pod informatioin
     @Published var currentUser: User?
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
     var db: Firestore!
