@@ -99,7 +99,12 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.questions = testSection.questions.map {Question(question: $0)}
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
         
-        
+    }
+    
+    func scalePages(factor: CGFloat){
+        for page in pages{
+            page.canvas?.drawing.transform(using: CGAffineTransform(scaleX: factor, y: factor))
+        }
     }
     
     func makeTestSectionForJson() -> TestSectionFromJson{
@@ -176,7 +181,6 @@ class Test: ObservableObject, Hashable, Identifiable {
     @Published var testState: TestState = .notStarted
     @Published var isEraserEnabled = false{
         didSet{
-            print("SETTTING Tool only on current section")
             for section in sections{
                 for question in section.questions{
                     question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)

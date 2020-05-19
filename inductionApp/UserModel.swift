@@ -66,7 +66,6 @@ class User: ObservableObject {
     }
     
     func getTestsFromFolder(completionHandler: @escaping (_ testList: [Test]) -> ()) {
-        print("BENDa")
         var testListFromDB: [Test] = []
         print(associationID)
         let storageRef = Storage.storage().reference().child("\(associationID)Files/")

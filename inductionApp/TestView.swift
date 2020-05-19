@@ -98,6 +98,7 @@ struct TimerNavigationView: View {
                 Button(action: {
                     if self.test.showAnswerSheet == true {
                         self.test.showAnswerSheet = false
+                        self.test.currentSection?.scalePages(factor: 1024.0 / 716.0)
                     }
                 }){
                     Image(systemName: "plus.magnifyingglass")
@@ -111,6 +112,7 @@ struct TimerNavigationView: View {
                 Button(action: {
                     if self.test.showAnswerSheet == false {
                         self.test.showAnswerSheet = true
+                        self.test.currentSection?.scalePages(factor: 716.0 / 1024.0 )
                     }
                 }){
                     Image(systemName: "minus.magnifyingglass")

@@ -26,6 +26,7 @@ struct CanvasRepresentable: UIViewRepresentable {
         var parent: CanvasRepresentable
         
         init(_ parent: CanvasRepresentable) {
+            print("Init Represenatable")
             self.parent = parent
             if parent.isAnswerSheet == true{
                 for i in 0..<4 {
@@ -36,7 +37,7 @@ struct CanvasRepresentable: UIViewRepresentable {
         }
         
         func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-            
+            print("Canvas View Did Change")
             //This function is called by the PKCanvasView when it is done being edited
 
             //UIImageWriteToSavedPhotosAlbum(imageCreated, self.parent, nil, nil)
@@ -114,11 +115,13 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func makeCoordinator() -> Coordinator {
         //question.coordinator =
+        print("Made Coordinator")
         return Coordinator(self)
         
     }
     
     func makeUIView(context: Context) -> PKCanvasView {
+        print("Make UIView")
         //if isAnswerSheet {
         if question.canvas == nil && isAnswerSheet == true {
             let c = PKCanvasView()
@@ -148,7 +151,13 @@ struct CanvasRepresentable: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
-        print("UPDATE VIEW: \(question.location.row)")
+        
+        if page.pageID != -1 { //It is a real page rather than 
+            print("View sent: \(uiView.bounds)")
+            print("Question View: \(page.canvas?.bounds)")
+        }
+        
+       //print("UPDATE VIEW: \(question.location.row)")
         //context.coordinator =
 
     }
