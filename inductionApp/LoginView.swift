@@ -27,8 +27,9 @@ struct LoginView: View {
     }
     var body: some View {
         VStack {
-            Image("ilLogo")
-                .padding()
+            
+            Spacer(minLength: 50)
+            
             userFormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
                 .padding()
             FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
@@ -37,16 +38,6 @@ struct LoginView: View {
                 if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
                 && self.userRegistrationViewModel.isPasswordCapitalLetter){
                     self.signIn()
-//                    Auth.auth().signIn(withEmail: self.userRegistrationViewModel.email, password: self.userRegistrationViewModel.password) { authResult, error in
-//                        if let error = error {
-//                            print(self.userRegistrationViewModel.email)
-//                            print(self.userRegistrationViewModel.password)
-//                            print("Error logging in: \(error.localizedDescription)")
-//                        }else{
-//                            //Create User here
-//                        }
-
-                    //}
                 }else{
                     print("Login Failed")
                 }
@@ -61,6 +52,10 @@ struct LoginView: View {
                     .cornerRadius(10)
                     .padding(.horizontal)
             }
+            Image("ilLogo")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            //.padding()
         }
     }
 }
