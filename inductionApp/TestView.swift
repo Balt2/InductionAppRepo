@@ -131,6 +131,9 @@ struct TimerNavigationView: View {
                         self.test.endSection()
                     case .betweenSection:
                         self.test.nextSection(fromStart: false)
+                        if self.test.showAnswerSheet == true {
+                            self.test.currentSection?.scalePages(factor: 1024.0 / 716.0)
+                        }
                     case .lastSection:
                         self.test.endSection()
                     case .testOver:
