@@ -73,6 +73,11 @@ struct CanvasRepresentable: UIViewRepresentable {
                         parent.question.userAnswer = question
                         parent.question.currentState = .selected
                         parent.question.secondsToAnswer += parent.section!.sectionTimer.timeDelta
+                        
+                        //Logic to set the order Answered in. The numbers will have jumps
+                        //but the order will represent the correct order based on erasing as well
+                        parent.section!.numAnsweredQuestions += 1
+                        parent.question.answerOrdredIn += parent.section!.numAnsweredQuestions
                         print("Selected: \(question)")
                         
                     //They are trying to answer more than one values
@@ -90,8 +95,15 @@ struct CanvasRepresentable: UIViewRepresentable {
                         //We want to add time becuase they have indicated an answer to the question
                         parent.question.secondsToAnswer += parent.section!.sectionTimer.timeDelta
                         parent.question.currentState = .selected
+                        
+                        //Logic to set the order Answered in. The numbers will have jumps
+                        //but the order will represent the correct order based on erasing as well
+                        parent.section!.numAnsweredQuestions += 1
+                        parent.question.answerOrdredIn += parent.section!.numAnsweredQuestions
+                        
                     } else{ //There are non selected
                         parent.question.currentState = .ommited
+                        
                     }
                 }
 

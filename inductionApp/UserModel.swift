@@ -37,12 +37,12 @@ class User: ObservableObject {
             self.isLoggedIn = true
             //completionHandler(true)
         }
-        self.getPerformancePdf { pdf in
-            self.performancePDF = TestPDF(data: pdf).pages
-        }
+//        self.getPerformancePdf { pdf in
+//            self.performancePDF = TestPDF(data: pdf).pages
+//        }
     }
     
-
+    
     
     
     func getTests(completionHandler: @escaping (_ testList: [Test]) -> ()) {
@@ -70,26 +70,26 @@ class User: ObservableObject {
         var testListFromDB: [Test] = []
         print(associationID)
         let storageRef = Storage.storage().reference().child("\(associationID)Files/")
-         storageRef.listAll { (result, error) in
+        storageRef.listAll { (result, error) in
             if let error = error {
-              print("ERROR RETRIVEVING JSONs FROM DATABASE")
-              completionHandler(testListFromDB)
+                print("ERROR RETRIVEVING JSONs FROM DATABASE")
+                completionHandler(testListFromDB)
             }
             
             for item in result.items {
-              print(item.name)
-              item.getData(maxSize: 1 * 1024 * 1024){data, error in
-                  if let error = error {
-                      print("Error retriving JSON")
-                  }else{
-                      print("JSON DATA: \(data)")
-                      //testListFromDB.append(data!)
-                      if testListFromDB.count == result.items.count {
-                          print("Done Loading JSON")
-                          completionHandler(testListFromDB)
-                      }
-                  }
-              }
+                print(item.name)
+                item.getData(maxSize: 1 * 1024 * 1024){data, error in
+                    if let error = error {
+                        print("Error retriving JSON")
+                    }else{
+                        print("JSON DATA: \(data)")
+                        //testListFromDB.append(data!)
+                        if testListFromDB.count == result.items.count {
+                            print("Done Loading JSON")
+                            completionHandler(testListFromDB)
+                        }
+                    }
+                }
             }
         }
     }
@@ -102,33 +102,33 @@ class User: ObservableObject {
         let storageRef = Storage.storage().reference().child("\(associationID)Files/testJSONS")
         storageRef.listAll { (result, error) in
             
-          if let error = error {
-            print("ERROR RETRIVEVING JSONs FROM DATABASE")
-            completionHandler(jsonDataList)
-          }
+            if let error = error {
+                print("ERROR RETRIVEVING JSONs FROM DATABASE")
+                completionHandler(jsonDataList)
+            }
             print("JSON Prefixes")
             print(result.prefixes)
-          for prefix in result.prefixes {
-            // The prefixes under storageReference.
-            // You may call listAll(completion:) recursively on them.
-          }
+            for prefix in result.prefixes {
+                // The prefixes under storageReference.
+                // You may call listAll(completion:) recursively on them.
+            }
             
-          print("JSONS ARRAY: \(result.items)")
-          for item in result.items {
-            print(item.name)
-            item.getData(maxSize: 1 * 1024 * 1024){data, error in
-                if let error = error {
-                    print("Error retriving JSON")
-                }else{
-                    print("JSON DATA: \(data)")
-                    jsonDataList.append( (data!, item.name) )
-                    if jsonDataList.count == result.items.count {
-                        print("Done Loading JSON")
-                        completionHandler(jsonDataList)
+            print("JSONS ARRAY: \(result.items)")
+            for item in result.items {
+                print(item.name)
+                item.getData(maxSize: 1 * 1024 * 1024){data, error in
+                    if let error = error {
+                        print("Error retriving JSON")
+                    }else{
+                        print("JSON DATA: \(data)")
+                        jsonDataList.append( (data!, item.name) )
+                        if jsonDataList.count == result.items.count {
+                            print("Done Loading JSON")
+                            completionHandler(jsonDataList)
+                        }
                     }
                 }
             }
-          }
             if result.items.count == 0 {
                 completionHandler(jsonDataList)
             }
@@ -141,37 +141,37 @@ class User: ObservableObject {
         let storageRef = Storage.storage().reference().child("\(associationID)Files/testPDFS")
         storageRef.listAll { (result, error) in
             
-          if let error = error {
-            print("ERROR RETRIVEVING PDF's FROM DATABASE")
-            completionHandler(pdfDataList)
-          }
+            if let error = error {
+                print("ERROR RETRIVEVING PDF's FROM DATABASE")
+                completionHandler(pdfDataList)
+            }
             print("PDF Prefixes")
             print(result.prefixes)
-          for prefix in result.prefixes {
-            // The prefixes under storageReference.
-            // You may call listAll(completion:) recursively on them.
-          }
+            for prefix in result.prefixes {
+                // The prefixes under storageReference.
+                // You may call listAll(completion:) recursively on them.
+            }
             print("PDFS ARRAY: \(result.items)")
-          for item in result.items {
-            print(item.name)
-            item.getData(maxSize: 40 * 1024 * 1024){data, error in
-                if let error = error {
-                    print("Error retriving PDF")
-                }else{
-                    print("PDF DATA: \(data)")
-                    pdfDataList.append( (data!, item.name))
-                    
-                    if pdfDataList.count == result.items.count {
-                        print("Done Loading PDFS")
-                        completionHandler(pdfDataList)
+            for item in result.items {
+                print(item.name)
+                item.getData(maxSize: 40 * 1024 * 1024){data, error in
+                    if let error = error {
+                        print("Error retriving PDF")
+                    }else{
+                        print("PDF DATA: \(data)")
+                        pdfDataList.append( (data!, item.name))
+                        
+                        if pdfDataList.count == result.items.count {
+                            print("Done Loading PDFS")
+                            completionHandler(pdfDataList)
+                        }
+                        
                     }
                     
                 }
                 
+                
             }
-           
-
-          }
             if result.items.count == 0 {
                 completionHandler(pdfDataList)
             }
@@ -186,11 +186,11 @@ class User: ObservableObject {
         let storageRef = Storage.storage().reference().child("\(associationID)Files/performancePdfs")
         storageRef.listAll { (result, error) in
             
-          if let error = error {
-            print("ERROR RETRIVEVING PDF's FROM DATABASE")
-            completionHandler(pdfD)
-          }
-
+            if let error = error {
+                print("ERROR RETRIVEVING PDF's FROM DATABASE")
+                completionHandler(pdfD)
+            }
+            
             print("PDFS ARRAY: \(result.items)")
             result.items[0].getData(maxSize: 40 * 1024 * 1024){data, error in
                 if let error = error {

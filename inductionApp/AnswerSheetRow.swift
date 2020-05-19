@@ -16,7 +16,6 @@ struct AnswerSheetRow: View {
    //@State private var canvas: PKCanvasView = PKCanvasView()
     @ObservedObject var question: Question
     @ObservedObject var section: TestSection
-    @State private var isEraserEnabled = false
     
     //@ObservedObject var test: Test
     

@@ -28,8 +28,9 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     var hashValue: Int {
         return ObjectIdentifier(self).hashValue
     }
+    var id = UUID()
     
-    @Published var leftOverTime: Double
+    
     @Published var sectionOver = false{
         didSet{
             if sectionOver == true{
@@ -47,9 +48,11 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         }
     }
     
-    var id = UUID()
+    
     var allotedTime: Double
-    var sectionTimer: CustomTimer
+    @Published var sectionTimer: CustomTimer
+    @Published var leftOverTime: Double
+    
     
     var rawScore: Int{
         var score = 0
@@ -70,6 +73,8 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     var index: (start: Int, end: Int) //Index of pages in the pdf
     var pages = [PageModel]()
     var questions = [Question]()
+    //Number of questions the student has answered in the section
+    var numAnsweredQuestions = 0
     
     init(sectionFromJson: TestSectionFromJson, pages: [PageModel], name: String, questions: [Question] ) {
         self.allotedTime = Double(sectionFromJson.timeAllowed)
@@ -79,6 +84,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.name = sectionFromJson.name
         self.sectionIndex = sectionFromJson.orderInTest
         self.questions = questions
+        
         
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
     }
@@ -92,6 +98,8 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.pages = testSection.pages.map {PageModel(page: $0)}
         self.questions = testSection.questions.map {Question(question: $0)}
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
+        
+        
     }
     
     func makeTestSectionForJson() -> TestSectionFromJson{
@@ -102,7 +110,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
                                         officialSub: question.officialSub, tutorSub: question.tutorSub,
                                         answer: question.answer, reason: question.reason,
                                         studentAnswer: question.userAnswer, secondsToAnswer: Int(question.secondsToAnswer),
-                                        finalState: question.finalState.rawValue) //TODO: Missing order in test
+                                        finalState: question.finalState.rawValue, orderAnsweredInSection: question.answerOrdredIn) //TODO: Missing order in test
             
             questionsForJson.append(temp)
         }
@@ -168,6 +176,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     @Published var testState: TestState = .notStarted
     @Published var isEraserEnabled = false{
         didSet{
+            print("SETTTING Tool only on current section")
             for section in sections{
                 for question in section.questions{
                     question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
@@ -291,10 +300,19 @@ class Test: ObservableObject, Hashable, Identifiable {
         
     }
     
-    //Called onnly if in an intermediaary section is over
+    //Called at the end of a section
     func endSection(){
+        
+        isEraserEnabled = false
         currentSection?.sectionOver = true
-        testState = .betweenSection
+        
+        if currentSectionIndex == numberOfSections! - 1 {
+            testState = .testOver
+            sendResultJson()
+            taken = true
+        }else{
+            testState = .betweenSection
+        }
     }
     
     //This is called when the user wants to begin the next section
@@ -316,12 +334,12 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     //Called when test (or section should be ended)
-    func endTest(){
-        taken = true
-        endSection()
-        testState = .testOver
-        sendResultJson()
-    }
+//    func endTest(){
+//        taken = true
+//        endSection()
+//        testState = .testOver
+//        sendResultJson()
+//    }
    
     
     func reset() {

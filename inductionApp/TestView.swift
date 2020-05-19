@@ -30,7 +30,7 @@ struct TestView: View {
                             VStack {
                                 ForEach(self.testData.currentSection!.pages, id: \.self){ page in
                                     PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
-                                        .disabled(self.testData.begunTest ? false : true)
+                                        .disabled( (self.testData.testState == .inSection || self.testData.testState == .lastSection ) ? false : true)
                                 }
                             }
                         }.navigationBarItems(trailing: TimerNavigationView(test: self.testData))
@@ -75,8 +75,10 @@ struct TimerNavigationView: View {
                     }
                 }){
                     Image(systemName: "pencil")
-                        .foregroundColor(self.test.isEraserEnabled == false ? .orange : .blue)
-                }.disabled(self.test.isEraserEnabled == false)
+                            .foregroundColor(self.test.isEraserEnabled == false ? .blue : .gray)
+                            .font(self.test.isEraserEnabled == false ? .largeTitle : .title)
+                    }.disabled(self.test.isEraserEnabled == false)
+                        .padding()
 
                 
                 //Eraser Button - Enables the eraser
@@ -86,30 +88,36 @@ struct TimerNavigationView: View {
                     }
                 }){
                     Image(systemName: "trash")
-                        .foregroundColor(self.test.isEraserEnabled == true ? .orange : .blue)
+                        .foregroundColor(self.test.isEraserEnabled == true ? .blue : .gray)
+                        .font(self.test.isEraserEnabled == true ? .largeTitle : .title)
                 }.disabled(self.test.isEraserEnabled == true)
+                .padding()
                 
                 
                 //Plus Magnifying glass - Makes test larger
                 Button(action: {
                     if self.test.showAnswerSheet == true {
-                        self.test.showAnswerSheet.toggle()
+                        self.test.showAnswerSheet = false
                     }
                 }){
                     Image(systemName: "plus.magnifyingglass")
-                        .foregroundColor(self.test.showAnswerSheet == false ? .orange : .blue)
+                        .foregroundColor(self.test.showAnswerSheet == false ? .blue : .gray)
+                        .font(self.test.showAnswerSheet == false ? .largeTitle : .title)
                 }.disabled(self.test.showAnswerSheet == false)
+                .padding()
                 
                 
                 //Minus Magnifying glass - Shows Answer Sheet
                 Button(action: {
                     if self.test.showAnswerSheet == false {
-                        self.test.showAnswerSheet.toggle()
+                        self.test.showAnswerSheet = true
                     }
                 }){
                     Image(systemName: "minus.magnifyingglass")
-                        .foregroundColor(self.test.showAnswerSheet == true ? .orange : .blue)
+                        .foregroundColor(self.test.showAnswerSheet == true ? .blue : .gray)
+                        .font(self.test.showAnswerSheet == true ? .largeTitle : .title)
                 }.disabled(self.test.showAnswerSheet == true)
+                .padding()
                 
             }
             HStack {
@@ -122,7 +130,7 @@ struct TimerNavigationView: View {
                     case .betweenSection:
                         self.test.nextSection(fromStart: false)
                     case .lastSection:
-                        self.test.endTest()
+                        self.test.endSection()
                     case .testOver:
                         print("Should never get here")
                     }
@@ -138,6 +146,9 @@ struct TimerNavigationView: View {
                     || self.test.testState == .lastSection {
                     Text("\(now) left")
                         .onReceive(timer) { _ in
+                            if self.test.currentSection!.sectionTimer.done == true{
+                                self.test.endSection()
+                            }
                             self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
                     }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
                 }

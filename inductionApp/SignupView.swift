@@ -21,8 +21,7 @@ struct SignupView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Image("ilLogo").resizable()
-                .aspectRatio(contentMode: .fit)
+                
                 VStack {
                     
                     //.padding()
@@ -89,7 +88,8 @@ struct SignupView: View {
                         }.padding(.bottom, 25.0)
                     }
                 }
-                
+                Image("ilLogo").resizable()
+                .aspectRatio(contentMode: .fit)
                 // Spacer()
             }
             .padding()

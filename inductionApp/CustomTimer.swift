@@ -13,6 +13,7 @@ class CustomTimer: ObservableObject {
     private var endDate: Date?
     private var timer: Timer?
     private var remainingTimeAtLastAnswer: Double
+    @Published var done = false
     
     var timeRemaining: Double {
         didSet {
@@ -46,6 +47,7 @@ class CustomTimer: ObservableObject {
             self.timeRemaining = self.endDate!.timeIntervalSince(Date())
             if self.timeRemaining < 0 {
                 timer.invalidate()
+                self.done = true
                 self.timer = nil
             }
         }
