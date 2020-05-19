@@ -100,10 +100,20 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
         
     }
-    
-    func scalePages(factor: CGFloat){
+    //scale up: bool
+    func scalePages(){
+       
         for page in pages{
-            page.canvas?.drawing.transform(using: CGAffineTransform(scaleX: factor, y: factor))
+            page.shouldScale = true
+            
+//            if up == true{
+//                print("SCALLING UP: \(page.scale!)")
+//                page.canvas?.drawing.transform(using: CGAffineTransform(scaleX: CGFloat(page.scale!.x), y: CGFloat(page.scale!.y)))
+//            }else{
+//                print("SCALLING DOWN: \(page.scale!)")
+//                page.canvas?.drawing.transform(using: CGAffineTransform(scaleX:  1.0 / CGFloat(page.scale!.x) , y:  1.0 / CGFloat(page.scale!.y)))
+//            }
+            
         }
     }
     

@@ -16,6 +16,7 @@ struct CanvasRepresentable: UIViewRepresentable {
     var section: TestSection? //TODO: Should be observed Object?
     var isAnswerSheet: Bool
     var protoRect: CGRect
+    var canvasGeo: CGSize
     
     
     //This checks to see if this instance of the struct is an answer sheet. If it is we want to check location
@@ -152,9 +153,21 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         
-        if page.pageID != -1 { //It is a real page rather than 
+        if page.pageID != -1 { //It is a real page rather than
+            
+            let scale = (x: CGFloat(canvasGeo.width) / uiView.bounds.size.width, y: CGFloat(canvasGeo.height) / uiView.bounds.size.height)
+            print("CANVAS GEO: \(canvasGeo)")
             print("View sent: \(uiView.bounds)")
-            print("Question View: \(page.canvas?.bounds)")
+            print("Canvas View: \(page.canvas?.bounds)")
+            print("Drawing View: \(uiView.drawing.bounds)")
+            print("Page View: \(page.uiImage.size)")
+            print("SCALE: \(scale) ")
+            if page.shouldScale == true && scale.x != CGFloat(1.0) {
+                print("THIS IS THE SCALIGN FACTOR")
+                page.canvas?.drawing.transform(using: CGAffineTransform(scaleX: scale.x , y: scale.y))
+                page.shouldScale = false
+            }
+            
         }
         
        //print("UPDATE VIEW: \(question.location.row)")

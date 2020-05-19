@@ -25,17 +25,20 @@ struct TestView: View {
                     if testData.showAnswerSheet == true{
                         AnswerSheetList(test: testData).frame(width: 300)
                     }
-                    GeometryReader {scrollGeo in
+                    // GeometryReader {scrollGeo in
                         ScrollView {
                             VStack {
                                 ForEach(self.testData.currentSection!.pages, id: \.self){ page in
                                     PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
                                         .disabled( (self.testData.testState == .inSection || self.testData.testState == .lastSection ) ? false : true)
+//                                        .onTapGesture {
+//                                            print("Page GEO: \(scrollGeo.size)")
+//                                        }
                                 }
                             }
                         }.navigationBarItems(trailing: TimerNavigationView(test: self.testData))
                             //.offset( y: -scrollGeo.frame(in: .global).minY)
-                    }
+                   // }
                 }
             }
         }
@@ -49,12 +52,18 @@ struct PageView: View{
     @State private var canvas: PKCanvasView = PKCanvasView()
     
     var body: some View {
-        
-        ZStack{
-            Image(uiImage: model.uiImage).resizable().aspectRatio(contentMode: .fill)
-            
-            CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), page: model, isAnswerSheet: false, protoRect: CGRect())
-        }
+       
+            ZStack{
+                Image(uiImage: self.model.uiImage).resizable().aspectRatio(contentMode: .fill)
+                
+                GeometryReader { geo in
+                    CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), page: self.model, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
+//                    .onTapGesture {
+//                        print("CANVAS GEOP: \(geo.size)")
+//                    }
+                }
+            }
+        //}
     }
 }
 
@@ -98,7 +107,7 @@ struct TimerNavigationView: View {
                 Button(action: {
                     if self.test.showAnswerSheet == true {
                         self.test.showAnswerSheet = false
-                        self.test.currentSection?.scalePages(factor: 1024.0 / 716.0)
+                        self.test.currentSection?.scalePages()
                     }
                 }){
                     Image(systemName: "plus.magnifyingglass")
@@ -112,7 +121,7 @@ struct TimerNavigationView: View {
                 Button(action: {
                     if self.test.showAnswerSheet == false {
                         self.test.showAnswerSheet = true
-                        self.test.currentSection?.scalePages(factor: 716.0 / 1024.0 )
+                        self.test.currentSection?.scalePages()
                     }
                 }){
                     Image(systemName: "minus.magnifyingglass")
@@ -132,7 +141,7 @@ struct TimerNavigationView: View {
                     case .betweenSection:
                         self.test.nextSection(fromStart: false)
                         if self.test.showAnswerSheet == true {
-                            self.test.currentSection?.scalePages(factor: 1024.0 / 716.0)
+                            self.test.currentSection?.scalePages()
                         }
                     case .lastSection:
                         self.test.endSection()

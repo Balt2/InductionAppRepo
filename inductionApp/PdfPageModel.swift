@@ -21,6 +21,8 @@ class PageModel: ObservableObject, Hashable, Identifiable {
     }
     
     var id = UUID()
+    @Published var shouldScale = false
+    //var scale: (x: CGFloat, y: CGFloat)?
     
     @Published var canvas: PKCanvasView?
     var uiImage: UIImage
@@ -34,6 +36,7 @@ class PageModel: ObservableObject, Hashable, Identifiable {
         self.uiImage = page.uiImage
         self.pageID = page.pageID
     }
+    
     
 }
 

@@ -60,7 +60,7 @@ struct AnswerSheetRow: View {
                     Text(self.question.userAnswer).frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
                 }
                 
-                CanvasRepresentable(question: self.question, page: PageModel(image: UIImage(), pageID: -1), section: self.section, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: 54, height: geo.size.height/1.5))
+                CanvasRepresentable(question: self.question, page: PageModel(image: UIImage(), pageID: -1), section: self.section, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: 54, height: geo.size.height/1.5), canvasGeo: CGSize())
                 
             }
 
