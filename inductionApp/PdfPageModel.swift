@@ -36,6 +36,10 @@ class PageModel: ObservableObject, Hashable, Identifiable {
         self.pageID = page.pageID
     }
     
+    func reset(){
+        canvas = nil
+    }
+    
     
 }
 

@@ -32,7 +32,8 @@ struct TestView: View {
                             ForEach(self.testData.currentSection!.pages, id: \.self){ page in
                                 PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
                                     .disabled( (self.testData.testState == .inSection || self.testData.testState == .lastSection ) ? false : true)
-                            }.navigationBarItems(leading: EndTestNavigationView(test: self.testData, shouldPopToRootFromNav: self.$shouldPopToRootView), trailing: TimerNavigationView(test: self.testData))
+                            }.navigationBarItems(leading: self.testData.isFullTest == true ? AnyView(EndTestNavigationView(test: self.testData, shouldPopToRootFromNav: self.$shouldPopToRootView, submitComplete: false)) : AnyView(EmptyView()) ,
+                                        trailing: TimerNavigationView(test: self.testData, shouldPopToRootView: self.$shouldPopToRootView))
                             
                         }
                     }
@@ -68,32 +69,31 @@ struct EndTestNavigationView: View {
     @ObservedObject var test: Test
     @State private var showAlert = false
     @Binding var shouldPopToRootFromNav: Bool
+    var submitComplete: Bool
     var body: some View {
          Button(action: {
             self.showAlert = true
        }){
-        Text("End Test")
+        Text(submitComplete == true ? "Submit" : "End Test")
             .foregroundColor(.red)
          }.alert(isPresented: $showAlert){
-            Alert(title: Text("Are you sure you want to end the test?"),
-                  message: Text("You will not be able to edit this test, but results will be calculated"),
+            Alert(title: Text(submitComplete == true ? "Submit Assessment" : "Are you sure you want to end the test?"),
+                  message: Text("You will not be able to edit this \(test.isFullTest == true ? "test" : "assignment") again"),
                   primaryButton: .default(Text("Cancel")),
                   secondaryButton: .default(Text("OK")){
                     //self.presentationMode.wrappedValue.dismiss()
-                    self.shouldPopToRootFromNav = false
                     self.test.endTest()
-                    //Ideally it goes all the way back to
+                    self.shouldPopToRootFromNav = false
                 })
         }
         
     }
 
-    
 }
 
 struct TimerNavigationView: View {
     @ObservedObject var test: Test
-    //@ObservedObject var user: User
+    @Binding var shouldPopToRootView : Bool
     @State private var now = ""
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
@@ -177,7 +177,7 @@ struct TimerNavigationView: View {
                     }
                 }){
                     HStack{
-                        getControlButton()
+                        getControlButton(test: self.test, shouldPopToRootFromNav: self.$shouldPopToRootView)
                     }
                 }
                 
@@ -197,27 +197,29 @@ struct TimerNavigationView: View {
             }
         }
     }
-    func getControlButton() -> Text {
+    func getControlButton(test: Test, shouldPopToRootFromNav: Binding<Bool>) -> AnyView {
+        
         switch self.test.testState{
         case .notStarted:
             if test.isFullTest == true {
-                return Text("Start Test")
+                return AnyView(Text("Start Test"))
             }else{
-                return Text("Start Section")
+                return AnyView(Text("Start Section"))
             }
-        case .inSection: return Text("End Section")
-        case .betweenSection: return Text("Start Next Section")
+        case .inSection: return AnyView(Text("End Section"))
+        case .betweenSection: return AnyView(Text("Start Next Section"))
         case .lastSection:
-            if test.isFullTest == true {
-                return Text("End Test")
-            }else{
-                return Text("End Study Section")
-            }
+            return AnyView(EndTestNavigationView(test: self.test, shouldPopToRootFromNav: $shouldPopToRootView, submitComplete: true))
+//            if test.isFullTest == true {
+//                return Text("End Test")
+//            }else{
+//                return Text("End Study Section")
+//            }
         case .testOver:
             if test.isFullTest == true {
-                return Text("Test Over")
+                return AnyView(Text("Test Over"))
             }else{
-                return Text("Study Section Over")
+                return AnyView(Text("Study Section Over"))
             }
         }
     }

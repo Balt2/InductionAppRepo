@@ -160,9 +160,9 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         leftOverTime = allotedTime
         begunSection = false
         sectionOver = false
+        pages.forEach {$0.reset()}
         questions.forEach {$0.reset() }
     }
-    
     
     
 }
