@@ -16,7 +16,7 @@ struct AnswerSheetRow: View {
    //@State private var canvas: PKCanvasView = PKCanvasView()
     @ObservedObject var question: Question
     @ObservedObject var section: TestSection
-    
+    @State var xStepper: CGFloat = CGFloat(54.0)
     //@ObservedObject var test: Test
     
     var body: some View {
@@ -32,12 +32,18 @@ struct AnswerSheetRow: View {
 //                    ForEach(0..<self.question.answerLetters.count, id: \.self) { letter in
 //
 //                        Group{
-//                            Text(String(letter)).frame(width: 15, height: 10, alignment: .center)
-//                                .position(CGPoint(x: 5, y: geo.size.height / 4.37))
+//                            Text(self.question.answerLetters[letter]).frame(width: 15, height: 10, alignment: .center)
+//                                .position(CGPoint(x: self.xStepper * letter  , y: geo.size.height / 4.37))
 //
 //                            Circle().stroke().frame(width: 20, height: 20)
-//                                .position(CGPoint(x: 54 , y: geo.size.height/1.5))
+//                                .position(CGPoint(x: self.xStepper * letter  , y: geo.size.height/1.5))
+//                                .onAppear(){
+//                                    print(54 + 55 * letter)
+//                                    //self.xStepper = self.xStepper + CGFloat(55)
+//                                    //print(CGFloat(self.question.answerLetters.firstIndex(of: String(letter))!))
+//                            }
 //                        }
+//
 //
 //                    }
                     

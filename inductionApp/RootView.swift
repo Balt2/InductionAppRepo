@@ -25,7 +25,6 @@ struct AppRootView: View {
             }else{
                 SignupView()
             }
-
            
         }
     }
@@ -42,8 +41,11 @@ class FirebaseManager: ObservableObject {
 
     //This init starts a listener that looks for changes in the Authstate. If the listener is triggered, the user wilil be set
     init(){
+        print("FIREBASE Start INIT")
         db = Firestore.firestore()
-        let handle = Auth.auth().addStateDidChangeListener { (authFromDataB, user) in
+        //let handle =
+        Auth.auth().addStateDidChangeListener { (authFromDataB, user) in
+            print("BEN")
             if let user = user {
                 //We got a user
                 print("User: \(user)")
@@ -58,6 +60,8 @@ class FirebaseManager: ObservableObject {
                         print("Failed to set user")
                     }
                 })
+            }else{
+                self.initialized = true
             }
         }
     }
