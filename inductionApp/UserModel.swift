@@ -19,7 +19,8 @@ class User: ObservableObject {
     let lastName: String
     let associationID: String
     let testRefs: [String]
-    var tests: [Test] = []
+    @Published var tests: [Test] = []
+    @Published var getTestsComplete = false
     var performancePDF = [PageModel]()
     
     init(fn: String, ln: String, id: String, aID: String, testRefs: [String]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
@@ -29,14 +30,18 @@ class User: ObservableObject {
         self.lastName = ln
         self.associationID = aID
         self.testRefs = testRefs
-        self.getTestsFromFolder{testList in
-            print("DONE")
+    
+        
+        self.addTests { b in
+            if b == true{
+                print("At least one test loaded in")
+                self.getTestsComplete = true
+            }else{
+                print("No Test loaded in")
+                self.getTestsComplete = true
+            }
         }
-        self.getTests { testList in
-            self.tests.append(contentsOf: testList)
-            self.isLoggedIn = true
-            //completionHandler(true)
-        }
+        
 //        self.getPerformancePdf { pdf in
 //            self.performancePDF = TestPDF(data: pdf).pages
 //        }
@@ -45,54 +50,27 @@ class User: ObservableObject {
     
     
     
-    func getTests(completionHandler: @escaping (_ testList: [Test]) -> ()) {
-        var testListFromDB: [Test] = []
-        
-        
+    func addTests(completionHandler: @escaping (_ completion: Bool) -> ()) {
+
         self.getTestPDFs { pdfs in
             self.getTestJsons { jsons in
                 for (index, json) in jsons.enumerated() {
                     let searchString = json.1.prefix(4)
                     let correctPdf = pdfs.filter {$0.1.contains(searchString)}
                     let test = Test(jsonData: json.0 , pdfData: correctPdf[0].0)
-                    testListFromDB.append(test)
+                    self.tests.append(test)
                 }
-                print(testListFromDB)
-                completionHandler(testListFromDB)
+                if self.tests.count == 0 {
+                    completionHandler(false)
+                }else{
+                    completionHandler(true)
+                }
             }
             
         }
         
     }
-    
-    func getTestsFromFolder(completionHandler: @escaping (_ testList: [Test]) -> ()) {
-        var testListFromDB: [Test] = []
-        print(associationID)
-        let storageRef = Storage.storage().reference().child("\(associationID)Files/")
-        storageRef.listAll { (result, error) in
-            if let error = error {
-                print("ERROR RETRIVEVING JSONs FROM DATABASE")
-                completionHandler(testListFromDB)
-            }
-            
-            for item in result.items {
-                print(item.name)
-                item.getData(maxSize: 1 * 1024 * 1024){data, error in
-                    if let error = error {
-                        print("Error retriving JSON")
-                    }else{
-                        print("JSON DATA: \(data)")
-                        //testListFromDB.append(data!)
-                        if testListFromDB.count == result.items.count {
-                            print("Done Loading JSON")
-                            completionHandler(testListFromDB)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
+        
     
     
     func getTestJsons(completionHandler: @escaping (_ jsons: [(Data, String)]) -> ()) {

@@ -11,6 +11,8 @@ import Firebase
 
 struct UserHomepageView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
+    @ObservedObject var user: User
+    
   var body: some View {
     NavigationView{
       HStack {
@@ -28,19 +30,22 @@ struct UserHomepageView: View {
               .padding()
               HStack(alignment: .top) {
                   VStack (alignment: .leading) {
-                    NavigationLink(destination: TestTable()){
+                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!)){
                         HStack{
-                            Image(systemName: "folder")
-                            Text("Choose Test!")
+                            getLoadingIcon() //Folder or activity indicator saying it is loading
+                            Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
                         }
-                    }.buttonStyle(buttonBackgroundStyle())
+                    }.buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+                        .disabled(user.getTestsComplete == false)
+                        
 
-                      NavigationLink(destination: StudyTable()){
+                    NavigationLink(destination: StudyTable(user: currentAuth.currentUser!)){
                           HStack{
-                              Image(systemName: "folder")
-                              Text("Study Library")
+                              getLoadingIcon() //Folder or activity indicator saying it is loading
+                              Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
                           }
-                      }.buttonStyle(buttonBackgroundStyle())
+                      }.buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+                    .disabled(user.getTestsComplete == false)
                     
                     NavigationLink(destination: PastPerformanceTable()){
                      HStack{
@@ -93,20 +98,53 @@ struct UserHomepageView: View {
         }
     }.navigationViewStyle((StackNavigationViewStyle()))
   }
-}
-
-struct UserHomepageView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserHomepageView()
+    
+    func getLoadingIcon() -> AnyView{
+        if user.getTestsComplete == true {
+            return AnyView(Image(systemName: "folder"))
+        }else{
+            return AnyView(ActivityIndicator(isAnimating: true).configure { $0.color = .white })
+        }
     }
 }
 
+//Acitivity monitor helpers: https://stackoverflow.com/questions/56496638/activity-indicator-in-swiftui
+struct ActivityIndicator: UIViewRepresentable {
+
+    typealias UIView = UIActivityIndicatorView
+    var isAnimating: Bool
+    fileprivate var configuration = { (indicator: UIView) in }
+
+    func makeUIView(context: UIViewRepresentableContext<Self>) -> UIView { UIView() }
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<Self>) {
+        isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
+        configuration(uiView)
+    }
+}
+
+extension View where Self == ActivityIndicator {
+    func configure(_ configuration: @escaping (Self.UIView)->Void) -> Self {
+        Self.init(isAnimating: self.isAnimating, configuration: configuration)
+    }
+}
+
+
+
+
+
+//struct UserHomepageView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        UserHomepageView(, user: <#User#>)
+//    }
+//}
+
 struct buttonBackgroundStyle: ButtonStyle {
+    var disabled: Bool?
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding()
             .foregroundColor(.white)
-            .background(Color("salmon"))
+            .background(disabled == true ? Color(.lightGray) : Color("salmon"))
             .cornerRadius(40)
             .padding()
             .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
@@ -138,167 +176,4 @@ struct infoLabelStyle: ViewModifier {
     }
 }
 
-enum SectionName: Int, CaseIterable, Hashable, Identifiable {
-    case overall = 0
-    case reading
-    case writing
-    case math
-    case science
-    
-    var name: String {
-        return "\(self)".capitalized
-    }
 
-    var id: SectionName {self}
-}
-
-
-enum Days: CaseIterable, Hashable, Identifiable {
-    
-    case CSE
-    case POW
-    case KOL
-    
-    case KID
-    case IK
-    case CS
-    
-    case IES
-    case Alg
-    case Geom
-    case Func
-    case Modeling
-    case NQ
-    
-    case IOD
-    case SI
-    case EM
-    
-    case ACT1
-    case ACT2
-    case ACT3
-    
-    
-    var shortName: String {
-        return String("\(self)".prefix(4)).capitalized
-    }
-    var id: Days {self}
-    
-}
-
-
-
-struct BarContentView: View {
-    
-    @State var pickerSelectedItem = 0
-    
-    @State var data: [(dayPart: SectionName, caloriesByDay: [(day:Days, calories:Int)])] =
-        [
-                (
-                    SectionName.overall,
-                        [
-                            (Days.ACT1, 28),
-                            (Days.ACT2, 34),
-                            (Days.ACT3, 36)
-                        ]
-                ),
-                (
-                    SectionName.reading,
-                        [
-                            (Days.ACT1, 28),
-                            (Days.ACT2, 32),
-                            (Days.ACT3, 35)
-                        ]
-                ),
-                (
-                    SectionName.writing,
-                        [
-                            (Days.ACT1, 26),
-                            (Days.ACT2, 33),
-                            (Days.ACT3, 36)
-                        ]
-                ),
-                (
-                    SectionName.math,
-                        [
-                            (Days.ACT1, 25),
-                            (Days.ACT2, 34),
-                            (Days.ACT3, 36)
-                        ]
-                ),
-                (
-                    SectionName.science,
-                        [
-                            (Days.ACT1, 30),
-                            (Days.ACT2, 32),
-                            (Days.ACT3, 36)
-                        ]
-                )
-                
-        ]
-
-    
-    
-    
-    var body: some View {
-        ZStack {
-            
-            
-            VStack {
-                
-                Text("Quick Data")
-                    .foregroundColor(Color("lightBlue"))
-                    .font(.system(size: 34))
-                    .fontWeight(.heavy)
-                
-                Picker(selection: $pickerSelectedItem.animation(), label: Text("")) {
-                   ForEach(SectionName.allCases) { dp in
-                        Text(dp.name).tag(dp.rawValue)
-                    }
-                    
-                    
-                }.pickerStyle(SegmentedPickerStyle())
-                    .padding(.horizontal, 24)
-                    .animation(.default)
-                
-                 
-              HStack (spacing: 10) {
-                     ForEach(0..<self.data[pickerSelectedItem].caloriesByDay.count, id: \.self)
-                     { i in
-                      
-                        BarView(
-                            value: self.data[self.pickerSelectedItem].caloriesByDay[i].calories,
-                            label: self.data[self.pickerSelectedItem].caloriesByDay[i].day.shortName
-                        )
-                     
-                     }
-                
-              }.padding(.top, 24)
-               .animation(.default)
-                
-                
-            }//vs
-        }//zs
-        
-    }
-}
-
-
-struct BarView:  View {
-    
-    var value: Int
-    var label: String
-    
-    var body: some View {
-        VStack {
-            ZStack(alignment: .bottom) {
-                Capsule().frame(width: 30, height: 216)
-                    .foregroundColor(Color("lightBlue"))
-                Capsule().frame(width: 30, height: CGFloat(value*6))
-                    .foregroundColor( Color("salmon"))
-            }
-            Text(label)
-                .padding(.top,8)
-        }
-    }
-}

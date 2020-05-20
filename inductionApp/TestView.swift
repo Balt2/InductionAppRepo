@@ -12,7 +12,7 @@ import Combine
 
 struct TestView: View {
     @EnvironmentObject var tests: TestList
-    //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "pdf_sat-practice-test-1")
+    //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "1-ACT Exam 1906")
     @ObservedObject var testData: Test
     
     var body: some View {
@@ -25,25 +25,27 @@ struct TestView: View {
                     if testData.showAnswerSheet == true{
                         AnswerSheetList(test: testData).frame(width: 300)
                     }
-                    // GeometryReader {scrollGeo in
-                        ScrollView {
-                            VStack {
-                                ForEach(self.testData.currentSection!.pages, id: \.self){ page in
-                                    PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
-                                        .disabled( (self.testData.testState == .inSection || self.testData.testState == .lastSection ) ? false : true)
-//                                        .onTapGesture {
-//                                            print("Page GEO: \(scrollGeo.size)")
-//                                        }
-                                }
-                            }
+                    GeometryReader {outsideProxy in
+                        ScrollView(.vertical) {
+                            ForEach(self.testData.currentSection!.pages, id: \.self){ page in
+                                PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
+                                    .disabled( (self.testData.testState == .inSection || self.testData.testState == .lastSection ) ? false : true)
+//                                    .onTapGesture {
+//                                    print(outsideProxy.frame(in: .local))
+                                        //}
                         }.navigationBarItems(trailing: TimerNavigationView(test: self.testData))
-                            //.offset( y: -scrollGeo.frame(in: .global).minY)
-                   // }
+                            
+                        }
+                    }
                 }
+                //.offset( y: -scrollGeo.frame(in: .global).minY)
+                
             }
         }
     }
 }
+
+
 
 
 
@@ -52,18 +54,14 @@ struct PageView: View{
     @State private var canvas: PKCanvasView = PKCanvasView()
     
     var body: some View {
-       
-            ZStack{
-                Image(uiImage: self.model.uiImage).resizable().aspectRatio(contentMode: .fill)
-                
-                GeometryReader { geo in
-                    CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), page: self.model, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
-//                    .onTapGesture {
-//                        print("CANVAS GEOP: \(geo.size)")
-//                    }
-                }
+        
+        ZStack{
+            Image(uiImage: self.model.uiImage).resizable().aspectRatio(contentMode: .fill)
+            
+            GeometryReader { geo in
+                CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), page: self.model, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
             }
-        //}
+        }
     }
 }
 
@@ -71,7 +69,7 @@ struct TimerNavigationView: View {
     @ObservedObject var test: Test
     @State private var now = ""
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
-
+    
     var body: some View {
         
         HStack (spacing: 200){
@@ -84,11 +82,11 @@ struct TimerNavigationView: View {
                     }
                 }){
                     Image(systemName: "pencil")
-                            .foregroundColor(self.test.isEraserEnabled == false ? .blue : .gray)
-                            .font(self.test.isEraserEnabled == false ? .largeTitle : .title)
-                    }.disabled(self.test.isEraserEnabled == false)
-                        .padding()
-
+                        .foregroundColor(self.test.isEraserEnabled == false ? .blue : .gray)
+                        .font(self.test.isEraserEnabled == false ? .largeTitle : .title)
+                }.disabled(self.test.isEraserEnabled == false)
+                    .padding()
+                
                 
                 //Eraser Button - Enables the eraser
                 Button(action: {
@@ -100,7 +98,7 @@ struct TimerNavigationView: View {
                         .foregroundColor(self.test.isEraserEnabled == true ? .blue : .gray)
                         .font(self.test.isEraserEnabled == true ? .largeTitle : .title)
                 }.disabled(self.test.isEraserEnabled == true)
-                .padding()
+                    .padding()
                 
                 
                 //Plus Magnifying glass - Makes test larger
@@ -114,7 +112,7 @@ struct TimerNavigationView: View {
                         .foregroundColor(self.test.showAnswerSheet == false ? .blue : .gray)
                         .font(self.test.showAnswerSheet == false ? .largeTitle : .title)
                 }.disabled(self.test.showAnswerSheet == false)
-                .padding()
+                    .padding()
                 
                 
                 //Minus Magnifying glass - Shows Answer Sheet
@@ -128,7 +126,7 @@ struct TimerNavigationView: View {
                         .foregroundColor(self.test.showAnswerSheet == true ? .blue : .gray)
                         .font(self.test.showAnswerSheet == true ? .largeTitle : .title)
                 }.disabled(self.test.showAnswerSheet == true)
-                .padding()
+                    .padding()
                 
             }
             HStack {
@@ -198,26 +196,25 @@ struct TimerNavigationView: View {
 
 //Tables that are presented before the TestView
 struct TestTable: View {
-    @EnvironmentObject var currentAuth: FirebaseManager
+    @ObservedObject var user: User
     var body: some View {
-        List(currentAuth.currentUser!.tests){test in
+        List(user.tests){test in
             NavigationLink(destination: TestView(testData: test)){
                 Text(test.name)
             }.frame(height: 90)
         }.navigationBarTitle(Text("Choose Test to Take"))
-        
     }
 }
 
 struct StudyTable: View {
-    @EnvironmentObject var currentAuth: FirebaseManager
+    @ObservedObject var user: User
     var body: some View {
         List{
-            ForEach(currentAuth.currentUser?.tests ?? [], id: \.self){test in
+            ForEach(user.tests ?? [], id: \.self){test in
                 ForEach(test.sections, id: \.self){section in
                     NavigationLink(destination: TestView(testData: Test(testSections: [section], test: test))){
                         Text(" \(section.name) from \(test.name)")
-                       }.frame(height: 90)
+                    }.frame(height: 90)
                 }
             }
         }.navigationBarTitle(Text("Choose Section to Study"))
@@ -226,14 +223,14 @@ struct StudyTable: View {
 
 struct PastPerformanceTable: View {
     @EnvironmentObject var currentAuth: FirebaseManager
-        var body: some View {
-            ScrollView {
-                VStack {
-                    ForEach(self.currentAuth.currentUser!.performancePDF, id: \.self){ page in
-                        PageView(model: page)
-                    }
+    var body: some View {
+        ScrollView {
+            VStack {
+                ForEach(self.currentAuth.currentUser!.performancePDF, id: \.self){ page in
+                    PageView(model: page)
                 }
             }
+        }
     }
 }
 

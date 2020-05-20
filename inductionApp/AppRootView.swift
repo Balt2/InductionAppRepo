@@ -16,15 +16,14 @@ struct AppRootView: View {
     
     var body: some View {
         Group {
-            if authManager.currentUser != nil {
-                
-                UserHomepageView() //user: authManager.currentUser!
-              
-            } else {
-              // No user is signed in.
-              SignupView()
+            if authManager.initialized == false {
+                //LoadingView()
+            }else if authManager.currentUser != nil  {
+                UserHomepageView()
+            }else{
+                SignupView()
             }
-            
+
            
         }
     }
@@ -36,6 +35,7 @@ class FirebaseManager: ObservableObject {
     //https://github.com/invertase/react-native-firebase/issues/1166 --Pod informatioin
     @Published var currentUser: User?
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
+    @Published var initialized = false
     var db: Firestore!
 
     //This init starts a listener that looks for changes in the Authstate. If the listener is triggered, the user wilil be set
@@ -48,9 +48,11 @@ class FirebaseManager: ObservableObject {
                 self.getUser(id: user.uid, completionHandler: { (success) -> Void in //Sets the current user
                     if success {
                         print("Set USer succsessfully")
+                        initialized = true
                         //self.currentUser!.updateFiles()
                     }else{
                         //ERROR
+                        initialized = true
                         print("Failed to set user")
                     }
                 })

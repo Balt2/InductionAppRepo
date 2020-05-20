@@ -25,10 +25,14 @@
 		2F33DCDD245D1E5600239E69 /* satPracticeTest1.json in Resources */ = {isa = PBXBuildFile; fileRef = 2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */; };
 		2F5DB6D724718007009766A7 /* QuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D624718007009766A7 /* QuestionModel.swift */; };
 		2F5DB6D92471828B009766A7 /* CustomTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D82471828B009766A7 /* CustomTimer.swift */; };
+		2F6A7D132474A93200BFD3FA /* 1-ACT Exam 1904S.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F6A7D122474A93200BFD3FA /* 1-ACT Exam 1904S.pdf */; };
+		2F6A7D152474ACC800BFD3FA /* 1-ACT Exam 1912.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F6A7D142474ACC800BFD3FA /* 1-ACT Exam 1912.pdf */; };
+		2F6A7D172474AE2500BFD3FA /* 1-ACT Exam 1906.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F6A7D162474AE2500BFD3FA /* 1-ACT Exam 1906.pdf */; };
+		2F6A7D1B2474C21E00BFD3FA /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6A7D1A2474C21E00BFD3FA /* RootView.swift */; };
+		2F6A7D1D2474CCF200BFD3FA /* BarGraphViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6A7D1C2474CCF200BFD3FA /* BarGraphViews.swift */; };
 		2F945181244FFA33009521F7 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F945180244FFA33009521F7 /* TestView.swift */; };
 		2F945183244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */; };
 		2F9451852450009D009521F7 /* josh.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 2F9451842450009D009521F7 /* josh.jpeg */; };
-		2F9C109C244F693100A7C6FF /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9C109B244F693100A7C6FF /* AppRootView.swift */; };
 		2FEEE3FF2450B5B0003DE2BD /* AnswerSheetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */; };
 		2FEEE4012450B94C003DE2BD /* AnswerSheetList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEEE4002450B94C003DE2BD /* AnswerSheetList.swift */; };
 		31AA690AE6CC2753079D9862 /* libPods-InductionApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9DC73592FDD3EC0EF64BE96 /* libPods-InductionApp.a */; };
@@ -56,10 +60,14 @@
 		2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = satPracticeTest1.json; path = InductionApp/satPracticeTest1.json; sourceTree = SOURCE_ROOT; };
 		2F5DB6D624718007009766A7 /* QuestionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionModel.swift; sourceTree = "<group>"; };
 		2F5DB6D82471828B009766A7 /* CustomTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTimer.swift; sourceTree = "<group>"; };
+		2F6A7D122474A93200BFD3FA /* 1-ACT Exam 1904S.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "1-ACT Exam 1904S.pdf"; sourceTree = "<group>"; };
+		2F6A7D142474ACC800BFD3FA /* 1-ACT Exam 1912.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "1-ACT Exam 1912.pdf"; sourceTree = "<group>"; };
+		2F6A7D162474AE2500BFD3FA /* 1-ACT Exam 1906.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "1-ACT Exam 1906.pdf"; sourceTree = "<group>"; };
+		2F6A7D1A2474C21E00BFD3FA /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		2F6A7D1C2474CCF200BFD3FA /* BarGraphViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarGraphViews.swift; sourceTree = SOURCE_ROOT; };
 		2F945180244FFA33009521F7 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestView.swift; path = InductionApp/TestView.swift; sourceTree = SOURCE_ROOT; };
 		2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "pdf_sat-practice-test-1.pdf"; sourceTree = "<group>"; };
 		2F9451842450009D009521F7 /* josh.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = josh.jpeg; sourceTree = "<group>"; };
-		2F9C109B244F693100A7C6FF /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppRootView.swift; path = InductionApp/AppRootView.swift; sourceTree = SOURCE_ROOT; };
 		2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnswerSheetRow.swift; path = InductionApp/AnswerSheetRow.swift; sourceTree = SOURCE_ROOT; };
 		2FEEE4002450B94C003DE2BD /* AnswerSheetList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnswerSheetList.swift; path = InductionApp/AnswerSheetList.swift; sourceTree = SOURCE_ROOT; };
 		737DE53F86881C52B1DF0C17 /* Pods-InductionApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InductionApp.debug.xcconfig"; path = "Target Support Files/Pods-InductionApp/Pods-InductionApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -101,6 +109,7 @@
 		03BEBC4B244E7B69001576EC /* inductionApp */ = {
 			isa = PBXGroup;
 			children = (
+				2F6A7D1C2474CCF200BFD3FA /* BarGraphViews.swift */,
 				2F20419F2472D93B002E811E /* PdfPageModel.swift */,
 				2F5DB6D82471828B009766A7 /* CustomTimer.swift */,
 				2F5DB6D624718007009766A7 /* QuestionModel.swift */,
@@ -112,8 +121,11 @@
 				03EA7F6524516BCF00184BA1 /* CanvasRepresentable.swift */,
 				2FEEE4002450B94C003DE2BD /* AnswerSheetList.swift */,
 				2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */,
+				2F6A7D162474AE2500BFD3FA /* 1-ACT Exam 1906.pdf */,
 				2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */,
-				2F9C109B244F693100A7C6FF /* AppRootView.swift */,
+				2F6A7D122474A93200BFD3FA /* 1-ACT Exam 1904S.pdf */,
+				2F6A7D142474ACC800BFD3FA /* 1-ACT Exam 1912.pdf */,
+				2F6A7D1A2474C21E00BFD3FA /* RootView.swift */,
 				2F0DD2C7244F5F3D00AFFADE /* UserModel.swift */,
 				2F0DD2C9244F5F6300AFFADE /* TestModel.swift */,
 				038753F7244E9AA900F85970 /* LoginView.swift */,
@@ -215,12 +227,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F6A7D152474ACC800BFD3FA /* 1-ACT Exam 1912.pdf in Resources */,
 				03BEBC59244E7B6A001576EC /* LaunchScreen.storyboard in Resources */,
 				2F33DCDD245D1E5600239E69 /* satPracticeTest1.json in Resources */,
 				03BEBC56244E7B6A001576EC /* Preview Assets.xcassets in Resources */,
 				2F0DD2C6244F5C9800AFFADE /* GoogleService-Info.plist in Resources */,
 				2F9451852450009D009521F7 /* josh.jpeg in Resources */,
 				2F945183244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf in Resources */,
+				2F6A7D132474A93200BFD3FA /* 1-ACT Exam 1904S.pdf in Resources */,
+				2F6A7D172474AE2500BFD3FA /* 1-ACT Exam 1906.pdf in Resources */,
 				03BEBC53244E7B6A001576EC /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,11 +290,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				038753F6244E923B00F85970 /* UserRegistrationViewModel.swift in Sources */,
+				2F6A7D1D2474CCF200BFD3FA /* BarGraphViews.swift in Sources */,
 				03B26B542452AE2200D1477E /* ListLibrary.swift in Sources */,
 				2F0DD2C8244F5F3D00AFFADE /* UserModel.swift in Sources */,
 				038753FA244E9AC800F85970 /* UserHomepageView.swift in Sources */,
 				2F0DD2CA244F5F6300AFFADE /* TestModel.swift in Sources */,
 				03BEBC4D244E7B69001576EC /* AppDelegate.swift in Sources */,
+				2F6A7D1B2474C21E00BFD3FA /* RootView.swift in Sources */,
 				03EA7F6624516BCF00184BA1 /* CanvasRepresentable.swift in Sources */,
 				2FEEE4012450B94C003DE2BD /* AnswerSheetList.swift in Sources */,
 				2F5DB6D92471828B009766A7 /* CustomTimer.swift in Sources */,
@@ -289,7 +306,6 @@
 				2F2041A02472D93B002E811E /* PdfPageModel.swift in Sources */,
 				2F945181244FFA33009521F7 /* TestView.swift in Sources */,
 				038753F8244E9AA900F85970 /* LoginView.swift in Sources */,
-				2F9C109C244F693100A7C6FF /* AppRootView.swift in Sources */,
 				03BEBC51244E7B69001576EC /* SignupView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

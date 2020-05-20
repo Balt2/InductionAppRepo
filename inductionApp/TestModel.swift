@@ -276,6 +276,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     //Create a test fromo Data (coming from database mostly)
     init(jsonData: Data, pdfData: Data){
         self.pdfImages = TestPDF(data: pdfData).pages
+        
         self.testFromJson = self.createTestFromJson(data: jsonData)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
         self.numberOfSections = self.sections.count
@@ -286,6 +287,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore)
             }
         }
+        print("donne")
     }
     
     //Creates a test from a section (or multiple ones) from a test
