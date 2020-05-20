@@ -12,7 +12,7 @@ import Firebase
 struct UserHomepageView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var user: User
-    
+    @State var isActive: Bool = false
   var body: some View {
     NavigationView{
       HStack {
@@ -30,17 +30,19 @@ struct UserHomepageView: View {
               .padding()
               HStack(alignment: .top) {
                   VStack (alignment: .leading) {
-                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!)){
+                    
+                    
+                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isActive), isActive: self.$isActive){
                         HStack{
                             getLoadingIcon() //Folder or activity indicator saying it is loading
                             Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
                         }
-                    }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+                    }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
                         .disabled(user.getTestsComplete == false)
                     
                         
 
-                    NavigationLink(destination: StudyTable(user: currentAuth.currentUser!)){
+                    NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isActive)){ // isActive: self.$isActive
                           HStack{
                               getLoadingIcon() //Folder or activity indicator saying it is loading
                               Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )

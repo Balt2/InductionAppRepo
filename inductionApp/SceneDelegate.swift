@@ -26,8 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = UIHostingController(rootView: AppRootView()
-                .environmentObject(manager)
-                .environmentObject(NavigationFlowObject()))
+                .environmentObject(manager))
                 
             self.window = window
             window.makeKeyAndVisible()

@@ -11,7 +11,7 @@ import PencilKit
 import Combine
 
 struct TestView: View {
-    //@EnvironmentObject var tests: TestList
+    @Binding var shouldPopToRootView : Bool
     //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "1-ACT Exam 1906")
     @ObservedObject var testData: Test
     //@ObservedObject var user: User
@@ -32,10 +32,7 @@ struct TestView: View {
                             ForEach(self.testData.currentSection!.pages, id: \.self){ page in
                                 PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
                                     .disabled( (self.testData.testState == .inSection || self.testData.testState == .lastSection ) ? false : true)
-//                                    .onTapGesture {
-//                                    print(outsideProxy.frame(in: .local))
-                                        //}
-                            }.navigationBarItems(leading: EndTestNavigationView(test: self.testData), trailing: TimerNavigationView(test: self.testData))
+                            }.navigationBarItems(leading: EndTestNavigationView(test: self.testData, shouldPopToRootFromNav: self.$shouldPopToRootView), trailing: TimerNavigationView(test: self.testData))
                             
                         }
                     }
@@ -68,12 +65,9 @@ struct PageView: View{
 }
 
 struct EndTestNavigationView: View {
-    //Used to go back
-   // @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @EnvironmentObject var currentAuth: FirebaseManager
-    @EnvironmentObject var navControl: NavigationFlowObject
     @ObservedObject var test: Test
     @State private var showAlert = false
+    @Binding var shouldPopToRootFromNav: Bool
     var body: some View {
          Button(action: {
             self.showAlert = true
@@ -86,40 +80,14 @@ struct EndTestNavigationView: View {
                   primaryButton: .default(Text("Cancel")),
                   secondaryButton: .default(Text("OK")){
                     //self.presentationMode.wrappedValue.dismiss()
-                    self.navControl.isActive = true
+                    self.shouldPopToRootFromNav = false
                     self.test.endTest()
                     //Ideally it goes all the way back to
-                    
                 })
         }
         
     }
-    
-    ////
-//    struct RootView: View {
-//
-//        @EnvironmentObject var navigationFlow: NavigationFlowObject
-//
-//        var body: some View {
-//            NavigationView {
-//                ZStack {
-//                    NavigationLink(destination: SecondView()
-//                        .navigationBarTitle("second", displayMode: .inline)
-//                    , isActive: $navigationFlow.isActive){
-//                        EmptyView()
-//                    }.isDetailLink(false)
-//                    Button(action: {
-//                        self.navigationFlow.isActive = true
-//                    }) {
-//                        Text("Push me")
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
-    
-    ////
+
     
 }
 
@@ -258,9 +226,10 @@ struct TimerNavigationView: View {
 //Tables that are presented before the TestView
 struct TestTable: View {
     @ObservedObject var user: User
+    @Binding var rootIsActive: Bool
     var body: some View {
         List(user.tests){test in
-            NavigationLink(destination: TestView(testData: test)){
+            NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
                 Text(test.name)
             }.isDetailLink(false).frame(height: 90)
         }.navigationBarTitle(Text("Choose Test to Take"))
@@ -269,11 +238,12 @@ struct TestTable: View {
 
 struct StudyTable: View {
     @ObservedObject var user: User
+    @Binding var rootIsActive: Bool
     var body: some View {
         List{
             ForEach(user.tests ?? [], id: \.self){test in
                 ForEach(test.sections, id: \.self){section in
-                    NavigationLink(destination: TestView(testData: Test(testSections: [section], test: test))){
+                    NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: Test(testSections: [section], test: test))){
                         Text(" \(section.name) from \(test.name)")
                     }.isDetailLink(false).frame(height: 90)
                     
