@@ -287,7 +287,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore)
             }
         }
-        print("donne")
+        print("donne: \(self.name)")
     }
     
     //Creates a test from a section (or multiple ones) from a test
@@ -323,12 +323,25 @@ class Test: ObservableObject, Hashable, Identifiable {
         currentSection?.sectionOver = true
         
         if currentSectionIndex == numberOfSections! - 1 {
+            //Test is over
             testState = .testOver
             sendResultJson()
             taken = true
+            self.reset()
         }else{
             testState = .betweenSection
         }
+    }
+    
+    //This will only be called if the
+    //user wants to leave the test early and not come back.
+    func endTest(){
+        isEraserEnabled = false
+        currentSection?.sectionOver = true
+        testState = .testOver
+        sendResultJson()
+        taken = true
+        self.reset()
     }
     
     //This is called when the user wants to begin the next section

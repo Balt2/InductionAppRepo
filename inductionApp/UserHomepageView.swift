@@ -35,8 +35,9 @@ struct UserHomepageView: View {
                             getLoadingIcon() //Folder or activity indicator saying it is loading
                             Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
                         }
-                    }.buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+                    }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
                         .disabled(user.getTestsComplete == false)
+                    
                         
 
                     NavigationLink(destination: StudyTable(user: currentAuth.currentUser!)){
@@ -44,7 +45,7 @@ struct UserHomepageView: View {
                               getLoadingIcon() //Folder or activity indicator saying it is loading
                               Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
                           }
-                      }.buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+                      }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
                     .disabled(user.getTestsComplete == false)
                     
                     NavigationLink(destination: PastPerformanceTable()){

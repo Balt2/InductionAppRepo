@@ -13,6 +13,7 @@ struct AppRootView: View {
     
 
     @EnvironmentObject var authManager: FirebaseManager
+    @EnvironmentObject var navFlow: NavigationFlowObject
     
     var body: some View {
         Group {
@@ -20,15 +21,48 @@ struct AppRootView: View {
                 //Loading view
                 //Could also just be a white screenn until it firebase initailzes
                 Image("ilLogo")
-            }else if authManager.currentUser != nil  {
+            }else if authManager.currentUser != nil && navFlow.isActive == false {
                 UserHomepageView(user: authManager.currentUser!)
-            }else{
+            }else if authManager.initialized == true && authManager.currentUser == nil{
                 SignupView()
+            }else{
+                
+                NavigationLink(destination: UserHomepageView(user: authManager.currentUser!),
+                               isActive: $navFlow.isActive){
+                                UserHomepageView(user: authManager.currentUser!)
+                }.isDetailLink(true)
+                
+                //UserHomepageView(user: authManager.currentUser!)
             }
-
-           
         }
     }
+}
+
+
+//struct RootView: View {
+//    
+//    @EnvironmentObject var navigationFlow: NavigationFlowObject
+//    
+//    var body: some View {
+//        NavigationView {
+//            ZStack {
+//                NavigationLink(destination: SecondView()
+//                    .navigationBarTitle("second", displayMode: .inline)
+//                , isActive: $navigationFlow.isActive){
+//                    EmptyView()
+//                }.isDetailLink(false)
+//                Button(action: {
+//                    self.navigationFlow.isActive = true
+//                }) {
+//                    Text("Push me")
+//                }
+//            }
+//        }
+//    }
+//}
+
+final class NavigationFlowObject: ObservableObject {
+    @Published var isActive: Bool = false
 }
 
 class FirebaseManager: ObservableObject {
@@ -37,7 +71,8 @@ class FirebaseManager: ObservableObject {
     //https://github.com/invertase/react-native-firebase/issues/1166 --Pod informatioin
     @Published var currentUser: User?
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
-    @Published var initialized = false
+    @Published var initialized = false //Set to true once the firebase manager is initialized
+    //@Published var backToHomepage = false //set to true when a test is finished, so the program sends them back to the UserHomePage
     var db: Firestore!
 
     //This init starts a listener that looks for changes in the Authstate. If the listener is triggered, the user wilil be set

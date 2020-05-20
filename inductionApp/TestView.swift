@@ -11,9 +11,11 @@ import PencilKit
 import Combine
 
 struct TestView: View {
-    @EnvironmentObject var tests: TestList
+    //@EnvironmentObject var tests: TestList
     //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "1-ACT Exam 1906")
     @ObservedObject var testData: Test
+    //@ObservedObject var user: User
+    @EnvironmentObject var currentAuth: FirebaseManager
     
     var body: some View {
         ZStack {
@@ -33,7 +35,7 @@ struct TestView: View {
 //                                    .onTapGesture {
 //                                    print(outsideProxy.frame(in: .local))
                                         //}
-                        }.navigationBarItems(trailing: TimerNavigationView(test: self.testData))
+                            }.navigationBarItems(leading: EndTestNavigationView(test: self.testData), trailing: TimerNavigationView(test: self.testData))
                             
                         }
                     }
@@ -65,8 +67,65 @@ struct PageView: View{
     }
 }
 
+struct EndTestNavigationView: View {
+    //Used to go back
+   // @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var currentAuth: FirebaseManager
+    @EnvironmentObject var navControl: NavigationFlowObject
+    @ObservedObject var test: Test
+    @State private var showAlert = false
+    var body: some View {
+         Button(action: {
+            self.showAlert = true
+       }){
+        Text("End Test")
+            .foregroundColor(.red)
+         }.alert(isPresented: $showAlert){
+            Alert(title: Text("Are you sure you want to end the test?"),
+                  message: Text("You will not be able to edit this test, but results will be calculated"),
+                  primaryButton: .default(Text("Cancel")),
+                  secondaryButton: .default(Text("OK")){
+                    //self.presentationMode.wrappedValue.dismiss()
+                    self.navControl.isActive = true
+                    self.test.endTest()
+                    //Ideally it goes all the way back to
+                    
+                })
+        }
+        
+    }
+    
+    ////
+//    struct RootView: View {
+//
+//        @EnvironmentObject var navigationFlow: NavigationFlowObject
+//
+//        var body: some View {
+//            NavigationView {
+//                ZStack {
+//                    NavigationLink(destination: SecondView()
+//                        .navigationBarTitle("second", displayMode: .inline)
+//                    , isActive: $navigationFlow.isActive){
+//                        EmptyView()
+//                    }.isDetailLink(false)
+//                    Button(action: {
+//                        self.navigationFlow.isActive = true
+//                    }) {
+//                        Text("Push me")
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    
+    ////
+    
+}
+
 struct TimerNavigationView: View {
     @ObservedObject var test: Test
+    //@ObservedObject var user: User
     @State private var now = ""
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
@@ -143,6 +202,8 @@ struct TimerNavigationView: View {
                         }
                     case .lastSection:
                         self.test.endSection()
+                        //Naviagate back to the user hompage
+                        //UserHomepageView(user: self.user)
                     case .testOver:
                         print("Should never get here")
                     }
@@ -201,7 +262,7 @@ struct TestTable: View {
         List(user.tests){test in
             NavigationLink(destination: TestView(testData: test)){
                 Text(test.name)
-            }.frame(height: 90)
+            }.isDetailLink(false).frame(height: 90)
         }.navigationBarTitle(Text("Choose Test to Take"))
     }
 }
@@ -214,7 +275,8 @@ struct StudyTable: View {
                 ForEach(test.sections, id: \.self){section in
                     NavigationLink(destination: TestView(testData: Test(testSections: [section], test: test))){
                         Text(" \(section.name) from \(test.name)")
-                    }.frame(height: 90)
+                    }.isDetailLink(false).frame(height: 90)
+                    
                 }
             }
         }.navigationBarTitle(Text("Choose Section to Study"))

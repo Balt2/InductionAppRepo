@@ -10,7 +10,11 @@ import Foundation
 import Firebase
 
 
-class User: ObservableObject {
+class User: ObservableObject, Equatable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     
     
     @Published var isLoggedIn = false

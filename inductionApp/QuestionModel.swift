@@ -86,6 +86,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     }
     
     func reset() {
+        self.answerOrdredIn = 0
         self.userAnswer = ""
         self.currentState = .ommited
         self.secondsToAnswer = 0.0
