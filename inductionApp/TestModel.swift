@@ -171,6 +171,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
 
 class Test: ObservableObject, Hashable, Identifiable {
     
+    
     //Conform to protocal helpers
     static func == (lhs: Test, rhs: Test) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
@@ -317,7 +318,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     //Called at the end of a section
-    func endSection(){
+    func endSection(user: User){
         
         isEraserEnabled = false
         currentSection?.sectionOver = true
@@ -325,7 +326,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         if currentSectionIndex == numberOfSections! - 1 {
             //Test is over
             testState = .testOver
-            sendResultJson()
+            sendResultJson(user: user)
             taken = true
             self.reset()
         }else{
@@ -335,11 +336,11 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     //This will only be called if the
     //user wants to leave the test early and not come back.
-    func endTest(){
+    func endTest(user: User){
         isEraserEnabled = false
         currentSection?.sectionOver = true
         testState = .testOver
-        sendResultJson()
+        sendResultJson(user: user)
         taken = true
         self.reset()
     }
@@ -425,7 +426,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             for question in section.questions{
                 let splitArray = question.id.split(separator: "_")
                 let questionNum = Int(splitArray[2])!
-                let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act)
+                let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
                 questionList.append(tempQuestion)
             }
             
@@ -504,8 +505,11 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     
     
-    func sendResultJson() {
-        let uploadRef = Storage.storage().reference(withPath: "performanceJSONS/newResultData.json")
+    func sendResultJson(user: User) {
+        
+        //Name of result: NameOfTest-UserID-Currentdate
+        let uploadRef = Storage.storage().reference(withPath:
+            "\(user.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(name)-\(user.id)-\(Date().toString(dateFormat: "dd-MMM-yyyy")).json")
         let uploadMetadata = StorageMetadata.init()
         uploadMetadata.contentType = "application/json"
 
@@ -585,6 +589,17 @@ struct ScoreConverter: Codable {
     var mathSectionTestScore: Int
     var writingAndLanguageTestScore: Int
     var scienceTestScore: Int
+}
+
+extension Date
+{
+    func toString( dateFormat format  : String ) -> String
+    {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
+    }
+
 }
 
 

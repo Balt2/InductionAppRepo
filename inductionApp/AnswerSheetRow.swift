@@ -16,8 +16,9 @@ struct AnswerSheetRow: View {
    //@State private var canvas: PKCanvasView = PKCanvasView()
     @ObservedObject var question: Question
     @ObservedObject var section: TestSection
-    @State var xStepper: CGFloat = CGFloat(54.0)
-    //@ObservedObject var test: Test
+    var xStepper: CGFloat = CGFloat(54.0)
+    var actMath: Bool
+    
     
     var body: some View {
         
@@ -47,17 +48,39 @@ struct AnswerSheetRow: View {
 //
 //                    }
                     
-                    Text(self.question.answerLetters[0]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 54, y: geo.size.height / 4.37))
-                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 54, y: geo.size.height/1.5))
+                    if self.actMath == true {
+                        Group{
+                            Text(self.question.answerLetters[0]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper, y: geo.size.height/1.5))
 
-                    Text(self.question.answerLetters[1]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 109, y: geo.size.height / 4.37))
-                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 109, y: geo.size.height/1.5))
+                            Text(self.question.answerLetters[1]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper + 41, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 41, y: geo.size.height/1.5))
 
-                    Text(self.question.answerLetters[2]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 163, y: geo.size.height / 4.37))
-                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 163, y: geo.size.height/1.5))
+                            Text(self.question.answerLetters[2]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper + 82, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 82, y: geo.size.height/1.5))
 
-                    Text(self.question.answerLetters[3]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: 217, y: geo.size.height / 4.37))
-                    Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: 217, y: geo.size.height/1.5))
+                            Text(self.question.answerLetters[3]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper + 123, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 123, y: geo.size.height/1.5))
+                            
+                            Text(self.question.answerLetters[4]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper + 164, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 164, y: geo.size.height/1.5))
+                        }
+                    }else{
+                        Group{
+                            Text(self.question.answerLetters[0]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper, y: geo.size.height/1.5))
+        
+                            Text(self.question.answerLetters[1]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper + 55, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 55, y: geo.size.height/1.5))
+        
+                            Text(self.question.answerLetters[2]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper + 110, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 110, y: geo.size.height/1.5))
+        
+                            Text(self.question.answerLetters[3]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper + 165, y: geo.size.height / 4.37))
+                            Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 165, y: geo.size.height/1.5))
+                        }
+                    }
+                    
                 }
                 
                 if(self.question.currentState == .invalidSelection){

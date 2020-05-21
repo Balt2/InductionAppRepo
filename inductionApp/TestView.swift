@@ -59,13 +59,16 @@ struct PageView: View{
             Image(uiImage: self.model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
             GeometryReader { geo in
-                CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true), page: self.model, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
+                CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true, isActMath: false), page: self.model, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
             }
         }
     }
 }
+//Helpful links: Alert  - https://www.hackingwithswift.com/books/ios-swiftui/showing-alert-messages
+//Workaround for popToRootView - https://stackoverflow.com/questions/57334455/swiftui-how-to-pop-to-root-view
 
 struct EndTestNavigationView: View {
+    @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
     @State private var showAlert = false
     @Binding var shouldPopToRootFromNav: Bool
@@ -82,7 +85,7 @@ struct EndTestNavigationView: View {
                   primaryButton: .default(Text("Cancel")),
                   secondaryButton: .default(Text("OK")){
                     //self.presentationMode.wrappedValue.dismiss()
-                    self.test.endTest()
+                    self.test.endTest(user: self.currentAuth.currentUser!) //TODO: Dont force
                     self.shouldPopToRootFromNav = false
                 })
         }
@@ -92,6 +95,7 @@ struct EndTestNavigationView: View {
 }
 
 struct TimerNavigationView: View {
+    @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
     @Binding var shouldPopToRootView : Bool
     @State private var now = ""
@@ -162,14 +166,14 @@ struct TimerNavigationView: View {
                     case .notStarted:
                         self.test.startTest()
                     case .inSection:
-                        self.test.endSection()
+                        self.test.endSection(user: self.currentAuth.currentUser!)
                     case .betweenSection:
                         self.test.nextSection(fromStart: false)
                         if self.test.showAnswerSheet == true {
                             self.test.currentSection?.scalePages()
                         }
                     case .lastSection:
-                        self.test.endSection()
+                        self.test.endSection(user: self.currentAuth.currentUser!)
                         //Naviagate back to the user hompage
                         //UserHomepageView(user: self.user)
                     case .testOver:
@@ -188,7 +192,7 @@ struct TimerNavigationView: View {
                     Text("\(now) left")
                         .onReceive(timer) { _ in
                             if self.test.currentSection!.sectionTimer.done == true{
-                                self.test.endSection()
+                                self.test.endSection(user: self.currentAuth.currentUser!)
                             }
                             self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
                     }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)

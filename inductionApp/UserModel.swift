@@ -34,21 +34,57 @@ class User: ObservableObject, Equatable {
         self.lastName = ln
         self.associationID = aID
         self.testRefs = testRefs
-    
         
-        self.addTests { b in
-            if b == true{
-                print("At least one test loaded in")
-                self.getTestsComplete = true
-            }else{
-                print("No Test loaded in")
-                self.getTestsComplete = true
-            }
+        
+        self.getTests{_ in
+            //If boolean is false then no tests exist
+            self.getTestsComplete = true
         }
+        
+//        self.addTests { b in
+//            if b == true{
+//                print("At least one test loaded in")
+//                self.getTestsComplete = true
+//            }else{
+//                print("No Test loaded in")
+//                self.getTestsComplete = true
+//            }
+//        }
         
 //        self.getPerformancePdf { pdf in
 //            self.performancePDF = TestPDF(data: pdf).pages
 //        }
+    }
+    
+    func getTests(completionHandler: @escaping (_ completion: Bool) -> ()) {
+        var count = 0 //Used to determine if the array has been searched and we can have the completion handler
+        if testRefs.count == 0 {completionHandler(false)} //Return if there are no tests in testRefs available
+        for testRef in self.testRefs {
+            let refJson: StorageReference = Storage.storage().reference().child("\(associationID)/tests/\(testRef).json")
+            let refPdf: StorageReference = Storage.storage().reference().child("\(associationID)/tests/\(testRef).pdf")
+            getFile(ref: refJson, pdf: false){jsonD in
+                guard let jsonData = jsonD else {return}
+                self.getFile(ref: refPdf, pdf: true){pdfD in
+                    guard let pdfData = pdfD else {return}
+                    let test = Test(jsonData: jsonData, pdfData: pdfData)
+                    print("TEST ADDED: \(refJson.fullPath)")
+                    self.tests.append(test)
+                    count += 1
+                    if count == self.testRefs.count {completionHandler(true)}
+                }
+            }
+        }
+    }
+    
+    func getFile(ref: StorageReference, pdf: Bool, completionHandler: @escaping (_ completion: Data?) -> ()) {
+        ref.getData(maxSize: pdf == true ? (40 * 1024 * 1024) : (1 * 1024 * 1024)){data, error in
+            if let error = error {
+                print("error retriving file at: \(ref.fullPath)")
+                completionHandler(nil)
+            }else{
+                completionHandler(data!)
+            }
+        }
     }
     
     

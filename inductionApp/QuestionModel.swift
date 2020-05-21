@@ -30,6 +30,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     let reason: String
     let location: IndexPath
     let isACT: Bool
+    let isACTMath: Bool
     var answerLetters = ["A", "B", "C", "D"]
     var finalState: QuestionState {
         self.checkAnswer()
@@ -42,7 +43,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     @Published var secondsToAnswer = 0.0
     @Published var canvas: PKCanvasView?
     
-    init(q: QuestionFromJson, ip: IndexPath, act: Bool) {
+    init(q: QuestionFromJson, ip: IndexPath, act: Bool, isActMath: Bool) {
         self.officialID = q.id
         self.officialSub = q.officialSub
         self.tutorSub = q.tutorSub
@@ -50,13 +51,19 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.reason = q.reason
         self.isACT = act
         self.location = ip
+        self.isACTMath = isActMath
         
-        if isACT && (ip.row + 1) % 2 == 1 {
+        if self.isACTMath && (ip.row + 1) % 2 == 1 {
+            self.answerLetters = ["A", "B", "C", "D", "E"]
+        }else if self.isACTMath {
+            self.answerLetters = ["F", "G", "H", "I", "J"]
+        }else if isACT && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D"]
         }else if isACT {
             self.answerLetters = ["F", "G", "H", "J"]
         }
-      
+        
+    
     }
     
     init(question: Question){
@@ -67,8 +74,13 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.reason = question.reason
         self.isACT = question.isACT
         self.location = question.location
+        self.isACTMath = question.isACTMath
         
-        if isACT && (question.location.row + 1) % 2 == 1 {
+        if self.isACTMath && (question.location.row + 1) % 2 == 1 {
+            self.answerLetters = ["A", "B", "C", "D", "E"]
+        }else if self.isACTMath {
+            self.answerLetters = ["F", "G", "H", "I", "J"]
+        }else if isACT && (question.location.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D"]
         }else if isACT {
             self.answerLetters = ["F", "G", "H", "J"]

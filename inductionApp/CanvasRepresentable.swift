@@ -27,7 +27,7 @@ struct CanvasRepresentable: UIViewRepresentable {
         var parent: CanvasRepresentable
         
         init(_ parent: CanvasRepresentable) {
-            print("Init Represenatable")
+            //print("Init Represenatable")
             self.parent = parent
             if parent.isAnswerSheet == true{
                 for i in 0..<4 {
@@ -38,7 +38,7 @@ struct CanvasRepresentable: UIViewRepresentable {
         }
         
         func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-            print("Canvas View Did Change")
+           //print("Canvas View Did Change")
             //This function is called by the PKCanvasView when it is done being edited
 
             //UIImageWriteToSavedPhotosAlbum(imageCreated, self.parent, nil, nil)
@@ -116,7 +116,7 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func makeCoordinator() -> Coordinator {
         //question.coordinator =
-        print("Made Coordinator")
+        //print("Made Coordinator")
         return Coordinator(self)
         
     }
@@ -153,17 +153,46 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         
-        if page.pageID != -1 { //It is a real page rather than
+        
+//        if isAnswerSheet == true{
+//           // uiView.layer.addSublayer(question.canvas!.layer)
+//            
+//            if question.canvas == nil{
+//                print("NILLL VIEW")
+//                //question.canvas = uiView
+//            }else if question.canvas != uiView{
+//                print("DIFFFERENT VIEW")
+//            }
+//            if question.canvas?.delegate == nil{
+//                print("Nill Delgate")
+//                question.canvas?.delegate = context.coordinator
+//            }
+//            
+////            if question.canvas?.delegate as! Coordinator != context.coordinator{
+////
+////                print("Different Coordinator")
+////                //question.canvas?.delegate = context.coordinator
+////            }
+////
+//                
+//            
+////            print("UPDATE VIEW")
+////            print(uiView)
+////            print(question.canvas)
+////
+////            print(context.coordinator)
+////            print(question.canvas?.delegate)
+//        }
+        if page.pageID != -1 { //It is a real page rather than a question
             
             let scale = (x: CGFloat(canvasGeo.width) / uiView.bounds.size.width, y: CGFloat(canvasGeo.height) / uiView.bounds.size.height)
-            print("CANVAS GEO: \(canvasGeo)")
-            print("View sent: \(uiView.bounds)")
-            print("Canvas View: \(page.canvas?.bounds)")
-            print("Drawing View: \(uiView.drawing.bounds)")
-            print("Page View: \(page.uiImage.size)")
-            print("SCALE: \(scale) ")
+//            print("CANVAS GEO: \(canvasGeo)")
+//            print("View sent: \(uiView.bounds)")
+//            print("Canvas View: \(page.canvas?.bounds)")
+//            print("Drawing View: \(uiView.drawing.bounds)")
+//            print("Page View: \(page.uiImage.size)")
+//            print("SCALE: \(scale) ")
             if page.shouldScale == true && scale.x != CGFloat(1.0) {
-                print("THIS IS THE SCALIGN FACTOR")
                 page.canvas?.drawing.transform(using: CGAffineTransform(scaleX: scale.x , y: scale.y))
                 page.shouldScale = false
             }

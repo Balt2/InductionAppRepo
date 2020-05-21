@@ -18,7 +18,7 @@ struct AnswerSheetList: View {
                 ForEach(self.test.sections, id: \.self){ section in
                     Section(header: Text("Section \(section.sectionIndex + 1)")){
                         ForEach(section.questions, id: \.self){ question in
-                            AnswerSheetRow(question: question, section: section)
+                            AnswerSheetRow(question: question, section: section, actMath: section.name == "Math" && self.test.act == true)
                         }
                     }.disabled( self.test.begunTest == false
                         || self.test.taken == true

@@ -76,7 +76,7 @@ class FirebaseManager: ObservableObject {
                                         ln: dataDescription!["lastN"] as! String,
                                         id: document.documentID,
                                         aID: dataDescription!["associationID"] as! String,
-                                        testRefs: ["BEN"])
+                                        testRefs: dataDescription!["testRefs"] as! [String])
                 completionHandler(true)
 
             }else{
