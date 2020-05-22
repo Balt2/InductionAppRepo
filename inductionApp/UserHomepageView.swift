@@ -51,8 +51,10 @@ struct UserHomepageView: View {
                       }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
                     .disabled(user.getTestsComplete == false)
                     
-                    NavigationLink(destination: PastPerformanceTable()){
-                     HStack{
+                    Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
+                        
+                    }){
+                        HStack{
                          Image(systemName: "archivebox")
                          Text("Past Performance")
                         }
@@ -67,6 +69,7 @@ struct UserHomepageView: View {
                           }
                       }
                       .buttonStyle(buttonBackgroundStyle())
+                    
                         Button(action: {
                             if self.currentAuth.signOut() == true {
                                 print("Sucsess Logging out!")
@@ -82,7 +85,8 @@ struct UserHomepageView: View {
                         .buttonStyle(buttonBackgroundStyle())
                     
                       Spacer()
-                      Image("ilLogo")
+                      //Image("ilLogo")
+                        Image("optLogo")
                       .resizable()
                           .aspectRatio(contentMode: .fit)
                           .frame(width: 100)

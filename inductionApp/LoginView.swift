@@ -14,10 +14,12 @@ struct LoginView: View {
     
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
     @EnvironmentObject var currentAuth: FirebaseManager
+    @State private var showingErrorCredentials = false
     
     func signIn () {
         currentAuth.signIn(email: userRegistrationViewModel.email, password: userRegistrationViewModel.password){ (result, error) in
             if error != nil{
+                self.showingErrorCredentials = true
                 print("ERROR Logging in")
             } else{
                 print("Succsess logging in")
@@ -25,6 +27,7 @@ struct LoginView: View {
             
         }
     }
+    
     var body: some View {
         VStack {
             
@@ -39,6 +42,7 @@ struct LoginView: View {
                 && self.userRegistrationViewModel.isPasswordCapitalLetter){
                     self.signIn()
                 }else{
+                    self.showingErrorCredentials = true
                     print("Login Failed")
                 }
             }) {
@@ -51,11 +55,14 @@ struct LoginView: View {
                     .background(Color("salmon"))
                     .cornerRadius(10)
                     .padding(.horizontal)
+            }.alert(isPresented: $showingErrorCredentials) {
+                Alert(title: Text("Error Logging In"),
+                      message: Text("Please use correct credentials. If you have not created an account, create one."),
+                      dismissButton: .default(Text("OK")))
             }
             Image("ilLogo")
             .resizable()
             .aspectRatio(contentMode: .fit)
-            //.padding()
         }
     }
 }

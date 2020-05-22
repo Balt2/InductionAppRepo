@@ -29,9 +29,14 @@ struct CanvasRepresentable: UIViewRepresentable {
         init(_ parent: CanvasRepresentable) {
             //print("Init Represenatable")
             self.parent = parent
-            if parent.isAnswerSheet == true{
+            if parent.isAnswerSheet == true && parent.question.isACTMath == false{
                 for i in 0..<4 {
-                    let rect = CGRect(x: parent.protoRect.width * (CGFloat(i) + 1) - 10, y: parent.protoRect.height - 10, width: parent.protoRect.minX, height: parent.protoRect.minX)
+                    let rect = CGRect(x: 54 + parent.protoRect.width * (CGFloat(i)) - 10, y: parent.protoRect.height - 10, width: parent.protoRect.minX, height: parent.protoRect.minX)
+                    self.bubbleRects[parent.question.answerLetters[i]] = rect
+                }
+            }else if parent.isAnswerSheet == true{
+                for i in 0..<5 {
+                    let rect = CGRect(x: 54 + parent.protoRect.width * (CGFloat(i)) - 10, y: parent.protoRect.height - 10, width: parent.protoRect.minX, height: parent.protoRect.minX)
                     self.bubbleRects[parent.question.answerLetters[i]] = rect
                 }
             }
@@ -156,7 +161,7 @@ struct CanvasRepresentable: UIViewRepresentable {
         
 //        if isAnswerSheet == true{
 //           // uiView.layer.addSublayer(question.canvas!.layer)
-//            
+//
 //            if question.canvas == nil{
 //                print("NILLL VIEW")
 //                //question.canvas = uiView
@@ -167,15 +172,15 @@ struct CanvasRepresentable: UIViewRepresentable {
 //                print("Nill Delgate")
 //                question.canvas?.delegate = context.coordinator
 //            }
-//            
+//
 ////            if question.canvas?.delegate as! Coordinator != context.coordinator{
 ////
 ////                print("Different Coordinator")
 ////                //question.canvas?.delegate = context.coordinator
 ////            }
 ////
-//                
-//            
+//
+//
 ////            print("UPDATE VIEW")
 ////            print(uiView)
 ////            print(question.canvas)

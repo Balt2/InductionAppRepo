@@ -197,7 +197,7 @@ struct TimerNavigationView: View {
                             self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
                     }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
                 }
-                
+                Spacer()
             }
         }
     }

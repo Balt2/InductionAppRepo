@@ -16,6 +16,8 @@ struct SignupView: View {
     //Observable object that contains data that the user puts in when creating a class
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
     @EnvironmentObject var currentAuth: FirebaseManager
+    @State private var showingErrorCredentials = false
+    
     var db = Firestore.firestore()
     
     var body: some View {
@@ -49,20 +51,25 @@ struct SignupView: View {
                     
                     Button(action: {
                         //Check if email is valid, check if password is minum 8 characters and has on upercase letter, Check confirm password is equal to password
-                        if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
+                        if (self.userRegistrationViewModel.associationID != "onpointtutors") {
+                            debugPrint(self.userRegistrationViewModel.associationID)
+                            self.showingErrorCredentials = true
+                        }
+                        else if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
                             && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordConfirmValid && self.userRegistrationViewModel.isAssociationIDLengthValid){
                                 
                             self.currentAuth.signUp(userRegModel: self.userRegistrationViewModel) { succsess in
                                 if succsess == true{
                                     print("Signed UP and loged in")
                                 }else{
+                                    self.showingErrorCredentials = true
                                     print("ERROR Signing up")
                                 }
                             }
                         }else{
+                            self.showingErrorCredentials = true
                             print("Error on Sign up: Invalid Email and/or password")
                         }
-                        
                     }) {
                         Text("Sign Up")
                             .font(.system(.body, design: .rounded))
@@ -74,6 +81,10 @@ struct SignupView: View {
                             .cornerRadius(10)
                             .padding(.horizontal)
                         
+                    }.alert(isPresented: $showingErrorCredentials) {
+                        Alert(title: Text("Error creating an account"),
+                              message: Text("Please make sure you are creating an account with a new email and that you are using a valid association ID. Make sure there is no white space in association ID"),
+                              dismissButton: .default(Text("OK")))
                     }
                     
                     HStack {

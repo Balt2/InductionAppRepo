@@ -76,7 +76,7 @@ class FirebaseManager: ObservableObject {
                                         ln: dataDescription!["lastN"] as! String,
                                         id: document.documentID,
                                         aID: dataDescription!["associationID"] as! String,
-                                        testRefs: dataDescription!["testRefs"] as! [String])
+                                        testRefs: ["1904S", "1906ACT", "1912ACT"]) //dataDescription!["testRefs"] as! [String]
                 completionHandler(true)
 
             }else{
@@ -115,15 +115,9 @@ class FirebaseManager: ObservableObject {
                 //We now want to create this user in our database
                 self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, handler: {(success) -> Void in
                     if success {
-                        self.getUser(id: (authResult?.user.uid)!, completionHandler: { (success) -> Void in //Sets the current user
-                            if success {
-                                //Sucess getting the user info from database
-                                handler(true)
-                            }else{
-                                //Failure getting the user info from database
-                                handler(false)
-                            }
-                        })
+                        //Self.getUser
+                        //Firebase automatically gets user so we dont need to call this
+                        handler(true)
                     } else{
                         //Failutre to create user
                         handler(false)
