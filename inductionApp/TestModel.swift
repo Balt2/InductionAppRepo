@@ -163,7 +163,6 @@ class TestSection: ObservableObject, Hashable, Identifiable {
 
 class Test: ObservableObject, Hashable, Identifiable {
     
-    
     //Conform to protocal helpers
     static func == (lhs: Test, rhs: Test) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
@@ -172,6 +171,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         return ObjectIdentifier(self).hashValue
     }
     var id = UUID()
+    var db = Firestore.firestore() //Instance of database
     
     //Variables used in UI
     @Published var currentSectionIndex = 0
@@ -490,10 +490,36 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     
     func sendResultJson(user: User) {
-        
         //Name of result: NameOfTest-UserID-Currentdate
         let uploadRef = Storage.storage().reference(withPath:
             "\(user.association.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(name)-\(user.id)-\(Date().toString(dateFormat: "dd-MMM-yyyy")).json")
+        
+        if self.isFullTest == true {
+            user.testResultRefs.append(uploadRef.fullPath)
+            self.db.collection("users").document(user.id).updateData([
+                "testResultRefs" : user.testResultRefs
+            ]){error in
+                if let error = error {
+                    print("Error updating document: \(error)")
+                }else{
+                    user.testResultRefs
+                    print("Document successfully updated")
+                }
+            }
+        }else{
+            user.studyResultRefs.append(uploadRef.fullPath)
+            self.db.collection("users").document(user.id).updateData([
+                "studyResultRefs" : user.studyResultRefs
+            ]){error in
+                if let error = error {
+                    print("Error updating document: \(error)")
+                }else{
+                    print("Document successfully updated")
+                }
+            }
+        }
+        
+        
         let uploadMetadata = StorageMetadata.init()
         uploadMetadata.contentType = "application/json"
 

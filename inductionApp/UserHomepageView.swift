@@ -20,7 +20,7 @@ struct UserHomepageView: View {
                 VStack {
                     HStack {
                         
-                        Text("Name: Ben") //currentAuth.currentUser!.firstName
+                        Text("Name: \(currentAuth.currentUser!.firstName)") //
                             .fontWeight(.bold)
                             .modifier(nameLabelStyle())
                         Spacer()

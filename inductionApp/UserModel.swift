@@ -22,10 +22,16 @@ class User: ObservableObject, Equatable {
     let firstName: String
     let lastName: String
     var association: Association
-    let testRefs: [String]
+    
     @Published var tests: [Test] = []
     @Published var getTestsComplete = false
     var performancePDF = [PageModel]()
+    
+    var testRefs: [String]
+    var testResultRefs: [String] = []
+    var studyRefs: [String] = []
+    var studyResultRefs: [String] = []
+     
     
     init(fn: String, ln: String, id: String, association: Association, testRefs: [String]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
         print("INIT USER")

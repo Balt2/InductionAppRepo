@@ -46,10 +46,10 @@ class FirebaseManager: ObservableObject {
         db = Firestore.firestore()
         
         //Get Associations
-//        getAssociations(){_ in
-//            print("GETTING ASSOCIATIONS")
-//            print(self.associations)
-//        }
+        getAssociations(){_ in
+            print("GETTING ASSOCIATIONS")
+            print(self.associations)
+        }
         
         //State listener for authentication
         Auth.auth().addStateDidChangeListener { (authFromDataB, user) in //let handle =
@@ -119,8 +119,7 @@ class FirebaseManager: ObservableObject {
                         completionHandler(false)
                     }
                 }
-                
-                
+
             }else{
                 print("Document was not retrieved")
                 self.currentUser = nil
@@ -133,7 +132,7 @@ class FirebaseManager: ObservableObject {
     //This creats a user in the database
     func createUser(uid: String, fn: String, ln: String, aid: String, handler: @escaping (_ success: Bool) -> Void){
         
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid]){ error in
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": [], "studyRefs": []]){ error in
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)
