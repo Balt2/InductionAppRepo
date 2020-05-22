@@ -51,7 +51,7 @@ struct SignupView: View {
                     
                     Button(action: {
                         //Check if email is valid, check if password is minum 8 characters and has on upercase letter, Check confirm password is equal to password
-                        if (self.userRegistrationViewModel.associationID != "onpointtutors") {
+                        if !(self.currentAuth.associations.contains(where: {$0.associationID == self.userRegistrationViewModel.associationID })){
                             debugPrint(self.userRegistrationViewModel.associationID)
                             self.showingErrorCredentials = true
                         }

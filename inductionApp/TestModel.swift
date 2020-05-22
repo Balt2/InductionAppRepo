@@ -106,14 +106,6 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         for page in pages{
             page.shouldScale = true
             
-//            if up == true{
-//                print("SCALLING UP: \(page.scale!)")
-//                page.canvas?.drawing.transform(using: CGAffineTransform(scaleX: CGFloat(page.scale!.x), y: CGFloat(page.scale!.y)))
-//            }else{
-//                print("SCALLING DOWN: \(page.scale!)")
-//                page.canvas?.drawing.transform(using: CGAffineTransform(scaleX:  1.0 / CGFloat(page.scale!.x) , y:  1.0 / CGFloat(page.scale!.y)))
-//            }
-            
         }
     }
     
@@ -363,14 +355,6 @@ class Test: ObservableObject, Hashable, Identifiable {
         currentSection?.begunSection = true
     }
     
-    //Called when test (or section should be ended)
-//    func endTest(){
-//        taken = true
-//        endSection()
-//        testState = .testOver
-//        sendResultJson()
-//    }
-   
     
     func reset() {
         questions.forEach { $0.forEach {$0.reset() } }
@@ -509,7 +493,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         //Name of result: NameOfTest-UserID-Currentdate
         let uploadRef = Storage.storage().reference(withPath:
-            "\(user.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(name)-\(user.id)-\(Date().toString(dateFormat: "dd-MMM-yyyy")).json")
+            "\(user.association.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(name)-\(user.id)-\(Date().toString(dateFormat: "dd-MMM-yyyy")).json")
         let uploadMetadata = StorageMetadata.init()
         uploadMetadata.contentType = "application/json"
 

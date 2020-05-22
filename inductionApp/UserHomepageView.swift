@@ -14,98 +14,107 @@ struct UserHomepageView: View {
     @ObservedObject var user: User
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
-  var body: some View {
-    NavigationView{
-      HStack {
-          VStack {
-              HStack {
-               
-                Text("Name: Ben") //currentAuth.currentUser!.firstName
-                      .fontWeight(.bold)
-                      .modifier(nameLabelStyle())
-                  Spacer()
-                Text("Tutor ID: \(currentAuth.currentUser!.associationID)")
-                      .fontWeight(.bold)
-                      .modifier(nameLabelStyle())
-              }
-              .padding()
-              HStack(alignment: .top) {
-                  VStack (alignment: .leading) {
-                    
-                    
-                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
-                        HStack{
-                            getLoadingIcon() //Folder or activity indicator saying it is loading
-                            Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
-                        }
-                    }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
-                        .disabled(user.getTestsComplete == false)
-                    
+    var body: some View {
+        NavigationView{
+            HStack {
+                VStack {
+                    HStack {
                         
-
-                    NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
-                          HStack{
-                              getLoadingIcon() //Folder or activity indicator saying it is loading
-                              Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
-                          }
-                      }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
-                    .disabled(user.getTestsComplete == false)
-                    
-                    Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
-                        
-                    }){
-                        HStack{
-                         Image(systemName: "archivebox")
-                         Text("Past Performance")
-                        }
-                    }.buttonStyle(buttonBackgroundStyle())
-                      
-                      Button(action: {
-                          //what the button does
-                      }) {
-                          HStack {
-                              Image(systemName: "lightbulb")
-                              Text("Reccomended Study")
-                          }
-                      }
-                      .buttonStyle(buttonBackgroundStyle())
-                    
-                        Button(action: {
-                            if self.currentAuth.signOut() == true {
-                                print("Sucsess Logging out!")
-                            } else {
-                                print("Failed to log out")
-                            }
-                        }) {
-                            HStack {
-                                Image(systemName: "arrow.right.circle")
-                                Text("Sign out")
-                            }
-                        }
-                        .buttonStyle(buttonBackgroundStyle())
-                    
-                      Spacer()
-                      //Image("ilLogo")
-                        Image("optLogo")
-                      .resizable()
-                          .aspectRatio(contentMode: .fit)
-                          .frame(width: 100)
+                        Text("Name: Ben") //currentAuth.currentUser!.firstName
+                            .fontWeight(.bold)
+                            .modifier(nameLabelStyle())
+                        Spacer()
+                        Text("Tutor: \(currentAuth.currentUser!.association.name)")
+                            .fontWeight(.bold)
+                            .modifier(nameLabelStyle())
+                    }
                     .padding()
-                      
-                  }
-                  .padding()
-    
-                  VStack {
-                      BarContentView()
-                    Spacer()
-                  }
-                  Spacer()
-              }
-          }
-          .navigationBarTitle("Home Page", displayMode: .inline)
-        }
-    }.navigationViewStyle((StackNavigationViewStyle()))
-  }
+                    HStack(alignment: .top) {
+                        VStack (alignment: .leading) {
+                            
+                            
+                            NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
+                                HStack{
+                                    getLoadingIcon() //Folder or activity indicator saying it is loading
+                                    Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
+                                }
+                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
+                                .disabled(user.getTestsComplete == false)
+                            
+                            
+                            
+                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
+                                HStack{
+                                    getLoadingIcon() //Folder or activity indicator saying it is loading
+                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
+                                }
+                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+                                .disabled(user.getTestsComplete == false)
+                            
+                            Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
+                                
+                            }){
+                                HStack{
+                                    Image(systemName: "archivebox")
+                                    Text("Past Performance")
+                                }
+                            }.buttonStyle(buttonBackgroundStyle())
+                            
+                            Button(action: {
+                                //what the button does
+                            }) {
+                                HStack {
+                                    Image(systemName: "lightbulb")
+                                    Text("Reccomended Study")
+                                }
+                            }
+                            .buttonStyle(buttonBackgroundStyle())
+                            
+                            Button(action: {
+                                if self.currentAuth.signOut() == true {
+                                    print("Sucsess Logging out!")
+                                } else {
+                                    print("Failed to log out")
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "arrow.right.circle")
+                                    Text("Sign out")
+                                }
+                            }
+                            .buttonStyle(buttonBackgroundStyle())
+                            
+                            Spacer()
+                            if user.association.image != nil{
+                                Image(uiImage: user.association.image!)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 100)
+                                    .padding()
+                            }else{
+                                Image("ilLogo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 100)
+                                    .padding()
+                            }
+                            
+                            
+                            
+                        }
+                        .padding()
+                        
+                        VStack {
+                            BarContentView()
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                }
+                .navigationBarTitle("Home Page", displayMode: .inline)
+            }
+        }.navigationViewStyle((StackNavigationViewStyle()))
+    }
     
     func getLoadingIcon() -> AnyView{
         if user.getTestsComplete == true {
@@ -118,11 +127,11 @@ struct UserHomepageView: View {
 
 //Acitivity monitor helpers: https://stackoverflow.com/questions/56496638/activity-indicator-in-swiftui
 struct ActivityIndicator: UIViewRepresentable {
-
+    
     typealias UIView = UIActivityIndicatorView
     var isAnimating: Bool
     fileprivate var configuration = { (indicator: UIView) in }
-
+    
     func makeUIView(context: UIViewRepresentableContext<Self>) -> UIView { UIView() }
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<Self>) {
         isAnimating ? uiView.startAnimating() : uiView.stopAnimating()

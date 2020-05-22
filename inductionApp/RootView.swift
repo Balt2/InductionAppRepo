@@ -35,6 +35,7 @@ class FirebaseManager: ObservableObject {
     //https://benmcmahen.com/authentication-with-swiftui-and-firebase/
     //https://github.com/invertase/react-native-firebase/issues/1166 --Pod informatioin
     @Published var currentUser: User?
+    @Published var associations = Set<Association>()
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
     @Published var initialized = false
     var db: Firestore!
@@ -43,9 +44,16 @@ class FirebaseManager: ObservableObject {
     init(){
         print("FIREBASE Start INIT")
         db = Firestore.firestore()
-        //let handle =
-        Auth.auth().addStateDidChangeListener { (authFromDataB, user) in
-            print("BEN")
+        
+        //Get Associations
+//        getAssociations(){_ in
+//            print("GETTING ASSOCIATIONS")
+//            print(self.associations)
+//        }
+        
+        //State listener for authentication
+        Auth.auth().addStateDidChangeListener { (authFromDataB, user) in //let handle =
+            print("Listeninng for auth changes")
             if let user = user {
                 //We got a user
                 print("User: \(user)")
@@ -64,6 +72,31 @@ class FirebaseManager: ObservableObject {
                 self.initialized = true
             }
         }
+        
+        
+        
+    }
+    
+    func getAssociations(completionHander: @escaping (_ success: Bool) -> Void) {
+        let ref = db.collection("association")
+        ref.getDocuments(){(querySnnapshot, error) in
+            if let error = error {
+                print("Error getting doc: \(error)")
+                completionHander(false)
+            }else{
+                for document in querySnnapshot!.documents{
+                    let documentData = document.data()
+                    let newAssociation = Association(uid: document.documentID,
+                                                     associationID: documentData["associationID"] as! String,
+                                                     name: documentData["name"] as! String,
+                                                     imagePath: documentData["imagePath"] as! String)
+                    self.associations.insert(newAssociation)
+                    print(self.associations)
+
+                }
+                completionHander(true)
+            }
+        }
     }
     
     //This gets a users information from the database
@@ -72,13 +105,22 @@ class FirebaseManager: ObservableObject {
         docRef.getDocument {(document, error) in
             if let document = document, document.exists{
                 let dataDescription = document.data()
-                self.currentUser = User(fn: dataDescription!["firstN"] as! String,
-                                        ln: dataDescription!["lastN"] as! String,
-                                        id: document.documentID,
-                                        aID: dataDescription!["associationID"] as! String,
-                                        testRefs: ["1904S", "1906ACT", "1912ACT"]) //dataDescription!["testRefs"] as! [String]
-                completionHandler(true)
-
+                
+                self.getAssociations(){got in
+                    if got == true {
+                        self.currentUser = User(fn: dataDescription!["firstN"] as! String,
+                                                ln: dataDescription!["lastN"] as! String,
+                                                id: document.documentID,
+                                                association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
+                                                testRefs: ["1904S", "1906ACT", "1912ACT"]) //dataDescription!["testRefs"] as! [String]
+                        completionHandler(true)
+                    }else{
+                        //ERROR: No association found
+                        completionHandler(false)
+                    }
+                }
+                
+                
             }else{
                 print("Document was not retrieved")
                 self.currentUser = nil
