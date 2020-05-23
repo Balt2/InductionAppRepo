@@ -9,7 +9,6 @@
 import Foundation
 
 class CustomTimer: ObservableObject {
-    //TODO: May have to take a section or test object to alert when the timer runs out.
     private var endDate: Date?
     private var timer: Timer?
     private var remainingTimeAtLastAnswer: Double

@@ -133,6 +133,9 @@ struct CanvasRepresentable: UIViewRepresentable {
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
+            
+            
+            
             c.delegate = context.coordinator
             question.canvas = c
             return c
@@ -142,9 +145,13 @@ struct CanvasRepresentable: UIViewRepresentable {
             question.canvas = c
             return c
         }else if page.canvas == nil {
+            
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
+            
+            c.isScrollEnabled = false
+            
             c.delegate = context.coordinator
             page.canvas = c
             return c

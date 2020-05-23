@@ -27,6 +27,7 @@ struct AnswerSheetList: View {
                         || self.test.currentSection != section) //If any of these conditions are true we disable
 
                 }
+            }
                 
                 
 //                Section(header: Text("Section 1")) {
@@ -54,7 +55,7 @@ struct AnswerSheetList: View {
             }
         }
     }
-}
+//}
 
 
 

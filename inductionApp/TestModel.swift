@@ -184,12 +184,13 @@ class Test: ObservableObject, Hashable, Identifiable {
     @Published var testState: TestState = .notStarted
     @Published var isEraserEnabled = false{
         didSet{
+
             for section in sections{
                 for question in section.questions{
-                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
+                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 5.0) //TODO: CHange width of pencil
                 }
                 for page in section.pages{
-                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen)
+                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 5.0)
                 }
             }
         }
@@ -500,9 +501,10 @@ class Test: ObservableObject, Hashable, Identifiable {
                 "testResultRefs" : user.testResultRefs
             ]){error in
                 if let error = error {
+                    user.testResultRefs.removeLast() 
                     print("Error updating document: \(error)")
                 }else{
-                    user.testResultRefs
+                    
                     print("Document successfully updated")
                 }
             }
@@ -512,6 +514,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 "studyResultRefs" : user.studyResultRefs
             ]){error in
                 if let error = error {
+                    user.testResultRefs.removeLast()
                     print("Error updating document: \(error)")
                 }else{
                     print("Document successfully updated")

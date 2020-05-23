@@ -11,6 +11,7 @@ pod 'Firebase/Firestore'
 pod 'FirebaseUI', :modular_headers => true
 pod 'Firebase/Auth'
 pod 'Firebase/Storage'
+pod 'Introspect'
 
 pod 'FBSDKCoreKit', :modular_headers => true
 pod 'FBSDKLoginKit', :modular_headers => true
