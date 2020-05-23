@@ -180,39 +180,52 @@ struct TimerNavigationView: View {
                     }
                     //self.shouldScroll = true
                 }){
-                    Image(systemName: "trash")
+                    
+                    Image("SingleEraser")
                         .foregroundColor(self.test.isEraserEnabled == true ? .blue : .gray)
                         .font(self.test.isEraserEnabled == true ? .largeTitle : .title)
                 }.disabled(self.test.isEraserEnabled == true)
                     .padding()
                 
                 
+                //Minus means minimize answer sheet. Plus means show it
+                Button(action: {
+                    self.test.showAnswerSheet.toggle()
+                    self.test.currentSection?.scalePages()
+                    
+                }){
+                    Image(systemName: self.test.showAnswerSheet == true ? "minus.circle" : "plus.circle")
+                        .foregroundColor(.blue)
+                        .font(.title)
+                }.padding()
+                    
+                
                 //Plus Magnifying glass - Makes test larger
-                Button(action: {
-                    if self.test.showAnswerSheet == true {
-                        self.test.showAnswerSheet = false
-                        self.test.currentSection?.scalePages()
-                    }
-                }){
-                    Image(systemName: "plus.magnifyingglass")
-                        .foregroundColor(self.test.showAnswerSheet == false ? .blue : .gray)
-                        .font(self.test.showAnswerSheet == false ? .largeTitle : .title)
-                }.disabled(self.test.showAnswerSheet == false)
-                    .padding()
-                
-                
-                //Minus Magnifying glass - Shows Answer Sheet
-                Button(action: {
-                    if self.test.showAnswerSheet == false {
-                        self.test.showAnswerSheet = true
-                        self.test.currentSection?.scalePages()
-                    }
-                }){
-                    Image(systemName: "minus.magnifyingglass")
-                        .foregroundColor(self.test.showAnswerSheet == true ? .blue : .gray)
-                        .font(self.test.showAnswerSheet == true ? .largeTitle : .title)
-                }.disabled(self.test.showAnswerSheet == true)
-                    .padding()
+//                Button(action: {
+//                    if self.test.showAnswerSheet == true {
+//                        self.test.showAnswerSheet = false
+//                        self.test.currentSection?.scalePages()
+//                    }
+//                }){
+//                    Image(systemName: "plus.circle")
+//                        .foregroundColor(self.test.showAnswerSheet == false ? .blue : .gray)
+//                        .font(self.test.showAnswerSheet == false ? .largeTitle : .title)
+//                }.disabled(self.test.showAnswerSheet == false)
+//                    .padding()
+//
+//
+//                //Minus Magnifying glass - Shows Answer Sheet
+//                Button(action: {
+//                    if self.test.showAnswerSheet == false {
+//                        self.test.showAnswerSheet = true
+//                        self.test.currentSection?.scalePages()
+//                    }
+//                }){
+//                    Image(systemName: "minus.circle")
+//                        .foregroundColor(self.test.showAnswerSheet == true ? .blue : .gray)
+//                        .font(self.test.showAnswerSheet == true ? .largeTitle : .title)
+//                }.disabled(self.test.showAnswerSheet == true)
+//                    .padding()
                 
             }
             HStack {

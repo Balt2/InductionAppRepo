@@ -187,10 +187,10 @@ class Test: ObservableObject, Hashable, Identifiable {
 
             for section in sections{
                 for question in section.questions{
-                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 5.0) //TODO: CHange width of pencil
+                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1.0) //TODO: CHange width of pencil
                 }
                 for page in section.pages{
-                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 5.0)
+                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1.0)
                 }
             }
         }

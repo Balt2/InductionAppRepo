@@ -56,7 +56,9 @@ class CustomTimer: ObservableObject {
     private func setRemaining() {
         let min = max(floor(self.timeRemaining / 60),0)
         let sec = max(floor((self.timeRemaining - min*60).truncatingRemainder(dividingBy:60)),0)
-        self.timeLeftFormatted = "\(Int(min)):\(Int(sec))"
+        self.timeLeftFormatted = "\(String(format: "%02d", Int(min))):\(String(format: "%02d", Int(sec)))"
+        //"\(Int(min)):\(Int(sec))"
+        
     }
 
     func endTimer() {
