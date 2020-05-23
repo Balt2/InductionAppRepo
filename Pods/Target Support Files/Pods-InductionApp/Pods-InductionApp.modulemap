@@ -1,0 +1,6 @@
+module Pods_InductionApp {
+  umbrella header "Pods-InductionApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -14,11 +14,9 @@ import Introspect
 struct TestView: View {
     @State var shouldScroll: Bool = true
     @State var shouldScrollToTop: Bool = false
-        
     @Binding var shouldPopToRootView : Bool
     //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "1-ACT Exam 1906")
     @ObservedObject var testData: Test
-    //@ObservedObject var user: User
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var offset = CGSize(width: 0, height: 5000)
     
@@ -41,26 +39,16 @@ struct TestView: View {
                             
                         }.frame(width: 300)
                             .introspectScrollView{tableView in
-                                print("Before Table Content Inset: \(tableView.contentInset)")
-                                print("Befeore TABLE CONTEENT OFFSET: \(tableView.contentOffset)")
-                                print("Before Table Adjected Content: \(tableView.adjustedContentInset)")
+                                tableView.contentInsetAdjustmentBehavior = .always
+                                
                                 if self.shouldScroll != tableView.isScrollEnabled{
-                                    let edgeInsetOffset = tableView.adjustedContentInset.top
-                                    let currentContentOffset = tableView.contentOffset.y
                                     tableView.isScrollEnabled = self.shouldScroll
-                                    
-                                    if self.shouldScroll == false { //Symbol is now blue
-                                        tableView.setContentOffset(CGPoint(x: 0, y: currentContentOffset + tableView.contentOffset.y), animated: false)
-                                    }else{
-                                        tableView.setContentOffset(CGPoint(x: 0, y: currentContentOffset), animated: false)
-                                    }
+
                                 }
                                 
-                                //tableView.setContentOffset(CGPoint(x: 0, y: -tableView.adjustedContentInset.top ), animated: false)
-                                print("After Table Content Inset: \(tableView.contentInset)")
-                                print("After TABLE CONTEENT OFFSET: \(tableView.contentOffset)")
-                                print("After Table Adjected Content: \(tableView.adjustedContentInset)")
-                                //tableView.setContentOffset(CGPoint(x: 0, y: tableView.adjustedContentInset.top ), animated: false)
+                                //print("Before Table Content Inset: \(tableView.contentInset)")
+//                                print("Befeore TABLE CONTEENT OFFSET: \(tableView.contentOffset)")
+//                                print("Before Table Adjected Content: \(tableView.adjustedContentInset)")
                                 
                         }
                         
@@ -73,8 +61,7 @@ struct TestView: View {
                                 ForEach(self.testData.currentSection!.pages, id: \.self){ page in
                                     PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
                                         .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
-                                    
-                                    
+
                                 }.navigationBarItems(leading: self.testData.isFullTest == true ? AnyView(EndTestNavigationView(test: self.testData, shouldPopToRootFromNav: self.$shouldPopToRootView, submitComplete: false)) : AnyView(EmptyView()) ,
                                                      trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView))
                                     .foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
@@ -82,24 +69,16 @@ struct TestView: View {
                                 
                             }
                         }.introspectScrollView{scrollView in
-                            //print(scrollView.adjustedContentInset.top)
-//                            print("Before Scroll Content Inset: \(scrollView.contentInset)")
-//                            print("Before Scroll CONTEENT OFFSET: \(scrollView.contentOffset)")
-//                            print("Before Scroll Adjected Content: \(scrollView.adjustedContentInset)")
+                            scrollView.contentInsetAdjustmentBehavior = .always
 
                             scrollView.isScrollEnabled = self.shouldScroll
                             if self.shouldScrollToTop == true{
-                                scrollView.scrollToTop()
+                                scrollView.scrollToTop(adjustedContentOffset: scrollView.adjustedContentInset.top)
                                 self.shouldScrollToTop = false
                             }
-                            
-//                            print("After Scroll Content Inset: \(scrollView.contentInset)")
-//                           print("After Scroll CONTEENT OFFSET: \(scrollView.contentOffset)")
-//                           print("AFter Scroll Adjected Content: \(scrollView.adjustedContentInset)")
                     }
                     
                 }
-                //.offset( y: -scrollGeo.frame(in: .global).minY)
                 
             }
         }
@@ -145,7 +124,6 @@ struct EndTestNavigationView: View {
                   message: Text("You will not be able to edit this \(test.isFullTest == true ? "test" : "assignment") again"),
                   primaryButton: .default(Text("Cancel")),
                   secondaryButton: .default(Text("OK")){
-                    //self.presentationMode.wrappedValue.dismiss()
                     self.test.endTest(user: self.currentAuth.currentUser!) //TODO: Dont force
                     self.shouldPopToRootFromNav = false
                 })
@@ -349,8 +327,9 @@ struct PastPerformanceTable: View {
 }
 
 extension UIScrollView {
-    func scrollToTop() {
-        let desiredOffset = CGPoint(x: 0, y: -contentInset.top - 70)
+    func scrollToTop(adjustedContentOffset: CGFloat) {
+        //Adjusted Contentoffset is the distance the navigation bar takes up
+        let desiredOffset = CGPoint(x: 0, y: -contentInset.top - adjustedContentOffset)
         setContentOffset(desiredOffset, animated: true)
    }
 }
