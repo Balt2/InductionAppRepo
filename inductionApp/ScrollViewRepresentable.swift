@@ -18,7 +18,10 @@ import UIKit
 
 
 
-
+//TO make correct CollectionViewRepresentable Steps. Currently We use introspect
+//1. Look at how PKCanvasView is implemented normally
+//2. Set the controller of the canvas view to the CollectionView controller and implement any funcitons
+//3. look at how UIViewRepresentable is implemented for UITable view or Scroll or anything that has cells rather than whole view controllers as subclasses.
 class PageCell: UICollectionViewCell {
     private static let reuseId = "pageCell"
     var imageView: UIImageView?

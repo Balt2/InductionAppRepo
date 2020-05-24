@@ -38,6 +38,7 @@ class FirebaseManager: ObservableObject {
     @Published var associations = Set<Association>()
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
     @Published var initialized = false
+    //@Published var pencilManager = ApplePencilReachability()
     var db: Firestore!
 
     //This init starts a listener that looks for changes in the Authstate. If the listener is triggered, the user wilil be set
