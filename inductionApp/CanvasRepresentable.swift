@@ -133,38 +133,46 @@ struct CanvasRepresentable: UIViewRepresentable {
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
-            
-            
-            
+            c.tool = PKInkingTool(.pen, color: .black, width: 1)
             c.delegate = context.coordinator
             question.canvas = c
+            print("ONE")
             return c
         }else if isAnswerSheet == true{
             let c = question.canvas!
             c.delegate = context.coordinator
+            c.tool = PKInkingTool(.pen, color: .black, width: 1)
             question.canvas = c
+            print("TWO")
             return c
         }else if page.canvas == nil {
-            
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
-            
+            c.tool = PKInkingTool(.pen, color: .black, width: 1)
             c.isScrollEnabled = false
-            
+            print("THREE")
             c.delegate = context.coordinator
             page.canvas = c
             return c
         }else{
             let c = page.canvas!
             c.delegate = context.coordinator
+            c.tool = PKInkingTool(.pen, color: .black, width: 1)
             page.canvas = c
+            print("FOUR")
             return c
         }
     }
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         
+//        print(tool.width)
+//        uiView.tool
+//        uiView.tool = PKInkingTool(.pen, color: .black, width: 0.2)
+//        tool = uiView.tool as! PKInkingTool
+//        print(tool.width)
+       
         
 //        if isAnswerSheet == true{
 //           // uiView.layer.addSublayer(question.canvas!.layer)

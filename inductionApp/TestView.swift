@@ -241,6 +241,7 @@ struct TimerNavigationView: View {
                     case .notStarted:
                         self.test.startTest()
                     case .inSection:
+                        self.shouldScrollNav = true
                         self.test.endSection(user: self.currentAuth.currentUser!)
                     case .betweenSection:
                         self.shouldScrollToTopNav = true

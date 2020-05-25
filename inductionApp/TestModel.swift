@@ -75,6 +75,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     var questions = [Question]()
     //Number of questions the student has answered in the section
     var numAnsweredQuestions = 0
+    var timed: Bool?
     
     init(sectionFromJson: TestSectionFromJson, pages: [PageModel], name: String, questions: [Question] ) {
         self.allotedTime = Double(sectionFromJson.timeAllowed)
@@ -84,7 +85,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.name = sectionFromJson.name
         self.sectionIndex = sectionFromJson.orderInTest
         self.questions = questions
-        
+        self.timed = sectionFromJson.timed
         
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
     }
@@ -98,6 +99,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.pages = testSection.pages.map {PageModel(page: $0)}
         self.questions = testSection.questions.map {Question(question: $0)}
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
+        self.timed = testSection.timed
         
     }
     //scale up: bool
@@ -187,10 +189,12 @@ class Test: ObservableObject, Hashable, Identifiable {
 
             for section in sections{
                 for question in section.questions{
-                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1.0) //TODO: CHange width of pencil
+                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1) //TODO: CHange width of pencil
+                    print("BELJSDF")
                 }
                 for page in section.pages{
-                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1.0)
+                    print("DSDFSSSSSS")
+                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1)
                 }
             }
         }
@@ -571,6 +575,7 @@ struct TestSectionFromJson: Codable {
     var endIndex: Int
     var orderInTest: Int
     var questions: [QuestionFromJson]
+    var timed: Bool?
     
     //Values only in the test result JSON
     var rawScore: Int?
