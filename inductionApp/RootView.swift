@@ -103,7 +103,9 @@ class FirebaseManager: ObservableObject {
     //This gets a users information from the database
     func getUser(id: String, completionHandler: @escaping (_ success: Bool) -> Void) {
         let docRef = db.collection("users").document(id)
+        print("GET USER CALLED")
         docRef.getDocument {(document, error) in
+            print("GETTING DOC REF")
             if let document = document, document.exists{
                 let dataDescription = document.data()
                 
@@ -117,6 +119,8 @@ class FirebaseManager: ObservableObject {
                         completionHandler(true)
                     }else{
                         //ERROR: No association found
+                        print("NO ASSOCIATION FOUND")
+                        self.currentUser = nil
                         completionHandler(false)
                     }
                 }

@@ -189,12 +189,14 @@ class Test: ObservableObject, Hashable, Identifiable {
 
             for section in sections{
                 for question in section.questions{
-                    question.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1) //TODO: CHange width of pencil
+                    question.canvas?.tool =  isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, color: .black, width: 1)
+                    //question.canvas?.__tool = isEraserEnabled ? PKEraserToolReference(eraserType: PKEraserTool(.bitmap)) : MyInkingTool(inkType: .pen, color: .black) //TODO: CHange width of pencil
                     print("BELJSDF")
                 }
                 for page in section.pages{
                     print("DSDFSSSSSS")
-                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, width: 1)
+                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, color: .black, width: 1)
+                    //page.canvas?.__tool = isEraserEnabled ? PKEraserToolReference(eraserType: PKEraserTool(.bitmap)) : MyInkingTool(inkType: .pen, color: .black)
                 }
             }
         }

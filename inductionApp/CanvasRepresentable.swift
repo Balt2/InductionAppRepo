@@ -258,3 +258,20 @@ extension UIImage {
     }
 }
 
+// custom inking tool
+class MyInkingTool : PKInkingToolReference {
+    override class func defaultWidth(forInkType inkType: __PKInkType) -> CGFloat {
+        return 1
+    }
+
+    override class func maximumWidth(forInkType inkType: __PKInkType) -> CGFloat {
+        return 1
+    }
+
+    override class func minimumWidth(forInkType inkType: __PKInkType) -> CGFloat {
+        return 1
+    }
+}
+
+
+

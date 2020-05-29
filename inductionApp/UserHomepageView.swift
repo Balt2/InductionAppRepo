@@ -51,14 +51,20 @@ struct UserHomepageView: View {
                             }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
                                 .disabled(user.getTestsComplete == false)
                             
-                            Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
-                                
-                            }){
+                            NavigationLink(destination: PastPerformanceView()){
                                 HStack{
                                     Image(systemName: "archivebox")
                                     Text("Past Performance")
                                 }
-                            }.buttonStyle(buttonBackgroundStyle())
+                                }.buttonStyle(buttonBackgroundStyle())
+//                            Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
+//
+//                            }){
+//                                HStack{
+//                                    Image(systemName: "archivebox")
+//                                    Text("Past Performance")
+//                                }
+//                            }.buttonStyle(buttonBackgroundStyle())
                             
                             Button(action: {
                                 //what the button does

@@ -56,6 +56,7 @@ class User: ObservableObject, Equatable {
             //If boolean is false then no tests exist
             self.getTestsComplete = true
         }
+        print("DONE CREATING USER")
         
 //        self.getPerformancePdf { pdf in
 //            self.performancePDF = TestPDF(data: pdf).pages
