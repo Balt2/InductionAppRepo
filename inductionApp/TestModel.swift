@@ -480,7 +480,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             sectionsForJson.append(temp)
         }
         //Todo: SAT
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore)
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore, dateTaken: Date().toString(dateFormat: "yyyy-MM-dd hh:mm:ss"))
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -567,6 +567,7 @@ struct TestFromJson: Codable {
     var overallScore: Int? //SAT and ACT
     var math: Int? //SAT
     var science: Int? //SAT
+    var dateTaken: String?
     
 }
 
