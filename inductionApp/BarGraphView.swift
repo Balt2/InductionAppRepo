@@ -62,9 +62,12 @@ struct BarChart: View {
     
     var body: some View {
         VStack{
-            GeometryReader{geometry in
-                ZStack{ //Whole backgoruund of graph
-                    Color("lightBlue")
+            
+            ZStack{ //Whole backgoruund of graph
+                Color("lightBlue")
+                
+                GeometryReader{geometry in
+                    
                     HStack{
                         Text(self.data.yAxisLabel)
                             .rotationEffect(Angle(degrees: -90))
@@ -104,8 +107,8 @@ struct BarChart: View {
                             Spacer()
                         }.frame(width: geometry.size.width * 0.9)
                     }
-                }.cornerRadius(20.0) //.frame(width: geometry.size.width) //.aspectRatio(self.ar, contentMode: .fit)
-            }
+                }
+            }.cornerRadius(20.0) //.frame(width: geometry.size.width) //
         }
     }
     

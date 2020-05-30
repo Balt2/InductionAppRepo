@@ -11,17 +11,14 @@ import SwiftUI
 struct PastPerformanceView: View {
     var body: some View {
         GeometryReader{geometry in
-            ScrollView() {
+            ScrollView(.vertical) {
                 VStack{
-                    Text("NEXT CHART")
+                    Spacer()
+                    Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
+                    BarChart().frame(width: geometry.size.width * 0.9, height: (geometry.size.width) / 2.0) //2 is the aspect ratio
+                    BarChart().frame(width: geometry.size.width * 0.9, height: (geometry.size.width) / 2.0) //2 is the
                     
-                    Text("NEXT...")
-                    Text("BENJAMIN")
-                    BarChart().frame(width: geometry.size.width * 0.9)
-//                    BarChart().frame(width: geometry.size.width * 0.9)
-                    Rectangle().frame(height: 50)
-                    Rectangle().foregroundColor(.green)
-                }
+                }.frame(maxWidth: .infinity)
             }
         }
     }

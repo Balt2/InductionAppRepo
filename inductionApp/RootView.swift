@@ -103,7 +103,7 @@ class FirebaseManager: ObservableObject {
     //This gets a users information from the database
     func getUser(id: String, completionHandler: @escaping (_ success: Bool) -> Void) {
         let docRef = db.collection("users").document(id)
-        print("GET USER CALLED")
+        print("GET USER CALLED") // TODO: PROBLEM HERE occosioanllyy while loading. Add a variable to that call and then if it goes on for 5 seconds try again
         docRef.getDocument {(document, error) in
             print("GETTING DOC REF")
             if let document = document, document.exists{
