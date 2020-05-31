@@ -16,7 +16,8 @@ struct PastPerformanceView: View {
                     Spacer()
                     Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                     BarChart().frame(width: geometry.size.width * 0.9, height: (geometry.size.width) / 2.0) //2 is the aspect ratio
-                    BarChart().frame(width: geometry.size.width * 0.9, height: (geometry.size.width) / 2.0) //2 is the
+                    BarChart().frame(width: geometry.size.width * 0.9, height: (geometry.size.width) / 2.0)
+                    ScatterChart().frame(width: geometry.size.width * 0.9, height: (geometry.size.width) / 2.0)
                     
                 }.frame(maxWidth: .infinity)
             }

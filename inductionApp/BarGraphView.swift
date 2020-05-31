@@ -42,51 +42,39 @@ struct BarEntry: Hashable, Identifiable{
 struct BarChart: View {
     //var width: CGFloat = 1000
     var ar: CGFloat = 2
-    
-    //    let entries = [
-    //        BarEntry(xLabel: "Date 1", yEntries: [(height: 0.5, color: Color.green), (height: 0.4, color: Color.red), (height: 0, color: Color.gray) ]),
-    //        BarEntry(xLabel: "Date 2", yEntries: [(height: 0.2, color: Color.green), (height: 0.8, color: Color.red), (height: 0, color: Color.gray) ]),
-    //        BarEntry(xLabel: "Date 3", yEntries: [(height: 0.3, color: Color.green), (height: 0.5, color: Color.red), (height: 0.2, color: Color.gray) ]),
-    //        BarEntry(xLabel: "Date 4", yEntries: [(height: 0.3, color: Color.green), (height: 0.1, color: Color.red), (height: 0.6, color: Color.gray) ])
-    //    ]
     let data = BarData(title: "ACT Performance by Data", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "Date 1", yEntries: [(height: 0.5, color: Color.green), (height: 0.4, color: Color.red), (height: 0, color: Color.gray) ]),
-        BarEntry(xLabel: "Date 2", yEntries: [(height: 0.2, color: Color.green), (height: 0.8, color: Color.red), (height: 0, color: Color.gray) ]),
-        BarEntry(xLabel: "Date 3", yEntries: [(height: 0.3, color: Color.green), (height: 0.5, color: Color.red), (height: 0.2, color: Color.gray) ]),
-        BarEntry(xLabel: "Date 4", yEntries: [(height: 0.3, color: Color.green), (height: 0.1, color: Color.red), (height: 0.6, color: Color.gray) ])
+        BarEntry(xLabel: "Date 1", yEntries: [(height: 30, color: Color.green), (height: 4, color: Color.red), (height: 2, color: Color.gray) ]),
+        BarEntry(xLabel: "Date 2", yEntries: [(height: 20, color: Color.green), (height: 15, color: Color.red), (height: 1, color: Color.gray) ]),
+        BarEntry(xLabel: "Date 3", yEntries: [(height: 15, color: Color.green), (height: 0, color: Color.red), (height: 21, color: Color.gray) ]),
+        BarEntry(xLabel: "Date 4", yEntries: [(height: 12, color: Color.green), (height: 12, color: Color.red), (height: 12, color: Color.gray) ])
     ])
     
-    //    var title: String = "ACT Performance by Date"
-    //    let data = [ BarEntry(xLabel: "Date 1", yEntries: [0.5, 0.4, 0.0], index: 0), BarEntry(xLabel: "Date 2", yEntries: [0.2, 0.8, 0.0], index: 1), BarEntry(xLabel: "Date 3", yEntries: [0.3, 0.5, 0.2], index: 2), BarEntry(xLabel: "Date 4", yEntries: [0.3, 0.1, 0.6], index: 3)]
-    //    let perfect: CGFloat = 36
-    
     var body: some View {
-        VStack{
-            
             ZStack{ //Whole backgoruund of graph
                 Color("lightBlue")
                 
                 GeometryReader{geometry in
                     
-                    HStack{
+                    HStack{ //HSTACK FOR GRAPH TO PLACE Y-AXIS
                         Text(self.data.yAxisLabel)
                             .rotationEffect(Angle(degrees: -90))
-                            .font(.system(.title))
-                            .padding(.leading, -15)
-                            .padding(.trailing, 10)
-                        VStack{
+                            .font(.system(.subheadline))
+                            //.background(Rectangle())
+                            //.padding(.leading, -15)
+                            //.padding(.trailing, 10)
+                        Spacer()
+                        VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                             Spacer(minLength: 25)
                             Text(self.data.title)
                                 .foregroundColor(.white)
                                 .font(.system(size: 30, weight: .medium , design: .rounded))
                             Spacer(minLength: 25)
-                            ZStack(){
+                            ZStack(){ //ZSTSCK FOR GRID AND BAR VIEWS
                                 Grid(data: self.data)
                                 HStack{
-                                    
                                     GeometryReader{innerGeometry in
                                         ForEach(0..<self.data.barEntries.count, id: \.self) { i in
-                                            BarShape(barEntry: self.data.barEntries[i])
+                                            BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
                                                 .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
                                                 .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
                                                 .onTapGesture {
@@ -102,14 +90,13 @@ struct BarChart: View {
                             }.frame(width: geometry.size.width * 0.9, height: (geometry.size.width/self.ar) * 0.75, alignment: .bottom)
                                 .padding([.top, .bottom], 0)
                             Spacer()
-                            Spacer()
-                            Text(self.data.xAxisLabel).font(.system(.title))
+                            Text(self.data.xAxisLabel).font(.system(.subheadline))
                             Spacer()
                         }.frame(width: geometry.size.width * 0.9)
-                    }
+                            .padding(.trailing, 15)
+                    }.padding(.trailing, 15)
                 }
             }.cornerRadius(20.0) //.frame(width: geometry.size.width) //
-        }
     }
     
     func offsetHelper (width: CGFloat, index: Int) -> CGFloat{
@@ -202,7 +189,7 @@ struct Grid: View {
 
 struct BarShape: View {
     var barEntry: BarEntry
-    //var colors = [Color.green, Color.red, Color.gray]
+    var yAxisTotal: Int
     var body: some View {
         
         VStack(alignment: .center){
@@ -228,17 +215,122 @@ struct BarShape: View {
     
     
     func heightHelper (maxHeight: CGFloat, index: Int, height: CGFloat = 0.0) -> CGFloat{
+        
         if index == -1 {
             return 0
-        }else if index == 0 {
-            return height + barEntry.yEntries[index].height * maxHeight
         }else{
-            return  heightHelper(maxHeight: maxHeight, index: index - 1, height: height + barEntry.yEntries[index].height * maxHeight)
+            let nextHeight = height + ((self.barEntry.yEntries[index].height) / CGFloat(self.yAxisTotal)) * maxHeight
+            if index == 0 {
+                return nextHeight
+            }else{
+                return heightHelper(maxHeight: maxHeight, index: index - 1, height: nextHeight)
+            }
         }
         
     }
     
     
+}
+
+struct ScatterChart: View {
+    //var width: CGFloat = 1000
+    var ar: CGFloat = 2
+    let data = BarData(title: "Time Per Question", xAxisLabel: "Questions", yAxisLabel: "Minutues", yAxisSegments: 4, yAxisTotal: 12, barEntries: [
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
+        BarEntry(xLabel: "4", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.red)])
+    ])
+    
+    var body: some View {
+            ZStack{ //Whole backgoruund of graph
+                Color("lightBlue")
+                
+                GeometryReader{geometry in
+                    
+                    HStack{ //HSTACK FOR GRAPH TO PLACE Y-AXIS
+                        Text(self.data.yAxisLabel)
+                            .rotationEffect(Angle(degrees: -90))
+                            .font(.system(.subheadline))
+                            //.background(Rectangle())
+                            //.padding(.leading, -15)
+                            //.padding(.trailing, 10)
+                        Spacer()
+                        VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
+                            Spacer(minLength: 25)
+                            Text(self.data.title)
+                                .foregroundColor(.white)
+                                .font(.system(size: 30, weight: .medium , design: .rounded))
+                            Spacer(minLength: 25)
+                            ZStack(){ //ZSTSCK FOR GRID AND BAR VIEWS
+                                Grid(data: self.data)
+                                HStack{
+                                    GeometryReader{innerGeometry in
+                                        ForEach(0..<self.data.barEntries.count, id: \.self) { i in
+                                            Circle().fill(self.data.barEntries[i].yEntries[0].color).frame(width: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, height: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, alignment: .center)
+                                                .offset(x: self.widthOffsetHelper(width: innerGeometry.size.width, index: i), y: (innerGeometry.size.height - (((self.data.barEntries[i].yEntries[0].height) / CGFloat(self.data.yAxisTotal)) * innerGeometry.size.height)) - (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.25)
+                                            
+                                        }
+                                    }
+                                    
+                                }
+                                
+                            }.frame(width: geometry.size.width * 0.9, height: (geometry.size.width/self.ar) * 0.75, alignment: .bottom)
+                                .padding([.top, .bottom], 0)
+                            Spacer()
+                            Text(self.data.xAxisLabel).font(.system(.subheadline))
+                            Spacer()
+                        }.frame(width: geometry.size.width * 0.9)
+                            .padding(.trailing, 15)
+                    }.padding(.trailing, 15)
+                }
+            }.cornerRadius(20.0) //.frame(width: geometry.size.width) //
+    }
+    
+    func widthOffsetHelper (width: CGFloat, index: Int) -> CGFloat{
+        let offsetWidth = (width / CGFloat(self.data.barEntries.count))
+        return CGFloat(index) * offsetWidth + (offsetWidth * 0.25)
+    }
+    
+    func heightOffSet(height: CGFloat){
+        
+    }
     
     
 }
@@ -251,3 +343,4 @@ struct ContentView_Previews: PreviewProvider {
         BarChart().previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
     }
 }
+
