@@ -41,13 +41,16 @@ struct BarEntry: Hashable, Identifiable{
 
 struct BarChart: View {
     //var width: CGFloat = 1000
+    @Binding var showDetailTest : Bool
     var ar: CGFloat = 2
-    let data = BarData(title: "ACT Performance by Data", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "Date 1", yEntries: [(height: 30, color: Color.green), (height: 4, color: Color.red), (height: 2, color: Color.gray) ]),
-        BarEntry(xLabel: "Date 2", yEntries: [(height: 20, color: Color.green), (height: 15, color: Color.red), (height: 1, color: Color.gray) ]),
-        BarEntry(xLabel: "Date 3", yEntries: [(height: 15, color: Color.green), (height: 0, color: Color.red), (height: 21, color: Color.gray) ]),
-        BarEntry(xLabel: "Date 4", yEntries: [(height: 12, color: Color.green), (height: 12, color: Color.red), (height: 12, color: Color.gray) ])
-    ])
+    let data: BarData
+    var barChart: Bool
+//        BarData(title: "ACT Performance by Data", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [
+//        BarEntry(xLabel: "Date 1", yEntries: [(height: 30, color: Color.green), (height: 4, color: Color.red), (height: 2, color: Color.gray) ]),
+//        BarEntry(xLabel: "Date 2", yEntries: [(height: 20, color: Color.green), (height: 15, color: Color.red), (height: 1, color: Color.gray) ]),
+//        BarEntry(xLabel: "Date 3", yEntries: [(height: 15, color: Color.green), (height: 0, color: Color.red), (height: 21, color: Color.gray) ]),
+//        BarEntry(xLabel: "Date 4", yEntries: [(height: 12, color: Color.green), (height: 12, color: Color.red), (height: 12, color: Color.gray) ])
+//    ])
     
     var body: some View {
             ZStack{ //Whole backgoruund of graph
@@ -59,49 +62,69 @@ struct BarChart: View {
                         Text(self.data.yAxisLabel)
                             .rotationEffect(Angle(degrees: -90))
                             .font(.system(.subheadline))
-                            //.background(Rectangle())
-                            //.padding(.leading, -15)
-                            //.padding(.trailing, 10)
                         Spacer()
                         VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
-                            Spacer(minLength: 25)
                             Text(self.data.title)
                                 .foregroundColor(.white)
                                 .font(.system(size: 30, weight: .medium , design: .rounded))
-                            Spacer(minLength: 25)
+                                .padding([.top, .bottom], 20)
                             ZStack(){ //ZSTSCK FOR GRID AND BAR VIEWS
                                 Grid(data: self.data)
-                                HStack{
-                                    GeometryReader{innerGeometry in
-                                        ForEach(0..<self.data.barEntries.count, id: \.self) { i in
-                                            BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
-                                                .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
-                                                .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
-                                                .onTapGesture {
-                                                    print("Taped")
-                                                    print(self.data.barEntries[i].xLabel)
+                                if self.barChart == true {
+                                    HStack{
+                                        GeometryReader{innerGeometry in
+                                            ForEach(0..<self.data.barEntries.count, id: \.self) { i in
+                                                
+                                                BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
+                                                    .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
+                                                    .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
+                                                .onTapGesture() {
+                                                        print("Taped")
+                                                        print(self.data.barEntries[i].xLabel)
+                                                    self.showDetailTest = true
+                                                }
+//                                                NavigationView(){
+//                                                    NavigationLink(destination: Text("BEN")){
+//                                                        EmptyView()
+//                                                    }
+//                                                }
+                                                
+                                                
                                             }
-                                            
                                         }
+                                        
                                     }
-                                    
+                                }else{
+                                    HStack{
+                                        GeometryReader{innerGeometry in
+                                            ForEach(0..<self.data.barEntries.count, id: \.self) { i in
+                                                Circle().fill(self.data.barEntries[i].yEntries[0].color).frame(width: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, height: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, alignment: .center)
+                                                    .offset(x: self.widthOffsetHelper(width: innerGeometry.size.width, index: i), y: (innerGeometry.size.height - (((self.data.barEntries[i].yEntries[0].height) / CGFloat(self.data.yAxisTotal)) * innerGeometry.size.height)) - (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.25)
+                                                
+                                            }
+                                        }
+                                        
+                                    }
                                 }
                                 
-                            }.frame(width: geometry.size.width * 0.9, height: (geometry.size.width/self.ar) * 0.75, alignment: .bottom)
+                            }.frame(width: geometry.size.width * 0.9, height: ((geometry.size.width * 0.9 )/self.ar) * 0.75, alignment: .bottom)
                                 .padding([.top, .bottom], 0)
-                            Spacer()
-                            Text(self.data.xAxisLabel).font(.system(.subheadline))
-                            Spacer()
+                            Text(self.data.xAxisLabel).font(.system(.subheadline)).padding([.top, .bottom], 10)
                         }.frame(width: geometry.size.width * 0.9)
                             .padding(.trailing, 15)
-                    }.padding(.trailing, 15)
+                    }
                 }
-            }.cornerRadius(20.0) //.frame(width: geometry.size.width) //
+            }.cornerRadius(20.0).padding([.leading, .trailing], 30).aspectRatio(self.ar, contentMode: .fit)
     }
     
     func offsetHelper (width: CGFloat, index: Int) -> CGFloat{
         let offsetWidth = (width / CGFloat(self.data.barEntries.count))
         return CGFloat(index) * offsetWidth
+    }
+    
+    func widthOffsetHelper (width: CGFloat, index: Int) -> CGFloat{
+        let offsetWidth = (width / CGFloat(self.data.barEntries.count))
+        return CGFloat(index) * offsetWidth + (offsetWidth * 0.25)
     }
     
     
@@ -132,7 +155,7 @@ struct Grid: View {
                         }
                     }
                 }
-            }.offset(x: 0, y: geometry.size.height + 10).padding([.leading, .trailing], (geometry.size.width / CGFloat(self.data.barEntries.count))*0.40)
+            }.offset(x: 0, y: geometry.size.height).padding([.leading, .trailing], (geometry.size.width / CGFloat(self.data.barEntries.count))*0.40)
         }
     }
     
@@ -311,7 +334,7 @@ struct ScatterChart: View {
                                     
                                 }
                                 
-                            }.frame(width: geometry.size.width * 0.9, height: (geometry.size.width/self.ar) * 0.75, alignment: .bottom)
+                            }.frame(width: geometry.size.width * 0.9, height: ((geometry.size.width * 0.9)/self.ar) * 0.75, alignment: .bottom)
                                 .padding([.top, .bottom], 0)
                             Spacer()
                             Text(self.data.xAxisLabel).font(.system(.subheadline))
@@ -337,10 +360,10 @@ struct ScatterChart: View {
 
 
 
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        BarChart().previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
-    }
-}
+//
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        BarChart().previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
+//    }
+//}
 
