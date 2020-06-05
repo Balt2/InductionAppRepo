@@ -56,7 +56,6 @@ struct BarChart: View {
             ZStack{ //Whole backgoruund of graph
                 Color("lightBlue")
                 
-                GeometryReader{geometry in
                     
                     HStack{ //HSTACK FOR GRAPH TO PLACE Y-AXIS
                         Text(self.data.yAxisLabel)
@@ -107,14 +106,14 @@ struct BarChart: View {
                                     }
                                 }
                                 
-                            }.frame(width: geometry.size.width * 0.9, height: ((geometry.size.width * 0.9 )/self.ar) * 0.75, alignment: .bottom)
+                            }.frame(width: UIScreen.main.bounds.width * 0.9, height: ((UIScreen.main.bounds.width * 0.9 )/self.ar) * 0.75, alignment: .bottom)
                                 .padding([.top, .bottom], 0)
                             Text(self.data.xAxisLabel).font(.system(.subheadline)).padding([.top, .bottom], 10)
-                        }.frame(width: geometry.size.width * 0.9)
+                        }.frame(width: UIScreen.main.bounds.width * 0.9)
                             .padding(.trailing, 15)
                     }
-                }
-            }.cornerRadius(20.0).padding([.leading, .trailing], 30).aspectRatio(self.ar, contentMode: .fit)
+                
+            }.cornerRadius(20.0).aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
     }
     
     func offsetHelper (width: CGFloat, index: Int) -> CGFloat{

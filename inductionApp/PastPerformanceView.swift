@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct PastPerformanceView: View {
+    //@EnvironmentObject var didChangeView: DidChangeModel
     @State var index = 0
     @State var offset : CGFloat = 0
     @State var showDetailTest = false
@@ -92,14 +93,15 @@ struct PastPerformanceView: View {
     var body: some View {
         Group{
             if showDetailTest == false{
-                GeometryReader{geometry in
+                
+                //GeometryReader{geometry in
                     ScrollView(.vertical) {
                         VStack{
                             Spacer()
                             Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                             //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
-                            BarChart(showDetailTest: self.$showDetailTest, data: self.totalData, barChart: true).frame(width: geometry.size.width) //.offset(x: geometry.size.width * 0.05) //2 is the aspect ratio
-                            CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Reading", "Math", "English", "Science"]).frame(width: geometry.size.width)
+                            BarChart(showDetailTest: self.$showDetailTest, data: self.totalData, barChart: true).frame(width: UIScreen.main.bounds.width) //.offset(x: geometry.size.width * 0.05) //2 is the aspect ratio
+                            CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Reading", "Math", "English", "Science"]).frame(width:  UIScreen.main.bounds.width)
                             //
                             HStack(spacing: 0){
                                 //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
@@ -138,13 +140,12 @@ struct PastPerformanceView: View {
                         
                     }
                     
-                }.frame(maxWidth: .infinity)
+                //}.frame(maxWidth: .infinity)
             }else{
-                GeometryReader{geometry in
                 VStack{
                     CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Tutor Analysis", "Raw Stats", "Actual Test"]).frame(width: UIScreen.main.bounds.width)
                     HStack(spacing: 0){
-                        ScrollView(.vertical){
+                        ScrollView(){
                             VStack{
                                 ZStack{
                                     Ellipse()
@@ -193,22 +194,64 @@ struct PastPerformanceView: View {
                                     }
                                     Spacer()
                                 }.frame(maxWidth: UIScreen.main.bounds.width)
+                                BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
                                 CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Readig", "Math", "Writing", "Science"]).frame(width: UIScreen.main.bounds.width)
                                 HStack(spacing: 0){
-                                    BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                   BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataM, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                   BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataE, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                   BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataS, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                }.offset(x: 0.5 * (4-1) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
+                                    VStack{
+                                        ZStack{
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .fill(Color.orange)
+                                                .font(.largeTitle)
+                                            Text("Reading Breakdown")
+                                                .font(.largeTitle)
+                                                .foregroundColor(Color.white)
+                                            
+                                        }.frame(width: 300)
+                                        BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                    }
+                                    VStack{
+                                        ZStack{
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .fill(Color.orange)
+                                                .font(.largeTitle)
+                                            Text("Math Breakdown")
+                                                .font(.largeTitle)
+                                                .foregroundColor(Color.white)
+                                        }.frame(width: 300)
+                                        BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataM, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                    }
+                                    VStack{
+                                        ZStack{
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .fill(Color.orange)
+                                                .font(.largeTitle)
+                                            Text("English Breakdown")
+                                                .font(.largeTitle)
+                                                .foregroundColor(Color.white)
+                                        }.frame(width: 300)
+                                        BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataE, barChart: true).frame(width: UIScreen.main.bounds.width)//.frame(width: UIScreen.main.bounds.width)
+                                    }
+                                    VStack{
+                                        ZStack{
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .fill(Color.orange)
+                                                .font(.largeTitle)
+                                            Text("Science Breakdown")
+                                                .font(.largeTitle)
+                                                .foregroundColor(Color.white)
+                                        }.frame(width: 300)
+                                        BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataS, barChart: true).frame(width: UIScreen.main.bounds.width)//.frame(width: UIScreen.main.bounds.width)
+                                    }
+                                    
+                                }.offset(x: 0.5 * (4-1) * UIScreen.main.bounds.width + self.offset) //(4-1) is headers.count - 1
                                 .animation(.default)
                                 .edgesIgnoringSafeArea(.all)
                                 .padding(.all, 0)
                                 BarChart(showDetailTest: self.$showDetailTest, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
-                                Rectangle().fill(Color("lightBlue"))
+                                //Rectangle().fill(Color("lightBlue"))
                                 
                             }
                         }
-                    }
                     }
                     //                    HStack(spacing: 0){
                     //
