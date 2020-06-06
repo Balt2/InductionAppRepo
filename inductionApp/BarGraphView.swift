@@ -8,6 +8,21 @@
 
 import SwiftUI
 
+struct ACTFormatedTestData: Hashable, Identifiable{
+    
+    static func == (lhs: ACTFormatedTestData, rhs: ACTFormatedTestData) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    var id = UUID()
+    
+    var overall: BarEntry //BarEntry(xLabel: date, yEntries: ([height: overallScore], orange)
+    //var overallTime: BarEntry //BarEntry(xLabel: date, yEntries: ([height: time], orange)
+    var sectionsOverall: [BarEntry] //(SectionName, Entry for the section)
+    var subSectionGraphs: [BarData] 
+    //var subSectionTime: [(String, BarData)]
+}
+
 struct BarData: Hashable, Identifiable{
     static func == (lhs: BarData, rhs: BarData) -> Bool {
         return lhs.id == rhs.id
@@ -37,6 +52,7 @@ struct BarEntry: Hashable, Identifiable{
     
     var xLabel: String
     var yEntries: [(height: CGFloat, color: Color)]
+    var index: Int?
 }
 
 struct BarChart: View {
@@ -59,8 +75,9 @@ struct BarChart: View {
                     
                     HStack{ //HSTACK FOR GRAPH TO PLACE Y-AXIS
                         Text(self.data.yAxisLabel)
-                            .rotationEffect(Angle(degrees: -90))
+                            .rotationEffect(Angle(degrees: -90), anchor: .trailing)
                             .font(.system(.subheadline))
+                            .padding(.trailing, 15)
                         Spacer()
                         VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                             Text(self.data.title)
@@ -80,18 +97,12 @@ struct BarChart: View {
                                                 .onTapGesture() {
                                                         print("Taped")
                                                         print(self.data.barEntries[i].xLabel)
+                                                    print(self.data.barEntries[i].index)
                                                     self.showDetailTest = true
+                                                    //self.detailData =
                                                 }
-//                                                NavigationView(){
-//                                                    NavigationLink(destination: Text("BEN")){
-//                                                        EmptyView()
-//                                                    }
-//                                                }
-                                                
-                                                
                                             }
                                         }
-                                        
                                     }
                                 }else{
                                     HStack{
@@ -106,12 +117,12 @@ struct BarChart: View {
                                     }
                                 }
                                 
-                            }.frame(width: UIScreen.main.bounds.width * 0.9, height: ((UIScreen.main.bounds.width * 0.9 )/self.ar) * 0.75, alignment: .bottom)
+                            }.frame(width: UIScreen.main.bounds.width * 0.85, height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
                                 .padding([.top, .bottom], 0)
                             Text(self.data.xAxisLabel).font(.system(.subheadline)).padding([.top, .bottom], 10)
-                        }.frame(width: UIScreen.main.bounds.width * 0.9)
-                            .padding(.trailing, 15)
-                    }
+                        }.frame(width: UIScreen.main.bounds.width * 0.85)
+                            .padding([.trailing, .leading], 15)
+                    }.padding([.leading], 15)
                 
             }.cornerRadius(20.0).aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
     }
@@ -254,108 +265,6 @@ struct BarShape: View {
     
 }
 
-struct ScatterChart: View {
-    //var width: CGFloat = 1000
-    var ar: CGFloat = 2
-    let data = BarData(title: "Time Per Question", xAxisLabel: "Questions", yAxisLabel: "Minutues", yAxisSegments: 4, yAxisTotal: 12, barEntries: [
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "4", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.red)])
-    ])
-    
-    var body: some View {
-            ZStack{ //Whole backgoruund of graph
-                Color("lightBlue")
-                
-                GeometryReader{geometry in
-                    
-                    HStack{ //HSTACK FOR GRAPH TO PLACE Y-AXIS
-                        Text(self.data.yAxisLabel)
-                            .rotationEffect(Angle(degrees: -90))
-                            .font(.system(.subheadline))
-                            //.background(Rectangle())
-                            //.padding(.leading, -15)
-                            //.padding(.trailing, 10)
-                        Spacer()
-                        VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
-                            Spacer(minLength: 25)
-                            Text(self.data.title)
-                                .foregroundColor(.white)
-                                .font(.system(size: 30, weight: .medium , design: .rounded))
-                            Spacer(minLength: 25)
-                            ZStack(){ //ZSTSCK FOR GRID AND BAR VIEWS
-                                Grid(data: self.data)
-                                HStack{
-                                    GeometryReader{innerGeometry in
-                                        ForEach(0..<self.data.barEntries.count, id: \.self) { i in
-                                            Circle().fill(self.data.barEntries[i].yEntries[0].color).frame(width: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, height: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, alignment: .center)
-                                                .offset(x: self.widthOffsetHelper(width: innerGeometry.size.width, index: i), y: (innerGeometry.size.height - (((self.data.barEntries[i].yEntries[0].height) / CGFloat(self.data.yAxisTotal)) * innerGeometry.size.height)) - (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.25)
-                                            
-                                        }
-                                    }
-                                    
-                                }
-                                
-                            }.frame(width: geometry.size.width * 0.9, height: ((geometry.size.width * 0.9)/self.ar) * 0.75, alignment: .bottom)
-                                .padding([.top, .bottom], 0)
-                            Spacer()
-                            Text(self.data.xAxisLabel).font(.system(.subheadline))
-                            Spacer()
-                        }.frame(width: geometry.size.width * 0.9)
-                            .padding(.trailing, 15)
-                    }.padding(.trailing, 15)
-                }
-            }.cornerRadius(20.0) //.frame(width: geometry.size.width) //
-    }
-    
-    func widthOffsetHelper (width: CGFloat, index: Int) -> CGFloat{
-        let offsetWidth = (width / CGFloat(self.data.barEntries.count))
-        return CGFloat(index) * offsetWidth + (offsetWidth * 0.25)
-    }
-    
-    func heightOffSet(height: CGFloat){
-        
-    }
-    
-    
-}
 
 
 

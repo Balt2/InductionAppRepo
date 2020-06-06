@@ -32,20 +32,29 @@ class Question: ObservableObject, Hashable, Identifiable {
     let isACT: Bool
     let isACTMath: Bool
     var answerLetters = ["A", "B", "C", "D"]
-    var finalState: QuestionState {
-        self.checkAnswer()
-        return self.currentState
-    }
+   
     var answerOrdredIn = 0
     
     @Published var userAnswer = ""
     @Published var currentState = QuestionState.ommited
+    var finalState: QuestionState {
+           get{
+               //self.checkAnswer()
+               return self.currentState
+           }
+           set{
+            self.currentState = newValue
+               print("SET")
+           }
+       }
     @Published var secondsToAnswer = 0.0
     @Published var canvas: PKCanvasView?
     
     init(q: QuestionFromJson, ip: IndexPath, act: Bool, isActMath: Bool) {
         self.officialID = q.id
         self.officialSub = q.officialSub
+        print("DSDF")
+        print(officialSub)
         self.tutorSub = q.tutorSub
         self.answer = q.answer
         self.reason = q.reason

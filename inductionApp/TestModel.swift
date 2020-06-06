@@ -102,6 +102,19 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.timed = testSection.timed
         
     }
+    
+    init(sectionFromJson: TestSectionFromJson, name: String, questions: [Question] ){ //This init is used for getting data from database
+        self.allotedTime = Double(sectionFromJson.timeAllowed)
+        self.leftOverTime = Double(sectionFromJson.timeAllowed)
+        self.index = (start: sectionFromJson.startIndex, end: sectionFromJson.endIndex)
+        self.name = sectionFromJson.name
+        self.sectionIndex = sectionFromJson.orderInTest
+        self.questions = questions
+        self.sectionTimer = CustomTimer(duration: Int(allotedTime))
+        self.timed = sectionFromJson.timed
+        
+    }
+    
     //scale up: bool
     func scalePages(){
        
@@ -186,7 +199,6 @@ class Test: ObservableObject, Hashable, Identifiable {
     @Published var testState: TestState = .notStarted
     @Published var isEraserEnabled = false{
         didSet{
-
             for section in sections{
                 for question in section.questions{
                     question.canvas?.tool =  isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, color: .black, width: 1)
@@ -212,7 +224,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var sections: [TestSection] = []
     var numberOfSections: Int?
     var act: Bool?
-    private var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
+    var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
     
     //Data about a test (probably just taken)
     var resultJson: Data{
@@ -257,7 +269,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.testPDFFile = pdfFile
         self.pdfImages = TestPDF(name: pdfFile).pages
         self.testFromJson = self.createTestFromJson(fileName: jsonFile)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: true)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
@@ -267,9 +279,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             }
         }
                 
-        
-     
-        
+
 
         //self.sendJsonTestPerformanceData()
     }
@@ -278,7 +288,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.pdfImages = TestPDF(data: pdfData).pages
         
         self.testFromJson = self.createTestFromJson(data: jsonData)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: true)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
@@ -288,6 +298,19 @@ class Test: ObservableObject, Hashable, Identifiable {
             }
         }
         print("donne: \(self.name)")
+    }
+    
+    //Create  answer
+    init(jsonData: Data){
+        self.testFromJson = self.createTestFromJson(data: jsonData)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: false)
+        self.numberOfSections = self.sections.count
+        if self.testFromJson != nil {
+            self.act = self.testFromJson?.act
+            self.name = self.testFromJson!.name
+        }
+        
+        
     }
     
     //Creates a test from a section (or multiple ones) from a test
@@ -307,6 +330,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.scoreConvertDict = test.scoreConvertDict
         
     }
+    
     
     //Called when the test has not begun yet
     func startTest(){
@@ -399,7 +423,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             let decoder = JSONDecoder()
             let testFromJson = try decoder.decode(TestFromJson.self, from: data)
             return testFromJson
-        }catch {
+        }catch{
             print("Error loading IN Test from DATA")
             return nil
         }
@@ -407,7 +431,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     
-    func createSectionArray(testFromJson: TestFromJson) -> [TestSection]{
+    func createSectionArray(testFromJson: TestFromJson, withPDF: Bool) -> [TestSection]{
         var sections: [TestSection] = []
         
         for section in testFromJson.sections {
@@ -418,13 +442,24 @@ class Test: ObservableObject, Hashable, Identifiable {
                 let splitArray = question.id.split(separator: "_")
                 let questionNum = Int(splitArray[2])!
                 let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
+                if withPDF == false{
+                    tempQuestion.finalState = QuestionState(rawValue: question.finalState ?? "O") ?? QuestionState.ommited
+                    print(question.finalState)
+                    print(QuestionState(rawValue: question.finalState!)!)
+                }
                 questionList.append(tempQuestion)
             }
+            if  withPDF == true{
+                let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
+                
+                let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList)
+                sections.append(tempSection)
+            }else{
+                let tempSection = TestSection(sectionFromJson: section, name: section.name , questions: questionList)
+                tempSection.scaledScore = section.scaledScore
+                sections.append(tempSection)
+            }
             
-            let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
-
-            let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList)
-            sections.append(tempSection)
         }
         return sections
     }

@@ -9,6 +9,8 @@
 import Foundation
 import Firebase
 import UIKit
+import SwiftUI
+
 
 
 class User: ObservableObject, Equatable {
@@ -24,6 +26,8 @@ class User: ObservableObject, Equatable {
     var association: Association
     
     @Published var tests: [Test] = []
+    var testResults: [Test] = []
+    var fullTestResults: [ACTFormatedTestData] = []
     @Published var getTestsComplete = false
     var performancePDF = [PageModel]()
     
@@ -56,6 +60,16 @@ class User: ObservableObject, Equatable {
             //If boolean is false then no tests exist
             self.getTestsComplete = true
         }
+        self.testResultRefs.append("1904sFilled")
+        print("HELLO?")
+        self.getTestResults{_ in
+            print("BENJAIMIN")
+            print(self.testResultRefs)
+            print(self.testResults)
+            for testResult in self.testResults{
+                self.createResulut(test: testResult)
+            }
+        }
         print("DONE CREATING USER")
         
 //        self.getPerformancePdf { pdf in
@@ -83,6 +97,21 @@ class User: ObservableObject, Equatable {
         }
     }
     
+    func getTestResults(completionHandler: @escaping  (_ completion: Bool) -> ()){
+        var count = 0 //Used to determine if the array has been searched and we can have the completion handler
+        if testResultRefs.count == 0 {completionHandler(false)} //Return if there are no tests in testRefs available
+        for testResultRef in testResultRefs{
+            let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/testResults/\(testResultRef).json")
+            getFile(ref: refJson, pdf: false){jsonD in
+                guard let jsonData = jsonD else {return}
+                let testResuult = Test(jsonData: jsonData)
+                self.testResults.append(testResuult)
+                count += 1
+                if count == self.testResults.count {completionHandler(true)}
+            }
+        }
+    }
+    
     func getFile(ref: StorageReference, pdf: Bool, completionHandler: @escaping (_ completion: Data?) -> ()) {
         ref.getData(maxSize: pdf == true ? (40 * 1024 * 1024) : (1 * 1024 * 1024)){data, error in
             if let error = error {
@@ -94,7 +123,57 @@ class User: ObservableObject, Equatable {
         }
     }
     
-    
+    func createResulut(test: Test){
+        print("BEN")
+        var overall = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(test.overallScore), color: Color.orange)], index: 0)
+        var sectionsOverall = [BarEntry]()
+        var subSectionGraphs = [BarData]()
+        //var scatterTiming = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 30, barEntries: [])
+        for section in test.sections{
+            var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
+            let subSectionEntry = BarEntry(xLabel: section.name, yEntries: [(height: CGFloat(section.scaledScore!), color: Color.orange)], index: 0)
+            sectionsOverall.append(subSectionEntry)
+            for question in section.questions{
+                switch question.finalState{
+                    case .right:
+                    
+                        if data[question.officialSub] != nil{
+                            data[question.officialSub]?.r+=1
+                        }else{
+                            data[question.officialSub] = (r:1, w: 0, o: 0)
+                        }
+                    case .wrong:
+                        if data[question.officialSub] != nil{
+                            data[question.officialSub]?.w+=1
+                        }else{
+                            data[question.officialSub] = (r:0, w: 1, o: 0)
+                        }
+                    default:
+                        print(question)
+                        print(question.finalState)
+                        print(question.userAnswer)
+                        if data[question.officialSub] != nil{
+                            data[question.officialSub]?.o+=1
+                        }else{
+                            data[question.officialSub] = (r:0, w: 0, o: 1)
+                        }
+                    }
+                }
+            var barData = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 0, barEntries: [])
+            for (subSectionString, values) in data{
+                barData.yAxisTotal =  Int(values.r +  values.w + values.o)
+                let barEntry = BarEntry(xLabel: subSectionString, yEntries: [(height: values.r, color: Color.green), (height: values.w, color: Color.red), (height: values.o, color: Color.gray)])
+                
+                barData.barEntries.append(barEntry)
+            }
+            print(barData.barEntries)
+            subSectionGraphs.append(barData)
+            
+        }
+        let formatedTestResulut = ACTFormatedTestData(overall: overall, sectionsOverall: sectionsOverall, subSectionGraphs: subSectionGraphs)
+        fullTestResults.append(formatedTestResulut)
+        
+    }
 
     
 

@@ -51,7 +51,7 @@ struct UserHomepageView: View {
                             }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
                                 .disabled(user.getTestsComplete == false)
                             
-                            NavigationLink(destination: PastPerformanceView()){
+                            NavigationLink(destination: PastPerformanceView(user: currentAuth.currentUser!)){
                                 HStack{
                                     Image(systemName: "archivebox")
                                     Text("Past Performance")
