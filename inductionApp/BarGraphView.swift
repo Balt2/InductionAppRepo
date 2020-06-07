@@ -96,6 +96,7 @@ struct BarChart: View {
                                                     .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
                                                     .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
                                                 .onTapGesture() {
+                                                    print(i)
                                                     print("Taped")
                                                     print(self.data.barEntries[i].xLabel)
                                                     print(self.data.barEntries[i].index)

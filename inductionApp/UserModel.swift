@@ -51,18 +51,19 @@ class User: ObservableObject, Equatable {
     var performancePDF = [PageModel]()
     
     var testRefs: [String]
-    var testResultRefs: [String] = []
+    var testResultRefs: [String]
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
      
     
-    init(fn: String, ln: String, id: String, association: Association, testRefs: [String]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
+    init(fn: String, ln: String, id: String, association: Association, testRefs: [String], testResultRefs: [String]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
         print("INIT USER")
         self.id = id
         self.firstName = fn
         self.lastName = ln
         self.association = association
         self.testRefs = testRefs
+        self.testResultRefs = testResultRefs
         
         //Getting Associations image
         let imageRef: StorageReference = Storage.storage().reference().child(association.imagePath)
@@ -79,15 +80,15 @@ class User: ObservableObject, Equatable {
             //If boolean is false then no tests exist
             self.getTestsComplete = true
         }
-        //self.testResultRefs.append("1904sFilled")
-        self.testResultRefs.append("1912SFilled")
+//        self.testResultRefs.append("1904sFilled")
+//        self.testResultRefs.append("1912SFilled")
         print("HELLO?")
         self.getTestResults{_ in
             print("BENJAIMIN")
             print(self.testResultRefs)
             print(self.testResults)
-            for testResult in self.testResults{
-                self.createResulut(test: testResult)
+            for (index, testResult) in self.testResults.enumerated(){
+                self.createResulut(test: testResult, index: index)
             }
         }
         print("DONE CREATING USER")
@@ -127,7 +128,7 @@ class User: ObservableObject, Equatable {
                 let testResuult = Test(jsonData: jsonData)
                 self.testResults.append(testResuult)
                 count += 1
-                if count == self.testResults.count {completionHandler(true)}
+                if count == self.testResultRefs.count {completionHandler(true)}
             }
         }
     }
@@ -143,15 +144,15 @@ class User: ObservableObject, Equatable {
         }
     }
     
-    func createResulut(test: Test){
+    func createResulut(test: Test, index: Int){
         print("BEN")
-        var overall = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(test.overallScore), color: Color.orange)], index: 0)
+        var overall = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(test.overallScore), color: Color.orange)], index: index)
         var sectionsOverall = [String : BarEntry]()
         var subSectionGraphs = [String: BarData]()
         //var scatterTiming = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 30, barEntries: [])
         for section in test.sections{
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
-            let subSectionEntry = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(section.scaledScore!), color: Color.orange)], index: 0)
+            let subSectionEntry = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(section.scaledScore!), color: Color.orange)], index: index)
             sectionsOverall[section.name] = subSectionEntry
             for question in section.questions{
                 switch question.finalState{
@@ -175,18 +176,22 @@ class User: ObservableObject, Equatable {
                         if data[question.officialSub] != nil{
                             data[question.officialSub]?.o+=1
                         }else{
-                            data[question.officialSub] = (r:0, w: 0, o: 1)
+                            data[
+                                question.officialSub] = (r:0, w: 0, o: 1)
                         }
                     }
                 }
             var barData = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 0, barEntries: [])
+            var yAxisTotalArray = [Int]()
             for (subSectionString, values) in data{
-                barData.yAxisTotal =  Int(values.r +  values.w + values.o)
+                yAxisTotalArray.append(Int(values.r +  values.w + values.o))
                 let barEntry = BarEntry(xLabel: subSectionString, yEntries: [(height: values.r, color: Color.green), (height: values.w, color: Color.red), (height: values.o, color: Color.gray)])
                 
                 barData.barEntries.append(barEntry)
             }
+            barData.yAxisTotal = yAxisTotalArray.max()!
             print(barData.barEntries)
+            
             subSectionGraphs[section.name] = barData
             
         }
