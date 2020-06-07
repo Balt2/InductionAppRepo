@@ -71,7 +71,6 @@ class Question: ObservableObject, Hashable, Identifiable {
         }else if isACT {
             self.answerLetters = ["F", "G", "H", "J"]
         }
-        
     
     }
     

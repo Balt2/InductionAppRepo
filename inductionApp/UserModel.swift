@@ -28,6 +28,25 @@ class User: ObservableObject, Equatable {
     @Published var tests: [Test] = []
     var testResults: [Test] = []
     var fullTestResults: [ACTFormatedTestData] = []
+    var sectionDateGraphs: [String: BarData]{
+        
+        var sectionEntries = [String: [BarEntry]]()
+        for test in fullTestResults{
+            for (key, sectionData) in test.sectionsOverall{
+                if sectionEntries[key] == nil{
+                    sectionEntries[key] = [sectionData]
+                }else{
+                    sectionEntries[key]!.append(sectionData)
+                }
+            }
+        }
+        var sectionGraphs = [String: BarData]()
+        for (section, entries) in sectionEntries{
+            let tempGraph = BarData(title: "ACT \(section) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: entries)
+            sectionGraphs[section] = tempGraph
+        }
+        return sectionGraphs
+    }
     @Published var getTestsComplete = false
     var performancePDF = [PageModel]()
     
@@ -60,7 +79,8 @@ class User: ObservableObject, Equatable {
             //If boolean is false then no tests exist
             self.getTestsComplete = true
         }
-        self.testResultRefs.append("1904sFilled")
+        //self.testResultRefs.append("1904sFilled")
+        self.testResultRefs.append("1912SFilled")
         print("HELLO?")
         self.getTestResults{_ in
             print("BENJAIMIN")
@@ -126,13 +146,13 @@ class User: ObservableObject, Equatable {
     func createResulut(test: Test){
         print("BEN")
         var overall = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(test.overallScore), color: Color.orange)], index: 0)
-        var sectionsOverall = [BarEntry]()
-        var subSectionGraphs = [BarData]()
+        var sectionsOverall = [String : BarEntry]()
+        var subSectionGraphs = [String: BarData]()
         //var scatterTiming = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 30, barEntries: [])
         for section in test.sections{
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
-            let subSectionEntry = BarEntry(xLabel: section.name, yEntries: [(height: CGFloat(section.scaledScore!), color: Color.orange)], index: 0)
-            sectionsOverall.append(subSectionEntry)
+            let subSectionEntry = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(section.scaledScore!), color: Color.orange)], index: 0)
+            sectionsOverall[section.name] = subSectionEntry
             for question in section.questions{
                 switch question.finalState{
                     case .right:
@@ -167,7 +187,7 @@ class User: ObservableObject, Equatable {
                 barData.barEntries.append(barEntry)
             }
             print(barData.barEntries)
-            subSectionGraphs.append(barData)
+            subSectionGraphs[section.name] = barData
             
         }
         let formatedTestResulut = ACTFormatedTestData(overall: overall, sectionsOverall: sectionsOverall, subSectionGraphs: subSectionGraphs)

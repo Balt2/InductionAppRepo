@@ -18,8 +18,8 @@ struct ACTFormatedTestData: Hashable, Identifiable{
     
     var overall: BarEntry //BarEntry(xLabel: date, yEntries: ([height: overallScore], orange)
     //var overallTime: BarEntry //BarEntry(xLabel: date, yEntries: ([height: time], orange)
-    var sectionsOverall: [BarEntry] //(SectionName, Entry for the section)
-    var subSectionGraphs: [BarData] 
+    var sectionsOverall: [String: BarEntry] //(SectionName, Entry for the section)
+    var subSectionGraphs: [String: BarData] //(SectionName, BarData)
     //var subSectionTime: [(String, BarData)]
 }
 
@@ -38,7 +38,7 @@ struct BarData: Hashable, Identifiable{
     
 }
 
-struct BarEntry: Hashable, Identifiable{
+struct BarEntry: Hashable, Identifiable, Equatable{
     static func == (lhs: BarEntry, rhs: BarEntry) -> Bool {
         return lhs.id == rhs.id
     }
@@ -58,6 +58,7 @@ struct BarEntry: Hashable, Identifiable{
 struct BarChart: View {
     //var width: CGFloat = 1000
     @Binding var showDetailTest : Bool
+    @Binding var detailDataIndex: Int?
     var ar: CGFloat = 2
     let data: BarData
     var barChart: Bool
@@ -95,11 +96,16 @@ struct BarChart: View {
                                                     .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
                                                     .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
                                                 .onTapGesture() {
-                                                        print("Taped")
-                                                        print(self.data.barEntries[i].xLabel)
+                                                    print("Taped")
+                                                    print(self.data.barEntries[i].xLabel)
                                                     print(self.data.barEntries[i].index)
-                                                    self.showDetailTest = true
-                                                    //self.detailData =
+                                                    if self.data.barEntries[i].index != nil{
+                                                        
+                                                        self.detailDataIndex = self.data.barEntries[i].index
+                                                        print(self.detailDataIndex)
+                                                        self.showDetailTest = true
+                                                        
+                                                    }
                                                 }
                                             }
                                         }

@@ -14,8 +14,9 @@ struct PastPerformanceView: View {
     @State var index = 0
     @State var offset : CGFloat = 0
     @State var showDetailTest = false
+    @State var detailDataIndex: Int?
     var detailData: ACTFormatedTestData?{
-        return user.fullTestResults[0]
+        return user.fullTestResults[detailDataIndex!]
     }
     var width = UIScreen.main.bounds.width
     let scatterData = BarData(title: "Time Per Question", xAxisLabel: "Questions", yAxisLabel: "Minutues", yAxisSegments: 4, yAxisTotal: 12, barEntries: [
@@ -95,7 +96,18 @@ struct PastPerformanceView: View {
         BarEntry(xLabel: "4-4-20", yEntries: [(height: 33, color: Color.orange)])
     ])
     var body: some View {
-        Group{
+        var sectionValues = [BarEntry]()
+        var sectionKeys = user.fullTestResults[0].sectionsOverall.map {$0.key} as! [String]
+        if detailDataIndex != nil{
+            //sectionKeys = detailData?.sectionsOverall.map {$0.key} as! [String]
+            
+            for key in sectionKeys{
+                sectionValues.append((detailData?.sectionsOverall[key])!)
+            }
+        }
+        //let sectionValues = detailData?.sectionsOverall.map {$0.value} as! [BarEntry]
+        
+        return Group {
             if showDetailTest == false{
                 
                 //GeometryReader{geometry in
@@ -104,15 +116,17 @@ struct PastPerformanceView: View {
                             Spacer()
                             Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                             //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
-                            BarChart(showDetailTest: self.$showDetailTest, data: self.createOverallGraph(), barChart: true).frame(width: UIScreen.main.bounds.width) //.offset(x: geometry.size.width * 0.05) //2 is the aspect ratio
-                            CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Reading", "Math", "English", "Science"]).frame(width:  UIScreen.main.bounds.width)
-                            //
+                            BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.createOverallGraph(), barChart: true).frame(width: UIScreen.main.bounds.width) //.offset(x: geometry.size.width * 0.05) //2 is the aspect ratio
+                            CostumeBarView(index: self.$index, offset: self.$offset, headers: sectionKeys).frame(width:  UIScreen.main.bounds.width)
                             HStack(spacing: 0){
+                                ForEach(sectionKeys.indices){index in
+                                    BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.user.sectionDateGraphs[sectionKeys[index]]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                }
                                 //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
-                                BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataM, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataE, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataS, barChart: true).frame(width: UIScreen.main.bounds.width)
+//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
+//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataM, barChart: true).frame(width: UIScreen.main.bounds.width)
+//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataE, barChart: true).frame(width: UIScreen.main.bounds.width)
+//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataS, barChart: true).frame(width: UIScreen.main.bounds.width)
                                  
                                 
                             }.offset(x: 0.5 * (4-1) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
@@ -121,7 +135,7 @@ struct PastPerformanceView: View {
                                 .padding(.all, 0)
                             
                             
-                            BarChart(showDetailTest: self.$showDetailTest, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
+                            BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
                             //                            .highPriorityGesture(DragGesture()
                             //
                             //                                .onEnded({ (value) in
@@ -161,104 +175,43 @@ struct PastPerformanceView: View {
                                 }
                                 HStack{
                                     Spacer()
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .fill(Color("lightBlue"))
-                                            .font(.largeTitle)
-                                        Text("Reading: 32")
-                                            .font(.largeTitle)
-                                            .foregroundColor(Color.white)
-                                    }
-                                    Spacer()
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .fill(Color("lightBlue"))
-                                            .font(.largeTitle)
-                                        Text("Math: 32")
-                                            .font(.largeTitle)
-                                            .foregroundColor(Color.white)
-                                    }
-                                    Spacer()
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .fill(Color("lightBlue"))
-                                            .font(.largeTitle)
-                                        Text("Reading: 32")
-                                            .font(.largeTitle)
-                                            .foregroundColor(Color.white)
-                                    }
-                                    Spacer()
-                                    ZStack{
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .fill(Color("lightBlue"))
-                                            .font(.largeTitle)
-                                        Text("Reading: 32")
-                                            .font(.largeTitle)
-                                            .foregroundColor(Color.white)
+                                    ForEach(sectionKeys.indices){index in
+                                        Group{
+                                            ZStack{
+                                                RoundedRectangle(cornerRadius: 5)
+                                                    .fill(Color("lightBlue"))
+                                                    .font(.largeTitle)
+                                                Text("\(sectionKeys[index]): \(Int(sectionValues[index].yEntries[0].height))")
+                                                    .font(.largeTitle)
+                                                    .foregroundColor(Color.white)
+                                            }
+                                            Spacer()
+                                        }
                                     }
                                     Spacer()
                                 }.frame(maxWidth: UIScreen.main.bounds.width)
                                 //BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Readig", "Math", "Writing", "Science"]).frame(width: UIScreen.main.bounds.width *  0.9)
+                                CostumeBarView(index: self.$index, offset: self.$offset, headers: sectionKeys).frame(width: UIScreen.main.bounds.width)
                                 HStack(spacing: 0){
-                                    VStack{
-                                        ZStack{
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .fill(Color.orange)
-                                                .font(.largeTitle)
-                                            Text("Reading Breakdown")
-                                                .font(.largeTitle)
-                                                .foregroundColor(Color.white)
-                                            
-                                        }.frame(width: 300)
-                                        Spacer()
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.detailData!.subSectionGraphs[0], barChart: true).frame(width: UIScreen.main.bounds.width)
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
-                                    }.padding(.all, 0)
-                                    VStack{
-                                        ZStack{
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .fill(Color.orange)
-                                                .font(.largeTitle)
-                                            Text("Math Breakdown")
-                                                .font(.largeTitle)
-                                                .foregroundColor(Color.white)
-                                        }.frame(width: 300)
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.detailData!.subSectionGraphs[1], barChart: true).frame(width: UIScreen.main.bounds.width)
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
-                                    }
-                                    
-                                    VStack{
-                                        ZStack{
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .fill(Color.orange)
-                                                .font(.largeTitle)
-                                            Text("English Breakdown")
-                                                .font(.largeTitle)
-                                                .foregroundColor(Color.white)
-                                        }.frame(width: 300)
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.detailData!.subSectionGraphs[2], barChart: true).frame(width: UIScreen.main.bounds.width)//.frame(width: UIScreen.main.bounds.width)
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
-                                    }
-                                    VStack{
-                                        ZStack{
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .fill(Color.orange)
-                                                .font(.largeTitle)
-                                            Text("Science Breakdown")
-                                                .font(.largeTitle)
-                                                .foregroundColor(Color.white)
-                                        }.frame(width: 300)
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.detailData!.subSectionGraphs[3], barChart: true)//.frame(width: UIScreen.main.bounds.width)//.frame(width: UIScreen.main.bounds.width)
-                                        BarChart(showDetailTest: self.$showDetailTest, data: self.scatterData, barChart: false)//.frame(width: UIScreen.main.bounds.width)
-                                    }
-                                    
-                                }.offset(x: 0.5 * (4-1) * UIScreen.main.bounds.width + self.offset) //(4-1) is headers.count - 1
+                                     ForEach(sectionKeys.indices){index in
+                                            VStack{
+                                                ZStack{
+                                                    RoundedRectangle(cornerRadius: 5)
+                                                        .fill(Color.orange)
+                                                        .font(.largeTitle)
+                                                    Text("\(sectionKeys[index]) Breakdown") //section.title
+                                                        .font(.largeTitle)
+                                                        .foregroundColor(Color.white)
+                                                }.frame(width: 300)
+                                                Spacer()
+                                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.detailData!.subSectionGraphs[sectionKeys[index]]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                            }.padding(.all, 0)
+                                        }
+                                }.offset(x: 0.5 * (CGFloat(self.detailData!.sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset) //(4-1) is headers.count - 1
                                 .animation(.default)
                                 .edgesIgnoringSafeArea(.all)
                                 .padding(.all, 0)
                                 
-                                //Rectangle().fill(Color("lightBlue"))
                                 
                             }
                         }
@@ -278,6 +231,7 @@ struct PastPerformanceView: View {
         return barData
         
     }
+
 }
 
 struct CostumeBarView : View {
@@ -323,6 +277,7 @@ struct CostumeBarView : View {
             .background(Color.red)
     }
 }
+
 
 
 //struct PastPerformanceView_Previews: PreviewProvider {
