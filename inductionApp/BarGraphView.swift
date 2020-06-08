@@ -8,72 +8,22 @@
 
 import SwiftUI
 
-struct ACTFormatedTestData: Hashable, Identifiable{
-    
-    static func == (lhs: ACTFormatedTestData, rhs: ACTFormatedTestData) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    var id = UUID()
-    
-    var overall: BarEntry //BarEntry(xLabel: date, yEntries: ([height: overallScore], orange)
-    //var overallTime: BarEntry //BarEntry(xLabel: date, yEntries: ([height: time], orange)
-    var sectionsOverall: [String: BarEntry] //(SectionName, Entry for the section)
-    var subSectionGraphs: [String: BarData] //(SectionName, BarData)
-    //var subSectionTime: [(String, BarData)]
-}
-
-struct BarData: Hashable, Identifiable{
-    static func == (lhs: BarData, rhs: BarData) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    var id = UUID()
-    var title: String
-    var xAxisLabel: String
-    var yAxisLabel: String
-    var yAxisSegments: Int
-    var yAxisTotal: Int
-    var barEntries: [BarEntry]
-    
-}
-
-struct BarEntry: Hashable, Identifiable, Equatable{
-    static func == (lhs: BarEntry, rhs: BarEntry) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    var id = UUID()
-    
-    var xLabel: String
-    var yEntries: [(height: CGFloat, color: Color)]
-    var index: Int?
-}
 
 struct BarChart: View {
+    var allData: AllACTData
     @Binding var showDetailTest : Bool
-    @Binding var detailDataIndex: Int?
     var ar: CGFloat = 2
     let data: BarData
     var barChart: Bool
-    //        BarData(title: "ACT Performance by Data", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [
-    //        BarEntry(xLabel: "Date 1", yEntries: [(height: 30, color: Color.green), (height: 4, color: Color.red), (height: 2, color: Color.gray) ]),
-    //        BarEntry(xLabel: "Date 2", yEntries: [(height: 20, color: Color.green), (height: 15, color: Color.red), (height: 1, color: Color.gray) ]),
-    //        BarEntry(xLabel: "Date 3", yEntries: [(height: 15, color: Color.green), (height: 0, color: Color.red), (height: 21, color: Color.gray) ]),
-    //        BarEntry(xLabel: "Date 4", yEntries: [(height: 12, color: Color.green), (height: 12, color: Color.red), (height: 12, color: Color.gray) ])
-    //    ])
+    
+    @State var zStackWidth: CGFloat = 0
     
     var body: some View {
         ZStack{ //Whole backgoruund of graph
             Color("lightBlue")
             
             
-            HStack(spacing: 0){ //HSTACK FOR GRAPH TO PLACE Y-AXIS
+            HStack(spacing: 0){
                 Text(self.data.yAxisLabel)
                     .rotationEffect(Angle(degrees: -90))
                     .font(.system(.subheadline))
@@ -86,8 +36,11 @@ struct BarChart: View {
                     VStack(spacing: 0){
                         HStack(spacing: 0){
                             YAXisLabelView(data: self.data).padding([.top, .bottom], -10).padding(.trailing, 10)
-                            ZStack(){ //ZSTSCK FOR GRID AND BAR VIEWS
-                                Grid(data: self.data)
+                            ZStack{ //ZSTSCK FOR GRID AND BAR VIEWS
+                                GeometryReader{zStackGeo in
+                                    Grid(data: self.data).onAppear(){
+                                        self.zStackWidth = zStackGeo.size.width
+                                    }
                                 if self.barChart == true {
                                     HStack{
                                         GeometryReader{innerGeometry in
@@ -98,8 +51,9 @@ struct BarChart: View {
                                                     .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
                                                     .onTapGesture() {
                                                         if self.data.barEntries[i].index != nil{
-                                                            self.detailDataIndex = self.data.barEntries[i].index
+                                                            self.allData.detailIndex = self.data.barEntries[i].index
                                                             self.showDetailTest = true
+                                                            print(zStackGeo.size)
                                                             
                                                         }
                                                 }
@@ -119,9 +73,10 @@ struct BarChart: View {
                                     }
                                 }
                                 
-                            }
+                                }
                         }
-                        XAxisLabelView(barEntries: self.data.barEntries)
+                        }
+                        XAxisLabelView(barEntries: self.data.barEntries).frame(width: zStackWidth)
                     }.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
                     
                 }.padding([.trailing, .leading], 15)
@@ -141,10 +96,6 @@ struct BarChart: View {
         return CGFloat(index) * offsetWidth + (offsetWidth * 0.25)
     }
     
-    func paddingForXAxis(width: CGFloat) -> CGFloat{
-        return (width * 0.85) / CGFloat(self.data.barEntries.count * 2 + 1)
-    }
-    
 }
 
 struct XAxisLabelView: View{
@@ -152,14 +103,12 @@ struct XAxisLabelView: View{
     var body: some View{
         HStack{
             Spacer()
-            Spacer()
-            Spacer()
             ForEach(0..<barEntries.count, id: \.self){i in
                 Group{
                     Spacer()
                     Text(self.barEntries[i].xLabel).multilineTextAlignment(.center).minimumScaleFactor(1.00).frame(maxWidth: .infinity, alignment: .center).lineLimit(3)
                     if i != self.barEntries.count - 1 {
-                        //Spacer()
+                        Spacer()
                     }
                 }
             }

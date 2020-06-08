@@ -23,6 +23,7 @@
 		2F0DD2CA244F5F6300AFFADE /* TestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0DD2C9244F5F6300AFFADE /* TestModel.swift */; };
 		2F2041A02472D93B002E811E /* PdfPageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F20419F2472D93B002E811E /* PdfPageModel.swift */; };
 		2F33DCDD245D1E5600239E69 /* satPracticeTest1.json in Resources */ = {isa = PBXBuildFile; fileRef = 2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */; };
+		2F40C48E248E981F00DCCA58 /* PerformanceDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */; };
 		2F56678D247A14780014F1ED /* ApplePencilReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56678C247A14780014F1ED /* ApplePencilReachability.swift */; };
 		2F5DB6D724718007009766A7 /* QuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D624718007009766A7 /* QuestionModel.swift */; };
 		2F5DB6D92471828B009766A7 /* CustomTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D82471828B009766A7 /* CustomTimer.swift */; };
@@ -64,6 +65,7 @@
 		2F20419F2472D93B002E811E /* PdfPageModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PdfPageModel.swift; sourceTree = "<group>"; };
 		2F2041A12472F00C002E811E /* InductionApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = InductionApp.entitlements; path = InductionApp/InductionApp.entitlements; sourceTree = "<group>"; };
 		2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = satPracticeTest1.json; path = InductionApp/satPracticeTest1.json; sourceTree = SOURCE_ROOT; };
+		2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceDataModel.swift; sourceTree = "<group>"; };
 		2F56678C247A14780014F1ED /* ApplePencilReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplePencilReachability.swift; sourceTree = "<group>"; };
 		2F5DB6D624718007009766A7 /* QuestionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionModel.swift; sourceTree = "<group>"; };
 		2F5DB6D82471828B009766A7 /* CustomTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTimer.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				038753F7244E9AA900F85970 /* LoginView.swift */,
 				038753F9244E9AC800F85970 /* UserHomepageView.swift */,
 				2F7ACE2C2481970600D0D80A /* BarGraphView.swift */,
+				2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */,
 				2F7ACE2E248197C300D0D80A /* PastPerformanceView.swift */,
 				03B26B532452AE2200D1477E /* ListLibrary.swift */,
 				038753F5244E923B00F85970 /* UserRegistrationViewModel.swift */,
@@ -318,6 +321,7 @@
 				03BEBC4D244E7B69001576EC /* AppDelegate.swift in Sources */,
 				2F7ACE2F248197C300D0D80A /* PastPerformanceView.swift in Sources */,
 				2F6A7D1B2474C21E00BFD3FA /* RootView.swift in Sources */,
+				2F40C48E248E981F00DCCA58 /* PerformanceDataModel.swift in Sources */,
 				03EA7F6624516BCF00184BA1 /* CanvasRepresentable.swift in Sources */,
 				2F87B4E72478CAC300C5CF05 /* ScrollViewRepresentable.swift in Sources */,
 				2FEEE4012450B94C003DE2BD /* AnswerSheetList.swift in Sources */,

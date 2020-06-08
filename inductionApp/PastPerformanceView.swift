@@ -9,15 +9,12 @@
 import SwiftUI
 
 struct PastPerformanceView: View {
-    @ObservedObject var user: User
+    var allData: AllACTData?
     
     @State var index = 0
     @State var offset : CGFloat = 0
     @State var showDetailTest = false
-    @State var detailDataIndex: Int?
-    var detailData: ACTFormatedTestData?{
-        return user.fullTestResults[detailDataIndex!]
-    }
+    
     var width = UIScreen.main.bounds.width
     let scatterData = BarData(title: "Time Per Question", xAxisLabel: "Questions", yAxisLabel: "Minutues", yAxisSegments: 4, yAxisTotal: 12, barEntries: [
         BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
@@ -29,21 +26,6 @@ struct PastPerformanceView: View {
         BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
         BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
         BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
-        BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
         BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
         BarEntry(xLabel: "1", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
         BarEntry(xLabel: "2", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
@@ -61,51 +43,9 @@ struct PastPerformanceView: View {
         BarEntry(xLabel: "3", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.green)]),
         BarEntry(xLabel: "4", yEntries: [(height: CGFloat(Int.random(in: 1..<11)), color: Color.red)])
     ])
-    let totalData = BarData(title: "ACT Perfomance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 30, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 35, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 36, color: Color.orange)])
-    ])
     
-    let totalDataR = BarData(title: "ACT Reading Perfomance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 28, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 35, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 36, color: Color.orange)])
-    ])
-    
-    let totalDataM = BarData(title: "ACT Math Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 32, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 35, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 32, color: Color.orange)])
-    ])
-    
-    let totalDataE = BarData(title: "ACT English Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 33, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 36, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 36, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 35, color: Color.orange)])
-    ])
-    
-    let totalDataS = BarData(title: "ACT Science Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 30, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 32, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 33, color: Color.orange)])
-    ])
     var body: some View {
-        var sectionValues = [BarEntry]()
-        var sectionKeys = user.fullTestResults[0].sectionsOverall.map {$0.key} as! [String]
-        if detailDataIndex != nil{
-            //sectionKeys = detailData?.sectionsOverall.map {$0.key} as! [String]
-            
-            for key in sectionKeys{
-                sectionValues.append((detailData?.sectionsOverall[key])!)
-            }
-        }
-        //let sectionValues = detailData?.sectionsOverall.map {$0.value} as! [BarEntry]
+
         
         return Group {
             if showDetailTest == false{
@@ -116,11 +56,11 @@ struct PastPerformanceView: View {
                             Spacer()
                             Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                             //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
-                            BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.createOverallGraph(), barChart: true).frame(width: UIScreen.main.bounds.width) //.offset(x: geometry.size.width * 0.05) //2 is the aspect ratio
-                            CostumeBarView(index: self.$index, offset: self.$offset, headers: sectionKeys).frame(width:  UIScreen.main.bounds.width)
+                            BarChart(allData: self.allData!, showDetailTest: self.$showDetailTest, data: allData!.overallPerformance!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                            CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.sectionNames).frame(width:  UIScreen.main.bounds.width)
                             HStack(spacing: 0){
-                                ForEach(sectionKeys.indices){index in
-                                    BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.user.sectionDateGraphs[sectionKeys[index]]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                ForEach(allData!.sectionNames, id: \.self){sectionKey in
+                                    BarChart(allData: self.allData!, showDetailTest: self.$showDetailTest, data: self.allData!.sectionsOverall[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
                                 }
                                 //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
 //                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
@@ -135,7 +75,7 @@ struct PastPerformanceView: View {
                                 .padding(.all, 0)
                             
                             
-                            BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
+                            //BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
                             //                            .highPriorityGesture(DragGesture()
                             //
                             //                                .onEnded({ (value) in
@@ -160,78 +100,81 @@ struct PastPerformanceView: View {
                     
                 //}.frame(maxWidth: .infinity)
             }else{
-                VStack{
-                    CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Tutor Analysis", "Raw Stats", "Actual Test"]).frame(width: UIScreen.main.bounds.width)
-                    HStack(spacing: 0){
-                        ScrollView(){
-                            VStack{
-                                ZStack{
-                                    Ellipse()
-                                        .fill(Color("lightBlue"))
-                                        .frame(width: 300, height: 100)
-                                    Text("Score: \(Int(self.detailData!.overall.yEntries[0].height))")
-                                        .font(.largeTitle)
-                                        .foregroundColor(Color.white)
-                                }
-                                HStack{
-                                    Spacer()
-                                    ForEach(sectionKeys.indices){index in
-                                        Group{
-                                            ZStack{
-                                                RoundedRectangle(cornerRadius: 5)
-                                                    .fill(Color("lightBlue"))
-                                                    .font(.largeTitle)
-                                                Text("\(sectionKeys[index]): \(Int(sectionValues[index].yEntries[0].height))")
-                                                    .font(.largeTitle)
-                                                    .foregroundColor(Color.white)
-                                            }
-                                            Spacer()
-                                        }
-                                    }
-                                    Spacer()
-                                }.frame(maxWidth: UIScreen.main.bounds.width)
-                                //BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                CostumeBarView(index: self.$index, offset: self.$offset, headers: sectionKeys).frame(width: UIScreen.main.bounds.width)
-                                HStack(spacing: 0){
-                                     ForEach(sectionKeys.indices){index in
-                                            VStack{
-                                                ZStack{
-                                                    RoundedRectangle(cornerRadius: 5)
-                                                        .fill(Color.orange)
-                                                        .font(.largeTitle)
-                                                    Text("\(sectionKeys[index]) Breakdown") //section.title
-                                                        .font(.largeTitle)
-                                                        .foregroundColor(Color.white)
-                                                }.frame(width: 300)
-                                                Spacer()
-                                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.detailData!.subSectionGraphs[sectionKeys[index]]!, barChart: true).frame(width: UIScreen.main.bounds.width)
-                                            }.padding(.all, 0)
-                                        }
-                                }.offset(x: 0.5 * (CGFloat(self.detailData!.sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset) //(4-1) is headers.count - 1
-                                .animation(.default)
-                                .edgesIgnoringSafeArea(.all)
-                                .padding(.all, 0)
-                                
-                                
-                            }
-                        }
-                    }
-                    //                    HStack(spacing: 0){
-                    //
-                    //                    }
-                }
+                DetailView(index: self.index, offset: self.offset, showDetailTest: self.$showDetailTest, allData: self.allData!, data: self.allData!.currentDetailData!)
             }
         }
     }
-    func createOverallGraph() -> BarData{
-        var barData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [])
-        for test in self.user.fullTestResults{
-            barData.barEntries.append(test.overall)
-        }
-        return barData
-        
-    }
 
+}
+
+struct DetailView: View{
+    @State var index: Int
+    @State var offset: CGFloat
+    @Binding var showDetailTest: Bool
+    var allData: AllACTData
+    var data: ACTFormatedTestData
+    var body: some View{
+        VStack{
+            CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Tutor Analysis", "Raw Stats", "Actual Test"]).frame(width: UIScreen.main.bounds.width)
+            HStack(spacing: 0){
+                ScrollView(){
+                    VStack{
+                        ZStack{
+                            Ellipse()
+                                .fill(Color("lightBlue"))
+                                .frame(width: 300, height: 100)
+                            Text("Score: \(Int(self.data.overall.yEntries[0].height))")
+                                .font(.largeTitle)
+                                .foregroundColor(Color.white)
+                        }
+                        HStack{
+                            Spacer()
+                            ForEach(self.allData.sectionNames, id: \.self){sectionKey in
+                                Group{
+                                    ZStack{
+                                        RoundedRectangle(cornerRadius: 5)
+                                            .fill(Color("lightBlue"))
+                                            .font(.largeTitle)
+                                        Text("\(sectionKey): \(Int(self.data.sectionsOverall[sectionKey]!.yEntries[0].height))")
+                                            .font(.largeTitle)
+                                            .foregroundColor(Color.white)
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            Spacer()
+                        }.frame(maxWidth: UIScreen.main.bounds.width)
+                        //BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
+                        CostumeBarView(index: self.$index, offset: self.$offset, headers: self.allData.sectionNames).frame(width: UIScreen.main.bounds.width)
+                        HStack(spacing: 0){
+                             ForEach(self.allData.sectionNames, id: \.self){sectionKey in
+                                    VStack{
+                                        ZStack{
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .fill(Color.orange)
+                                                .font(.largeTitle)
+                                            Text("\(sectionKey) Breakdown") //section.title
+                                                .font(.largeTitle)
+                                                .foregroundColor(Color.white)
+                                        }.frame(width: 300)
+                                        Spacer()
+                                        BarChart(allData: self.allData, showDetailTest: self.$showDetailTest, data: self.data.subSectionGraphs[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                    }.padding(.all, 0)
+                                }
+                        }.offset(x: 0.5 * (CGFloat(self.data.sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset) //(4-1) is headers.count - 1
+                        .animation(.default)
+                        .edgesIgnoringSafeArea(.all)
+                        .padding(.all, 0)
+                        
+                        
+                    }
+                }
+            }
+            //                    HStack(spacing: 0){
+            //
+            //                    }
+        }
+    }
 }
 
 struct CostumeBarView : View {

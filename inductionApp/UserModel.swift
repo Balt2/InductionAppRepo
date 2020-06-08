@@ -18,35 +18,35 @@ class User: ObservableObject, Equatable {
         return lhs.id == rhs.id
     }
     
-    
-    @Published var isLoggedIn = false
     let id: String
     let firstName: String
     let lastName: String
     var association: Association
     
     @Published var tests: [Test] = []
-    var testResults: [Test] = []
-    var fullTestResults: [ACTFormatedTestData] = []
-    var sectionDateGraphs: [String: BarData]{
-        
-        var sectionEntries = [String: [BarEntry]]()
-        for test in fullTestResults{
-            for (key, sectionData) in test.sectionsOverall{
-                if sectionEntries[key] == nil{
-                    sectionEntries[key] = [sectionData]
-                }else{
-                    sectionEntries[key]!.append(sectionData)
-                }
-            }
-        }
-        var sectionGraphs = [String: BarData]()
-        for (section, entries) in sectionEntries{
-            let tempGraph = BarData(title: "ACT \(section) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: entries)
-            sectionGraphs[section] = tempGraph
-        }
-        return sectionGraphs
-    }
+    //var testResults: [Test] = []
+    @Published var allACTPerformanceData: AllACTData?
+    //var fullTestResults: [ACTFormatedTestData] = []
+    
+//    var sectionDateGraphs: [String: BarData]{
+//
+//        var sectionEntries = [String: [BarEntry]]()
+//        for test in fullTestResults{
+//            for (key, sectionData) in test.sectionsOverall{
+//                if sectionEntries[key] == nil{
+//                    sectionEntries[key] = [sectionData]
+//                }else{
+//                    sectionEntries[key]!.append(sectionData)
+//                }
+//            }
+//        }
+//        var sectionGraphs = [String: BarData]()
+//        for (section, entries) in sectionEntries{
+//            let tempGraph = BarData(title: "ACT \(section) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: entries)
+//            sectionGraphs[section] = tempGraph
+//        }
+//        return sectionGraphs
+//    }
     @Published var getTestsComplete = false
     var performancePDF = [PageModel]()
     
@@ -80,16 +80,16 @@ class User: ObservableObject, Equatable {
             //If boolean is false then no tests exist
             self.getTestsComplete = true
         }
-//        self.testResultRefs.append("1904sFilled")
-//        self.testResultRefs.append("1912SFilled")
-        print("HELLO?")
-        self.getTestResults{_ in
+        
+        self.getTestResults{tests in
             print("BENJAIMIN")
             print(self.testResultRefs)
-            print(self.testResults)
-            for (index, testResult) in self.testResults.enumerated(){
-                self.createResulut(test: testResult, index: index)
+            
+            let actPerformanceTests: [ACTFormatedTestData] = tests.enumerated().map{(index, test) in
+                ACTFormatedTestData(test: test, index: index)
             }
+            self.allACTPerformanceData = AllACTData(tests: actPerformanceTests)
+           
         }
         print("DONE CREATING USER")
         
@@ -118,17 +118,19 @@ class User: ObservableObject, Equatable {
         }
     }
     
-    func getTestResults(completionHandler: @escaping  (_ completion: Bool) -> ()){
+    func getTestResults(completionHandler: @escaping  (_ completion: [Test]) -> ()){
         var count = 0 //Used to determine if the array has been searched and we can have the completion handler
-        if testResultRefs.count == 0 {completionHandler(false)} //Return if there are no tests in testRefs available
+        var tests = [Test]()
+        if testResultRefs.count == 0 {completionHandler(tests)} //Return if there are no tests in testRefs available
         for testResultRef in testResultRefs{
             let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/testResults/\(testResultRef).json")
             getFile(ref: refJson, pdf: false){jsonD in
                 guard let jsonData = jsonD else {return}
-                let testResuult = Test(jsonData: jsonData)
-                self.testResults.append(testResuult)
+                let testResult = Test(jsonData: jsonData)
+                tests.append(testResult)
+                //self.testResults.append(testResult)
                 count += 1
-                if count == self.testResultRefs.count {completionHandler(true)}
+                if count == self.testResultRefs.count {completionHandler(tests)}
             }
         }
     }
@@ -144,62 +146,6 @@ class User: ObservableObject, Equatable {
         }
     }
     
-    func createResulut(test: Test, index: Int){
-        print("BEN")
-        var overall = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(test.overallScore), color: Color.orange)], index: index)
-        var sectionsOverall = [String : BarEntry]()
-        var subSectionGraphs = [String: BarData]()
-        //var scatterTiming = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 30, barEntries: [])
-        for section in test.sections{
-            var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
-            let subSectionEntry = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(section.scaledScore!), color: Color.orange)], index: index)
-            sectionsOverall[section.name] = subSectionEntry
-            for question in section.questions{
-                switch question.finalState{
-                    case .right:
-                    
-                        if data[question.officialSub] != nil{
-                            data[question.officialSub]?.r+=1
-                        }else{
-                            data[question.officialSub] = (r:1, w: 0, o: 0)
-                        }
-                    case .wrong:
-                        if data[question.officialSub] != nil{
-                            data[question.officialSub]?.w+=1
-                        }else{
-                            data[question.officialSub] = (r:0, w: 1, o: 0)
-                        }
-                    default:
-                        print(question)
-                        print(question.finalState)
-                        print(question.userAnswer)
-                        if data[question.officialSub] != nil{
-                            data[question.officialSub]?.o+=1
-                        }else{
-                            data[
-                                question.officialSub] = (r:0, w: 0, o: 1)
-                        }
-                    }
-                }
-            var barData = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 0, barEntries: [])
-            var yAxisTotalArray = [Int]()
-            for (subSectionString, values) in data{
-                yAxisTotalArray.append(Int(values.r +  values.w + values.o))
-                let barEntry = BarEntry(xLabel: subSectionString, yEntries: [(height: values.r, color: Color.green), (height: values.w, color: Color.red), (height: values.o, color: Color.gray)])
-                
-                barData.barEntries.append(barEntry)
-            }
-            barData.yAxisTotal = yAxisTotalArray.max()!
-            print(barData.barEntries)
-            
-            subSectionGraphs[section.name] = barData
-            
-        }
-        let formatedTestResulut = ACTFormatedTestData(overall: overall, sectionsOverall: sectionsOverall, subSectionGraphs: subSectionGraphs)
-        fullTestResults.append(formatedTestResulut)
-        
-    }
-
     
 
     //DONT USE ANYMORE. USINGN AS EXAMPLE OF LIST ALL
