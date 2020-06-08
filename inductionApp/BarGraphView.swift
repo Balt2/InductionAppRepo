@@ -56,35 +56,36 @@ struct BarEntry: Hashable, Identifiable, Equatable{
 }
 
 struct BarChart: View {
-    //var width: CGFloat = 1000
     @Binding var showDetailTest : Bool
     @Binding var detailDataIndex: Int?
     var ar: CGFloat = 2
     let data: BarData
     var barChart: Bool
-//        BarData(title: "ACT Performance by Data", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [
-//        BarEntry(xLabel: "Date 1", yEntries: [(height: 30, color: Color.green), (height: 4, color: Color.red), (height: 2, color: Color.gray) ]),
-//        BarEntry(xLabel: "Date 2", yEntries: [(height: 20, color: Color.green), (height: 15, color: Color.red), (height: 1, color: Color.gray) ]),
-//        BarEntry(xLabel: "Date 3", yEntries: [(height: 15, color: Color.green), (height: 0, color: Color.red), (height: 21, color: Color.gray) ]),
-//        BarEntry(xLabel: "Date 4", yEntries: [(height: 12, color: Color.green), (height: 12, color: Color.red), (height: 12, color: Color.gray) ])
-//    ])
+    //        BarData(title: "ACT Performance by Data", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [
+    //        BarEntry(xLabel: "Date 1", yEntries: [(height: 30, color: Color.green), (height: 4, color: Color.red), (height: 2, color: Color.gray) ]),
+    //        BarEntry(xLabel: "Date 2", yEntries: [(height: 20, color: Color.green), (height: 15, color: Color.red), (height: 1, color: Color.gray) ]),
+    //        BarEntry(xLabel: "Date 3", yEntries: [(height: 15, color: Color.green), (height: 0, color: Color.red), (height: 21, color: Color.gray) ]),
+    //        BarEntry(xLabel: "Date 4", yEntries: [(height: 12, color: Color.green), (height: 12, color: Color.red), (height: 12, color: Color.gray) ])
+    //    ])
     
     var body: some View {
-            ZStack{ //Whole backgoruund of graph
-                Color("lightBlue")
-                
+        ZStack{ //Whole backgoruund of graph
+            Color("lightBlue")
+            
+            
+            HStack(spacing: 0){ //HSTACK FOR GRAPH TO PLACE Y-AXIS
+                Text(self.data.yAxisLabel)
+                    .rotationEffect(Angle(degrees: -90))
+                    .font(.system(.subheadline))
+                VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
+                    Text(self.data.title)
+                        .foregroundColor(.white)
+                        .font(.title)
+                        .padding([.top, .bottom], 10)
                     
-                    HStack{ //HSTACK FOR GRAPH TO PLACE Y-AXIS
-                        Text(self.data.yAxisLabel)
-                            .rotationEffect(Angle(degrees: -90), anchor: .trailing)
-                            .font(.system(.subheadline))
-                            .padding(.trailing, 15)
-                        Spacer()
-                        VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
-                            Text(self.data.title)
-                                .foregroundColor(.white)
-                                .font(.system(size: 30, weight: .medium , design: .rounded))
-                                .padding([.top, .bottom], 20)
+                    VStack(spacing: 0){
+                        HStack(spacing: 0){
+                            YAXisLabelView(data: self.data).padding([.top, .bottom], -10).padding(.trailing, 10)
                             ZStack(){ //ZSTSCK FOR GRID AND BAR VIEWS
                                 Grid(data: self.data)
                                 if self.barChart == true {
@@ -95,18 +96,12 @@ struct BarChart: View {
                                                 BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
                                                     .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
                                                     .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
-                                                .onTapGesture() {
-                                                    print(i)
-                                                    print("Taped")
-                                                    print(self.data.barEntries[i].xLabel)
-                                                    print(self.data.barEntries[i].index)
-                                                    if self.data.barEntries[i].index != nil{
-                                                        
-                                                        self.detailDataIndex = self.data.barEntries[i].index
-                                                        print(self.detailDataIndex)
-                                                        self.showDetailTest = true
-                                                        
-                                                    }
+                                                    .onTapGesture() {
+                                                        if self.data.barEntries[i].index != nil{
+                                                            self.detailDataIndex = self.data.barEntries[i].index
+                                                            self.showDetailTest = true
+                                                            
+                                                        }
                                                 }
                                             }
                                         }
@@ -124,14 +119,16 @@ struct BarChart: View {
                                     }
                                 }
                                 
-                            }.frame(width: UIScreen.main.bounds.width * 0.85, height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
-                                .padding([.top, .bottom], 0)
-                            Text(self.data.xAxisLabel).font(.system(.subheadline)).padding([.top, .bottom], 10)
-                        }.frame(width: UIScreen.main.bounds.width * 0.85)
-                            .padding([.trailing, .leading], 15)
-                    }.padding([.leading], 15)
-                
-            }.cornerRadius(20.0).aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
+                            }
+                        }
+                        XAxisLabelView(barEntries: self.data.barEntries)
+                    }.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
+                    
+                }.padding([.trailing, .leading], 15)
+                    .padding(.bottom, 25)
+            }
+            
+        }.cornerRadius(20.0).aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
     }
     
     func offsetHelper (width: CGFloat, index: Int) -> CGFloat{
@@ -144,52 +141,60 @@ struct BarChart: View {
         return CGFloat(index) * offsetWidth + (offsetWidth * 0.25)
     }
     
+    func paddingForXAxis(width: CGFloat) -> CGFloat{
+        return (width * 0.85) / CGFloat(self.data.barEntries.count * 2 + 1)
+    }
     
 }
 
+struct XAxisLabelView: View{
+    var barEntries: [BarEntry]
+    var body: some View{
+        HStack{
+            Spacer()
+            Spacer()
+            Spacer()
+            ForEach(0..<barEntries.count, id: \.self){i in
+                Group{
+                    Spacer()
+                    Text(self.barEntries[i].xLabel).multilineTextAlignment(.center).minimumScaleFactor(1.00).frame(maxWidth: .infinity, alignment: .center).lineLimit(3)
+                    if i != self.barEntries.count - 1 {
+                        //Spacer()
+                    }
+                }
+            }
+        }
+    }
+}
 
+struct YAXisLabelView: View{
+    var data: BarData
+    var body: some View{
+        VStack{
+            
+            ForEach((0...self.data.yAxisSegments).reversed(), id: \.self){i in
+                Group{
+                    Text(self.getYAxisLabel(i: i))
+                    if i != 0{
+                        Spacer()
+                    }
+                }
+            }
+        }
+    }
+    
+    func getYAxisLabel(i: Int) -> String{
+        let label = (CGFloat(i) / CGFloat(data.yAxisSegments)) * CGFloat(data.yAxisTotal)
+        return String(Int(label))
+    }
+    
+}
 struct Grid: View {
     var data: BarData
     var body: some View{
         GeometryReader{geometry in
             self.createGridLines(geometry: geometry.size).stroke(Color.gray)
-            VStack{
-                ForEach( (0...self.data.yAxisSegments).reversed(), id: \.self){i in
-                    Group{
-                        Text(self.getYAxisLabel(i: i))
-                        if i != 0{
-                            Spacer()
-                        }
-                    }
-                }
-            }.padding([.top, .bottom], -10).padding(.leading, self.paddingHelp() )
-            HStack{
-                ForEach(0..<self.data.barEntries.count, id: \.self){i in
-                    Group{
-                        Text(self.data.barEntries[i].xLabel)
-                        if i != self.data.barEntries.count - 1 {
-                            Spacer()
-                        }
-                    }
-                }
-            }.offset(x: 0, y: geometry.size.height).padding([.leading, .trailing], (geometry.size.width / CGFloat(self.data.barEntries.count))*0.40)
         }
-    }
-    
-    func getYAxisLabel(i: Int) -> String{
-        let label = (CGFloat(i) / CGFloat(self.data.yAxisSegments)) * CGFloat(self.data.yAxisTotal)
-        return String(Int(label))
-    }
-    
-    func paddingHelp() -> CGFloat{
-        if data.yAxisTotal < 100{
-            return -25
-        }else if data.yAxisTotal >= 100 {
-            return -40
-        }else if data.yAxisTotal >= 1000{
-            return -55
-        }
-        return 0
     }
     
     func createGridLines(geometry: CGSize) -> Path{
