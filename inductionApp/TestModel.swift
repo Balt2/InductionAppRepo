@@ -218,9 +218,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var resultJson: Data{
         return self.createResultJson()
     }
-    var computedData: [[String:(r: Double, w: Double, o: Double)]] {
-        return self.computeData()
-    }
+    
     var overallScore: Int{
         if act == true{
             var sum = 0
@@ -446,47 +444,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         return sections
     }
     
-    
-    //Create Data to send from Test
-    func computeData() -> [[String:(r: Double, w: Double, o: Double)]] {
-        var dataForMathCalculator = [String:(r: Double, w: Double, o: Double)]()
-        var dataForReading = [String:(r: Double, w: Double, o: Double)]()
-        var dataForWriting = [String:(r: Double, w: Double, o: Double)]()
-        var dataForMathNo = [String:(r: Double, w: Double, o: Double)]()
-        var data = [dataForReading, dataForWriting, dataForMathNo, dataForMathCalculator]
-        
-        for (_, section) in self.questions.enumerated() {
-            for question in section{
-                print(question.currentState)
-                print(question.secondsToAnswer)
-                switch question.currentState {
-                case .right:
-                    if question.location.row == 0 {
-                        
-                    }
-                    if data[question.location.section][question.tutorSub] != nil{
-                        data[question.location.section][question.tutorSub]?.r+=1
-                    }else{
-                        data[question.location.section][question.tutorSub] = (r:1, w: 0, o: 0)
-                    }
-                case .wrong:
-                    if data[question.location.section][question.tutorSub] != nil{
-                        data[question.location.section][question.tutorSub]?.w+=1
-                    }else{
-                        data[question.location.section][question.tutorSub] = (r:0, w: 1, o: 0)
-                    }
-                default:
-                    if data[question.location.section][question.tutorSub] != nil{
-                        data[question.location.section][question.tutorSub]?.o+=1
-                    }else{
-                        data[question.location.section][question.tutorSub] = (r:0, w: 0, o: 1)
-                    }
-                }
-            }
-        }
-        print(data)
-        return data
-    }
+
     
     func createResultJson() -> Data {
         //Creating encodable object from test

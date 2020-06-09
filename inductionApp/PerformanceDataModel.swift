@@ -11,58 +11,10 @@ import SwiftUI
 
 class AllACTData: ObservableObject{
     
-    let totalData = BarData(title: "ACT Perfomance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 30, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 35, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 36, color: Color.orange)])
-    ])
-    
-    let totalDataR = BarData(title: "ACT Reading Perfomance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 28, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 35, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 36, color: Color.orange)])
-    ])
-    
-    let totalDataM = BarData(title: "ACT Math Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 32, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 35, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 32, color: Color.orange)])
-    ])
-    
-    let totalDataE = BarData(title: "ACT English Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 33, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 36, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 36, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 35, color: Color.orange)])
-    ])
-    
-    let totalDataS = BarData(title: "ACT Science Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 5, yAxisTotal: 36, barEntries: [
-        BarEntry(xLabel: "1-16-20", yEntries: [(height: 30, color: Color.orange)]),
-        BarEntry(xLabel: "2-1-20", yEntries: [(height: 31, color: Color.orange)]),
-        BarEntry(xLabel: "3-10-20", yEntries: [(height: 32, color: Color.orange)]),
-        BarEntry(xLabel: "4-4-20", yEntries: [(height: 33, color: Color.orange)])
-    ])
-    
-    
-    
-    //var detailIndex: Int?
-    
-//    {
-//        didSet{
-//            if detailIndex! < allTestData!.count{
-//                self.currentDetailData = allTestData![detailIndex!]
-//            }
-//        }
-//    }
-    
-    //var currentDetailData: ACTFormatedTestData?
     var allTestData: [ACTFormatedTestData]?
-    var sectionNames: [String]
+    var sectionNames: [String]?
     var overallPerformance: BarData?
-    var sectionsOverall: [String: BarData]
+    var sectionsOverall: [String: BarData]?
     init(tests: [ACTFormatedTestData]){
         if tests.count > 0{
             self.allTestData = tests
@@ -90,11 +42,8 @@ class AllACTData: ObservableObject{
             self.sectionsOverall = sectionGraphs
             
         }else{
-            self.sectionNames = []
-            self.overallPerformance = nil
-            self.sectionsOverall = [:]
+            print("Invalid Creation of AllACTDATA: No tests")
         }
-            
     }
     
 }
@@ -119,7 +68,7 @@ struct ACTFormatedTestData: Hashable, Identifiable{
         var sectionsOverall = [String : BarEntry]()
         var subSectionGraphs = [String: BarData]()
         var subSectionTime = [String: BarData]()
-        //var scatterTiming = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 30, barEntries: [])
+
         for section in test.sections{
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
             var timingDataYTotal: CGFloat = 0

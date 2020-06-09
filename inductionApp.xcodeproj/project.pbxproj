@@ -10,7 +10,6 @@
 		038753F6244E923B00F85970 /* UserRegistrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038753F5244E923B00F85970 /* UserRegistrationViewModel.swift */; };
 		038753F8244E9AA900F85970 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038753F7244E9AA900F85970 /* LoginView.swift */; };
 		038753FA244E9AC800F85970 /* UserHomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038753F9244E9AC800F85970 /* UserHomepageView.swift */; };
-		03B26B542452AE2200D1477E /* ListLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B26B532452AE2200D1477E /* ListLibrary.swift */; };
 		03BEBC4D244E7B69001576EC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BEBC4C244E7B69001576EC /* AppDelegate.swift */; };
 		03BEBC4F244E7B69001576EC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BEBC4E244E7B69001576EC /* SceneDelegate.swift */; };
 		03BEBC51244E7B69001576EC /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BEBC50244E7B69001576EC /* SignupView.swift */; };
@@ -49,7 +48,6 @@
 		038753F5244E923B00F85970 /* UserRegistrationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRegistrationViewModel.swift; sourceTree = "<group>"; };
 		038753F7244E9AA900F85970 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		038753F9244E9AC800F85970 /* UserHomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomepageView.swift; sourceTree = "<group>"; };
-		03B26B532452AE2200D1477E /* ListLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListLibrary.swift; sourceTree = "<group>"; };
 		03BEBC49244E7B69001576EC /* InductionApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InductionApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03BEBC4C244E7B69001576EC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		03BEBC4E244E7B69001576EC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -151,7 +149,6 @@
 				2F7ACE2C2481970600D0D80A /* BarGraphView.swift */,
 				2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */,
 				2F7ACE2E248197C300D0D80A /* PastPerformanceView.swift */,
-				03B26B532452AE2200D1477E /* ListLibrary.swift */,
 				038753F5244E923B00F85970 /* UserRegistrationViewModel.swift */,
 				2F9451842450009D009521F7 /* josh.jpeg */,
 				03BEBC52244E7B6A001576EC /* Assets.xcassets */,
@@ -314,7 +311,6 @@
 				2F6A7D1D2474CCF200BFD3FA /* BarGraphViews.swift in Sources */,
 				2F8458D82477FA7300E8E62D /* AssociationModel.swift in Sources */,
 				2FAB71EC247D57A100955B02 /* GraphView.swift in Sources */,
-				03B26B542452AE2200D1477E /* ListLibrary.swift in Sources */,
 				2F0DD2C8244F5F3D00AFFADE /* UserModel.swift in Sources */,
 				038753FA244E9AC800F85970 /* UserHomepageView.swift in Sources */,
 				2F0DD2CA244F5F6300AFFADE /* TestModel.swift in Sources */,
