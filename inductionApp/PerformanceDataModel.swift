@@ -48,14 +48,17 @@ class AllACTData: ObservableObject{
     
     
     
-    var detailIndex: Int?{
-        didSet{
-            if detailIndex! < allTestData!.count{
-                self.currentDetailData = allTestData![detailIndex!]
-            }
-        }
-    }
-    var currentDetailData: ACTFormatedTestData?
+    //var detailIndex: Int?
+    
+//    {
+//        didSet{
+//            if detailIndex! < allTestData!.count{
+//                self.currentDetailData = allTestData![detailIndex!]
+//            }
+//        }
+//    }
+    
+    //var currentDetailData: ACTFormatedTestData?
     var allTestData: [ACTFormatedTestData]?
     var sectionNames: [String]
     var overallPerformance: BarData?
@@ -109,18 +112,23 @@ struct ACTFormatedTestData: Hashable, Identifiable{
     //var overallTime: BarEntry //BarEntry(xLabel: date, yEntries: ([height: time], orange)
     var sectionsOverall: [String: BarEntry] //(SectionName, Entry for the section)
     var subSectionGraphs: [String: BarData] //(SectionName, BarData)
-    //var subSectionTime: [(String, BarData)]
+    var subSectionTime: [String: BarData]
     
     init(test: Test, index: Int) {
         self.overall = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(test.overallScore), color: Color.orange)], index: index)
         var sectionsOverall = [String : BarEntry]()
         var subSectionGraphs = [String: BarData]()
+        var subSectionTime = [String: BarData]()
         //var scatterTiming = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 30, barEntries: [])
         for section in test.sections{
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
+            var timingDataYTotal: CGFloat = 0
+            var timingData = BarData(title: "\(section.name): Timing by Question", xAxisLabel: "Question #", yAxisLabel: "Seconds", yAxisSegments: 8, yAxisTotal: 0, barEntries: [])
             let subSectionEntry = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(section.scaledScore!), color: Color.orange)], index: index)
             sectionsOverall[section.name] = subSectionEntry
             for question in section.questions{
+                let secondsToAnswerTemp = CGFloat(question.secondsToAnswer)
+                timingDataYTotal = timingDataYTotal < secondsToAnswerTemp ? secondsToAnswerTemp : timingDataYTotal
                 switch question.finalState{
                     case .right:
                         if data[question.officialSub] != nil{
@@ -128,22 +136,32 @@ struct ACTFormatedTestData: Hashable, Identifiable{
                         }else{
                             data[question.officialSub] = (r:1, w: 0, o: 0)
                         }
+                        
+                        let barEntryTiming = BarEntry(xLabel: String(question.location.row + 1), yEntries: [(height: secondsToAnswerTemp, color: Color.green)])
+                        timingData.barEntries.append(barEntryTiming)
                     case .wrong:
                         if data[question.officialSub] != nil{
                             data[question.officialSub]?.w+=1
                         }else{
                             data[question.officialSub] = (r:0, w: 1, o: 0)
                         }
+                        let barEntryTiming = BarEntry(xLabel: String(question.location.row + 1), yEntries: [(height: secondsToAnswerTemp, color: Color.red)])
+                        timingData.barEntries.append(barEntryTiming)
                     case .ommited: //Ommited
                         if data[question.officialSub] != nil{
                             data[question.officialSub]?.o+=1
                         }else{
                             data[question.officialSub] = (r:0, w: 0, o: 1)
                         }
+                        let barEntryTiming = BarEntry(xLabel: String(question.location.row + 1), yEntries: [(height: 0, color: Color.gray)])
+                        timingData.barEntries.append(barEntryTiming)
                     default:
                         print("Impossible Question State")
                     }
                 }
+            timingData.yAxisTotal = Int(timingDataYTotal)
+            subSectionTime[section.name] = timingData
+            
             var barData = BarData(title: "\(section.name) by Sub Section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 0, barEntries: [])
             var yAxisMax = 0
             for (subSectionString, values) in data{
@@ -159,6 +177,7 @@ struct ACTFormatedTestData: Hashable, Identifiable{
         }
         self.sectionsOverall = sectionsOverall
         self.subSectionGraphs = subSectionGraphs
+        self.subSectionTime = subSectionTime
     }
     
     

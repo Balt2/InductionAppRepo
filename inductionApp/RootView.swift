@@ -116,7 +116,6 @@ class FirebaseManager: ObservableObject {
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
                                                 testRefs: ["1904S", "1906ACT", "1912ACT"], testResultRefs: ["1904sFilled", "1912SFilled"]) //dataDescription!["testRefs"] as! [String]
-                        print("GOOGLE")
                         print(dataDescription!["testResultRefs"])
                         //self.currentUser?.testResultRefs = dataDescription!["testResultRefs"] as! [String]
                         //self.currentUser?.testResultRefs = ["1904sFilled", "1912SFilled"]

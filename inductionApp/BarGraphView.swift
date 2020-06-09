@@ -10,8 +10,8 @@ import SwiftUI
 
 
 struct BarChart: View {
-    var allData: AllACTData
     @Binding var showDetailTest : Bool
+    @Binding var allDataTestIndex: Int
     var ar: CGFloat = 2
     let data: BarData
     var barChart: Bool
@@ -51,7 +51,7 @@ struct BarChart: View {
                                                     .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
                                                     .onTapGesture() {
                                                         if self.data.barEntries[i].index != nil{
-                                                            self.allData.detailIndex = self.data.barEntries[i].index
+                                                            self.allDataTestIndex = self.data.barEntries[i].index!
                                                             self.showDetailTest = true
                                                             print(zStackGeo.size)
                                                             
@@ -78,7 +78,7 @@ struct BarChart: View {
                         }
                         XAxisLabelView(barEntries: self.data.barEntries).frame(width: zStackWidth)
                     }.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
-                    
+                    Text(self.data.xAxisLabel).font(.system(.subheadline))
                 }.padding([.trailing, .leading], 15)
                     .padding(.bottom, 25)
             }
@@ -100,19 +100,25 @@ struct BarChart: View {
 
 struct XAxisLabelView: View{
     var barEntries: [BarEntry]
+    var labelJump: Int{
+        return ((barEntries.count) / 25 + 1)
+    }
     var body: some View{
         HStack{
             Spacer()
-            ForEach(0..<barEntries.count, id: \.self){i in
+            ForEach(self.getStride(), id: \.self){i in
                 Group{
                     Spacer()
                     Text(self.barEntries[i].xLabel).multilineTextAlignment(.center).minimumScaleFactor(1.00).frame(maxWidth: .infinity, alignment: .center).lineLimit(3)
-                    if i != self.barEntries.count - 1 {
+                    if i < self.barEntries.count - self.labelJump {
                         Spacer()
                     }
                 }
             }
         }
+    }
+    func getStride() -> [Int] {
+        return Array(stride(from: 0, to: barEntries.count, by: labelJump ))
     }
 }
 

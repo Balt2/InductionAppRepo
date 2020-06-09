@@ -14,6 +14,7 @@ struct PastPerformanceView: View {
     @State var index = 0
     @State var offset : CGFloat = 0
     @State var showDetailTest = false
+    @State var allDataTestIndex = 0
     
     var width = UIScreen.main.bounds.width
     let scatterData = BarData(title: "Time Per Question", xAxisLabel: "Questions", yAxisLabel: "Minutues", yAxisSegments: 4, yAxisTotal: 12, barEntries: [
@@ -47,7 +48,7 @@ struct PastPerformanceView: View {
     var body: some View {
 
         
-        return Group {
+        Group {
             if showDetailTest == false{
                 
                 //GeometryReader{geometry in
@@ -56,17 +57,12 @@ struct PastPerformanceView: View {
                             Spacer()
                             Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                             //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
-                            BarChart(allData: self.allData!, showDetailTest: self.$showDetailTest, data: allData!.overallPerformance!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                            BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: allData!.overallPerformance!, barChart: true).frame(width: UIScreen.main.bounds.width)
                             CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.sectionNames).frame(width:  UIScreen.main.bounds.width)
                             HStack(spacing: 0){
                                 ForEach(allData!.sectionNames, id: \.self){sectionKey in
-                                    BarChart(allData: self.allData!, showDetailTest: self.$showDetailTest, data: self.allData!.sectionsOverall[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.allData!.sectionsOverall[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
                                 }
-                                //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
-//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
-//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataM, barChart: true).frame(width: UIScreen.main.bounds.width)
-//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataE, barChart: true).frame(width: UIScreen.main.bounds.width)
-//                                BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.totalDataS, barChart: true).frame(width: UIScreen.main.bounds.width)
                                  
                                 
                             }.offset(x: 0.5 * (4-1) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
@@ -100,7 +96,7 @@ struct PastPerformanceView: View {
                     
                 //}.frame(maxWidth: .infinity)
             }else{
-                DetailView(index: self.index, offset: self.offset, showDetailTest: self.$showDetailTest, allData: self.allData!, data: self.allData!.currentDetailData!)
+                DetailView(index: self.index, offset: self.offset, showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, sectionNames: self.allData!.sectionNames, data: self.allData!.allTestData![allDataTestIndex])
             }
         }
     }
@@ -111,11 +107,12 @@ struct DetailView: View{
     @State var index: Int
     @State var offset: CGFloat
     @Binding var showDetailTest: Bool
-    var allData: AllACTData
+    @Binding var allDataTestIndex: Int
+    var sectionNames: [String]
     var data: ACTFormatedTestData
     var body: some View{
         VStack{
-            CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Tutor Analysis", "Raw Stats", "Actual Test"]).frame(width: UIScreen.main.bounds.width)
+            //CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Tutor Analysis", "Raw Stats", "Actual Test"]).frame(width: UIScreen.main.bounds.width)
             HStack(spacing: 0){
                 ScrollView(){
                     VStack{
@@ -129,7 +126,7 @@ struct DetailView: View{
                         }
                         HStack{
                             Spacer()
-                            ForEach(self.allData.sectionNames, id: \.self){sectionKey in
+                            ForEach(self.sectionNames, id: \.self){sectionKey in
                                 Group{
                                     ZStack{
                                         RoundedRectangle(cornerRadius: 5)
@@ -145,9 +142,9 @@ struct DetailView: View{
                             Spacer()
                         }.frame(maxWidth: UIScreen.main.bounds.width)
                         //BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
-                        CostumeBarView(index: self.$index, offset: self.$offset, headers: self.allData.sectionNames).frame(width: UIScreen.main.bounds.width)
+                        CostumeBarView(index: self.$index, offset: self.$offset, headers: self.sectionNames).frame(width: UIScreen.main.bounds.width)
                         HStack(spacing: 0){
-                             ForEach(self.allData.sectionNames, id: \.self){sectionKey in
+                             ForEach(self.sectionNames, id: \.self){sectionKey in
                                     VStack{
                                         ZStack{
                                             RoundedRectangle(cornerRadius: 5)
@@ -158,10 +155,11 @@ struct DetailView: View{
                                                 .foregroundColor(Color.white)
                                         }.frame(width: 300)
                                         Spacer()
-                                        BarChart(allData: self.allData, showDetailTest: self.$showDetailTest, data: self.data.subSectionGraphs[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionGraphs[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionTime[sectionKey]!, barChart: false).frame(width: UIScreen.main.bounds.width)
                                     }.padding(.all, 0)
                                 }
-                        }.offset(x: 0.5 * (CGFloat(self.data.sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset) //(4-1) is headers.count - 1
+                            }.offset(x: 0.5 * (CGFloat(self.data.sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset)
                         .animation(.default)
                         .edgesIgnoringSafeArea(.all)
                         .padding(.all, 0)

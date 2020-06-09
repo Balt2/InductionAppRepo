@@ -44,7 +44,6 @@ class Question: ObservableObject, Hashable, Identifiable {
            }
            set{
             self.currentState = newValue
-               print("SET")
            }
        }
     @Published var secondsToAnswer = 0.0
@@ -61,6 +60,8 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.isACT = act
         self.location = ip
         self.isACTMath = isActMath
+        self.secondsToAnswer = Double(q.secondsToAnswer ?? 0)
+        self.finalState = QuestionState(rawValue: q.finalState ?? "O") ?? QuestionState.ommited
         
         if self.isACTMath && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D", "E"]

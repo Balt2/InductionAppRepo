@@ -77,7 +77,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     var numAnsweredQuestions = 0
     var timed: Bool?
     
-    init(sectionFromJson: TestSectionFromJson, pages: [PageModel], name: String, questions: [Question] ) {
+    init(sectionFromJson: TestSectionFromJson, pages: [PageModel] = [PageModel](), name: String, questions: [Question]) {
         self.allotedTime = Double(sectionFromJson.timeAllowed)
         self.leftOverTime = Double(sectionFromJson.timeAllowed)
         self.index = (start: sectionFromJson.startIndex, end: sectionFromJson.endIndex)
@@ -85,8 +85,9 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.name = sectionFromJson.name
         self.sectionIndex = sectionFromJson.orderInTest
         self.questions = questions
+        self.sectionTimer = CustomTimer(duration: Int(allotedTime))
         self.timed = sectionFromJson.timed
-        
+        self.scaledScore = sectionFromJson.scaledScore
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
     }
     
@@ -102,18 +103,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.timed = testSection.timed
         
     }
-    
-    init(sectionFromJson: TestSectionFromJson, name: String, questions: [Question] ){ //This init is used for getting data from database
-        self.allotedTime = Double(sectionFromJson.timeAllowed)
-        self.leftOverTime = Double(sectionFromJson.timeAllowed)
-        self.index = (start: sectionFromJson.startIndex, end: sectionFromJson.endIndex)
-        self.name = sectionFromJson.name
-        self.sectionIndex = sectionFromJson.orderInTest
-        self.questions = questions
-        self.sectionTimer = CustomTimer(duration: Int(allotedTime))
-        self.timed = sectionFromJson.timed
-        
-    }
+
     
     //scale up: bool
     func scalePages(){
@@ -203,10 +193,8 @@ class Test: ObservableObject, Hashable, Identifiable {
                 for question in section.questions{
                     question.canvas?.tool =  isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, color: .black, width: 1)
                     //question.canvas?.__tool = isEraserEnabled ? PKEraserToolReference(eraserType: PKEraserTool(.bitmap)) : MyInkingTool(inkType: .pen, color: .black) //TODO: CHange width of pencil
-                    print("BELJSDF")
                 }
                 for page in section.pages{
-                    print("DSDFSSSSSS")
                     page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, color: .black, width: 1)
                     //page.canvas?.__tool = isEraserEnabled ? PKEraserToolReference(eraserType: PKEraserTool(.bitmap)) : MyInkingTool(inkType: .pen, color: .black)
                 }
@@ -300,7 +288,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         print("donne: \(self.name)")
     }
     
-    //Create  answer
+    //Create Test from performacne JSONS
     init(jsonData: Data){
         self.testFromJson = self.createTestFromJson(data: jsonData)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: false)
@@ -442,11 +430,6 @@ class Test: ObservableObject, Hashable, Identifiable {
                 let splitArray = question.id.split(separator: "_")
                 let questionNum = Int(splitArray[2])!
                 let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
-                if withPDF == false{
-                    tempQuestion.finalState = QuestionState(rawValue: question.finalState ?? "O") ?? QuestionState.ommited
-                    print(question.finalState)
-                    print(QuestionState(rawValue: question.finalState!)!)
-                }
                 questionList.append(tempQuestion)
             }
             if  withPDF == true{
@@ -456,7 +439,6 @@ class Test: ObservableObject, Hashable, Identifiable {
                 sections.append(tempSection)
             }else{
                 let tempSection = TestSection(sectionFromJson: section, name: section.name , questions: questionList)
-                tempSection.scaledScore = section.scaledScore
                 sections.append(tempSection)
             }
             

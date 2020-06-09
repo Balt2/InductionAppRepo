@@ -24,29 +24,7 @@ class User: ObservableObject, Equatable {
     var association: Association
     
     @Published var tests: [Test] = []
-    //var testResults: [Test] = []
     @Published var allACTPerformanceData: AllACTData?
-    //var fullTestResults: [ACTFormatedTestData] = []
-    
-//    var sectionDateGraphs: [String: BarData]{
-//
-//        var sectionEntries = [String: [BarEntry]]()
-//        for test in fullTestResults{
-//            for (key, sectionData) in test.sectionsOverall{
-//                if sectionEntries[key] == nil{
-//                    sectionEntries[key] = [sectionData]
-//                }else{
-//                    sectionEntries[key]!.append(sectionData)
-//                }
-//            }
-//        }
-//        var sectionGraphs = [String: BarData]()
-//        for (section, entries) in sectionEntries{
-//            let tempGraph = BarData(title: "ACT \(section) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: entries)
-//            sectionGraphs[section] = tempGraph
-//        }
-//        return sectionGraphs
-//    }
     @Published var getTestsComplete = false
     var performancePDF = [PageModel]()
     
