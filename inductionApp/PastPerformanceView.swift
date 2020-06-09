@@ -132,15 +132,7 @@ struct PastPerformanceView: View {
                                 HStack(spacing: 0){
                                     ForEach((self.allData?.sectionNames)!, id: \.self){sectionKey in
                                             VStack{
-                                                ZStack{
-                                                    RoundedRectangle(cornerRadius: 5)
-                                                        .fill(Color.orange)
-                                                        .font(.largeTitle)
-                                                    Text("\(sectionKey) Breakdown") //section.title
-                                                        .font(.largeTitle)
-                                                        .foregroundColor(Color.white)
-                                                }.frame(width: 300)
-                                                Spacer()
+                                               
                                                 BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: (self.allData?.allTestData![self.allDataTestIndex].subSectionGraphs[sectionKey]!)!, barChart: true).frame(width: UIScreen.main.bounds.width)
                                                 BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: (self.allData!.allTestData![self.allDataTestIndex].subSectionTime[sectionKey]!), barChart: false).frame(width: UIScreen.main.bounds.width)
                                             }.padding(.all, 0)
@@ -207,15 +199,6 @@ struct DetailView: View{
                         HStack(spacing: 0){
                              ForEach(self.sectionNames, id: \.self){sectionKey in
                                     VStack{
-                                        ZStack{
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .fill(Color.orange)
-                                                .font(.largeTitle)
-                                            Text("\(sectionKey) Breakdown") //section.title
-                                                .font(.largeTitle)
-                                                .foregroundColor(Color.white)
-                                        }.frame(width: 300)
-                                        Spacer()
                                         BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionGraphs[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
                                         BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionTime[sectionKey]!, barChart: false).frame(width: UIScreen.main.bounds.width)
                                     }.padding(.all, 0)

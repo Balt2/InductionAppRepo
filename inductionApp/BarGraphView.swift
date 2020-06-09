@@ -15,8 +15,8 @@ struct BarChart: View {
     var ar: CGFloat = 2
     let data: BarData
     var barChart: Bool
+    let gridHeight = ((UIScreen.main.bounds.width * 0.85 )/2) * 0.75 //2 is the AR
     
-    @State var zStackWidth: CGFloat = 0
     
     var body: some View {
         ZStack{ //Whole backgoruund of graph
@@ -24,61 +24,59 @@ struct BarChart: View {
             
             
             HStack(spacing: 0){
-                Text(self.data.yAxisLabel)
-                    .rotationEffect(Angle(degrees: -90))
-                    .font(.system(.subheadline))
+                HStack(spacing: 20){
+                    Text(self.data.yAxisLabel)
+                        .rotationEffect(Angle(degrees: -90), anchor: .trailing)
+                        .font(.system(.subheadline))
+                    YAXisLabelView(data: self.data).padding(.bottom, -15)
+                }.frame(height: self.gridHeight).padding([.trailing, .leading], 0)
+                
                 VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                     Text(self.data.title)
                         .foregroundColor(.white)
                         .font(.title)
                         .padding([.top, .bottom], 10)
                     
-                    //VStack(spacing: 0){
-                        HStack(spacing: 0){
-                            YAXisLabelView(data: self.data).padding([.top, .bottom], -10).padding(.trailing, 10)
-                            ZStack{ //ZSTSCK FOR GRID AND BAR VIEWS
-                                GeometryReader{zStackGeo in
-                                    Grid(data: self.data).onAppear(){
-                                        self.zStackWidth = zStackGeo.size.width
-                                    }
-                                if self.barChart == true {
-                                    HStack{
-                                        GeometryReader{innerGeometry in
-                                            ForEach(0..<self.data.barEntries.count, id: \.self) { i in
-                                                
-                                                BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
-                                                    .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
-                                                    .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
-                                                    .onTapGesture() {
-                                                        if self.data.barEntries[i].index != nil{
-                                                            self.allDataTestIndex = self.data.barEntries[i].index!
-                                                            self.showDetailTest = true
-                                                            print(zStackGeo.size)
-                                                            
-                                                        }
+                    ZStack{ //ZSTSCK FOR GRID AND BAR VIEWS
+                        
+                        Grid(data: self.data)
+                        
+                        if self.barChart == true {
+                            HStack{
+                                GeometryReader{innerGeometry in
+                                    ForEach(0..<self.data.barEntries.count, id: \.self) { i in
+                                        
+                                        BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
+                                            .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
+                                            .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
+                                            .onTapGesture() {
+                                                if self.data.barEntries[i].index != nil{
+                                                    self.allDataTestIndex = self.data.barEntries[i].index!
+                                                    self.showDetailTest = true
+                                                    
                                                 }
-                                            }
                                         }
                                     }
-                                }else{
-                                    HStack{
-                                        GeometryReader{innerGeometry in
-                                            ForEach(0..<self.data.barEntries.count, id: \.self) { i in
-                                                Circle().fill(self.data.barEntries[i].yEntries[0].color).frame(width: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, height: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, alignment: .center)
-                                                    .offset(x: self.widthOffsetHelper(width: innerGeometry.size.width, index: i), y: (innerGeometry.size.height - (((self.data.barEntries[i].yEntries[0].height) / CGFloat(self.data.yAxisTotal)) * innerGeometry.size.height)) - (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.25)
-                                                
-                                            }
-                                        }
+                                }
+                            }
+                        }else{
+                            HStack{
+                                GeometryReader{innerGeometry in
+                                    ForEach(0..<self.data.barEntries.count, id: \.self) { i in
+                                        Circle().fill(self.data.barEntries[i].yEntries[0].color).frame(width: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, height: (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.5, alignment: .center)
+                                            .offset(x: self.widthOffsetHelper(width: innerGeometry.size.width, index: i), y: (innerGeometry.size.height - (((self.data.barEntries[i].yEntries[0].height) / CGFloat(self.data.yAxisTotal)) * innerGeometry.size.height)) - (innerGeometry.size.width / CGFloat(self.data.barEntries.count)) * 0.25)
                                         
                                     }
                                 }
                                 
-                                }
+                            }
                         }
-                        }.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
-                        XAxisLabelView(barEntries: self.data.barEntries).frame(width: zStackWidth)
-                    //}.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
-                    Text(self.data.xAxisLabel).font(.system(.subheadline))
+                        
+                        
+                        
+                    }.frame(height: self.gridHeight, alignment: .bottom)
+                    XAxisLabelView(barEntries: self.data.barEntries)//.background(Color.black).opacity(0.5)//.padding(.trailing, -15)
+                    //Text(self.data.xAxisLabel).font(.system(.subheadline))
                 }.padding([.trailing, .leading], 15)
                     .padding(.bottom, 25)
             }
@@ -105,11 +103,9 @@ struct XAxisLabelView: View{
     }
     var body: some View{
         HStack{
-            Spacer()
             ForEach(self.getStride(), id: \.self){i in
                 Group{
-                    Spacer()
-                    Text(self.barEntries[i].xLabel).multilineTextAlignment(.center).minimumScaleFactor(1.00).frame(maxWidth: .infinity, alignment: .center).lineLimit(3)
+                    Text(self.barEntries[i].xLabel).minimumScaleFactor(1.00).frame(maxWidth: .infinity, alignment: .center) //.multilineTextAlignment(.center).lineLimit(3)
                     if i < self.barEntries.count - self.labelJump {
                         Spacer()
                     }
