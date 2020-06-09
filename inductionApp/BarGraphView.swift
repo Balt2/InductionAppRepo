@@ -33,7 +33,7 @@ struct BarChart: View {
                         .font(.title)
                         .padding([.top, .bottom], 10)
                     
-                    VStack(spacing: 0){
+                    //VStack(spacing: 0){
                         HStack(spacing: 0){
                             YAXisLabelView(data: self.data).padding([.top, .bottom], -10).padding(.trailing, 10)
                             ZStack{ //ZSTSCK FOR GRID AND BAR VIEWS
@@ -75,9 +75,9 @@ struct BarChart: View {
                                 
                                 }
                         }
-                        }
+                        }.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
                         XAxisLabelView(barEntries: self.data.barEntries).frame(width: zStackWidth)
-                    }.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
+                    //}.frame(height: ((UIScreen.main.bounds.width * 0.85 )/self.ar) * 0.75, alignment: .bottom)
                     Text(self.data.xAxisLabel).font(.system(.subheadline))
                 }.padding([.trailing, .leading], 15)
                     .padding(.bottom, 25)

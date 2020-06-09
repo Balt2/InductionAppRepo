@@ -58,10 +58,10 @@ struct PastPerformanceView: View {
                             Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                             //BarChart(data: self.totalData, barChart: true).frame(width: geometry.size.width)
                             BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: allData!.overallPerformance!, barChart: true).frame(width: UIScreen.main.bounds.width)
-                            CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.sectionNames).frame(width:  UIScreen.main.bounds.width)
+                            CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.sectionNames!).frame(width:  UIScreen.main.bounds.width)
                             HStack(spacing: 0){
-                                ForEach(allData!.sectionNames, id: \.self){sectionKey in
-                                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.allData!.sectionsOverall[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                ForEach(allData!.sectionNames!, id: \.self){sectionKey in
+                                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.allData!.sectionsOverall![sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
                                 }
                                  
                                 
@@ -96,7 +96,68 @@ struct PastPerformanceView: View {
                     
                 //}.frame(maxWidth: .infinity)
             }else{
-                DetailView(index: self.index, offset: self.offset, showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, sectionNames: self.allData!.sectionNames, data: self.allData!.allTestData![allDataTestIndex])
+//                DetailView(index: self.index, offset: self.offset, showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, sectionNames: self.allData!.sectionNames, data: self.allData!.allTestData![allDataTestIndex])
+                VStack{
+                    //CostumeBarView(index: self.$index, offset: self.$offset, headers: ["Tutor Analysis", "Raw Stats", "Actual Test"]).frame(width: UIScreen.main.bounds.width)
+                    HStack(spacing: 0){
+                        ScrollView(){
+                            VStack{
+                                ZStack{
+                                    Ellipse()
+                                        .fill(Color("lightBlue"))
+                                        .frame(width: 300, height: 100)
+                                    Text("Score: \(Int((self.allData?.allTestData![self.allDataTestIndex].overall.yEntries[0].height)!))")
+                                        .font(.largeTitle)
+                                        .foregroundColor(Color.white)
+                                }
+                                HStack{
+                                    Spacer()
+                                    ForEach((self.allData!.sectionNames!), id: \.self){sectionKey in
+                                        Group{
+                                            ZStack{
+                                                RoundedRectangle(cornerRadius: 5)
+                                                    .fill(Color("lightBlue"))
+                                                    .font(.largeTitle)
+                                                Text("\(sectionKey): \(Int((self.allData?.allTestData![self.allDataTestIndex].sectionsOverall[sectionKey]!.yEntries[0].height)!))")
+                                                    .font(.largeTitle)
+                                                    .foregroundColor(Color.white)
+                                            }
+                                            Spacer()
+                                        }
+                                    }
+                                    Spacer()
+                                }.frame(maxWidth: UIScreen.main.bounds.width)
+                                //BarChart(showDetailTest: self.$showDetailTest, data: self.totalDataR, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                CostumeBarView(index: self.$index, offset: self.$offset, headers: (self.allData?.sectionNames)!).frame(width: UIScreen.main.bounds.width)
+                                HStack(spacing: 0){
+                                    ForEach((self.allData?.sectionNames)!, id: \.self){sectionKey in
+                                            VStack{
+                                                ZStack{
+                                                    RoundedRectangle(cornerRadius: 5)
+                                                        .fill(Color.orange)
+                                                        .font(.largeTitle)
+                                                    Text("\(sectionKey) Breakdown") //section.title
+                                                        .font(.largeTitle)
+                                                        .foregroundColor(Color.white)
+                                                }.frame(width: 300)
+                                                Spacer()
+                                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: (self.allData?.allTestData![self.allDataTestIndex].subSectionGraphs[sectionKey]!)!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: (self.allData!.allTestData![self.allDataTestIndex].subSectionTime[sectionKey]!), barChart: false).frame(width: UIScreen.main.bounds.width)
+                                            }.padding(.all, 0)
+                                        }
+                                }.offset(x: 0.5 * (CGFloat(self.allData!.allTestData![self.allDataTestIndex].sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset)
+                                .animation(.default)
+                                .edgesIgnoringSafeArea(.all)
+                                .padding(.all, 0)
+                                
+                                
+                            }
+                        }
+                    }
+                    //                    HStack(spacing: 0){
+                    //
+                    //                    }
+                }
             }
         }
     }

@@ -52,8 +52,6 @@ class Question: ObservableObject, Hashable, Identifiable {
     init(q: QuestionFromJson, ip: IndexPath, act: Bool, isActMath: Bool) {
         self.officialID = q.id
         self.officialSub = q.officialSub
-        print("DSDF")
-        print(officialSub)
         self.tutorSub = q.tutorSub
         self.answer = q.answer
         self.reason = q.reason
