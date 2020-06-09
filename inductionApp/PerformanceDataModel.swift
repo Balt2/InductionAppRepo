@@ -111,7 +111,7 @@ struct ACTFormatedTestData: Hashable, Identifiable{
             timingData.yAxisTotal = Int(timingDataYTotal)
             subSectionTime[section.name] = timingData
             
-            var barData = BarData(title: "\(section.name) by Sub Section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 0, barEntries: [])
+            var barData = BarData(title: "\(section.name) by sub s visection", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 0, barEntries: [])
             var yAxisMax = 0
             for (subSectionString, values) in data{
                 let totalInSubSection = Int(values.r +  values.w + values.o)
