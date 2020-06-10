@@ -23,6 +23,7 @@
 		2F2041A02472D93B002E811E /* PdfPageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F20419F2472D93B002E811E /* PdfPageModel.swift */; };
 		2F33DCDD245D1E5600239E69 /* satPracticeTest1.json in Resources */ = {isa = PBXBuildFile; fileRef = 2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */; };
 		2F40C48E248E981F00DCCA58 /* PerformanceDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */; };
+		2F40C4902490786F00DCCA58 /* BreiteJ-CB1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */; };
 		2F56678D247A14780014F1ED /* ApplePencilReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56678C247A14780014F1ED /* ApplePencilReachability.swift */; };
 		2F5DB6D724718007009766A7 /* QuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D624718007009766A7 /* QuestionModel.swift */; };
 		2F5DB6D92471828B009766A7 /* CustomTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D82471828B009766A7 /* CustomTimer.swift */; };
@@ -64,6 +65,7 @@
 		2F2041A12472F00C002E811E /* InductionApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = InductionApp.entitlements; path = InductionApp/InductionApp.entitlements; sourceTree = "<group>"; };
 		2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = satPracticeTest1.json; path = InductionApp/satPracticeTest1.json; sourceTree = SOURCE_ROOT; };
 		2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceDataModel.swift; sourceTree = "<group>"; };
+		2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BreiteJ-CB1.pdf"; sourceTree = "<group>"; };
 		2F56678C247A14780014F1ED /* ApplePencilReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplePencilReachability.swift; sourceTree = "<group>"; };
 		2F5DB6D624718007009766A7 /* QuestionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionModel.swift; sourceTree = "<group>"; };
 		2F5DB6D82471828B009766A7 /* CustomTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTimer.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */,
 				2F6A7D122474A93200BFD3FA /* 1-ACT Exam 1904S.pdf */,
 				2F6A7D142474ACC800BFD3FA /* 1-ACT Exam 1912.pdf */,
+				2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */,
 				2F6A7D1A2474C21E00BFD3FA /* RootView.swift */,
 				2F0DD2C7244F5F3D00AFFADE /* UserModel.swift */,
 				2F8458D72477FA7300E8E62D /* AssociationModel.swift */,
@@ -250,6 +253,7 @@
 				2F33DCDD245D1E5600239E69 /* satPracticeTest1.json in Resources */,
 				03BEBC56244E7B6A001576EC /* Preview Assets.xcassets in Resources */,
 				2F0DD2C6244F5C9800AFFADE /* GoogleService-Info.plist in Resources */,
+				2F40C4902490786F00DCCA58 /* BreiteJ-CB1.pdf in Resources */,
 				2F9451852450009D009521F7 /* josh.jpeg in Resources */,
 				2F945183244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf in Resources */,
 				2F6A7D132474A93200BFD3FA /* 1-ACT Exam 1904S.pdf in Resources */,

@@ -22,7 +22,6 @@ struct BarChart: View {
         ZStack{ //Whole backgoruund of graph
             Color("lightBlue")
             
-            
             HStack(spacing: 0){
                 HStack(spacing: 20){
                     Text(self.data.yAxisLabel)
@@ -50,12 +49,13 @@ struct BarChart: View {
                                             .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
                                             .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
                                             .onTapGesture() {
+                                                print("TAPPPED")
                                                 if self.data.barEntries[i].index != nil{
                                                     self.allDataTestIndex = self.data.barEntries[i].index!
                                                     self.showDetailTest = true
                                                     
                                                 }
-                                        }
+                                        }.disabled(self.allDataTestIndex < 0)
                                     }
                                 }
                             }
@@ -75,7 +75,20 @@ struct BarChart: View {
                         
                         
                     }.frame(height: self.gridHeight, alignment: .bottom)
-                    XAxisLabelView(barEntries: self.data.barEntries)//.background(Color.black).opacity(0.5)//.padding(.trailing, -15)
+                    //Group{
+                        XAxisLabelView(barEntries: self.data.barEntries)//.background(Color.black).opacity(0.5)//.padding(.trailing, -15)
+//                        HStack{
+//                            Group{
+//                            Rectangle().fill(Color.green)
+//                            Text("Correct")
+//                            Rectangle().fill(Color.red)
+//                            Text("Incorrect")
+//                            Rectangle().fill(Color.grey)
+//                            Text("Ommitted")
+//                            }
+//
+//                        }
+                   // }
                     //Text(self.data.xAxisLabel).font(.system(.subheadline))
                 }.padding([.trailing, .leading], 15)
                     .padding(.bottom, 25)
@@ -105,7 +118,7 @@ struct XAxisLabelView: View{
         HStack{
             ForEach(self.getStride(), id: \.self){i in
                 Group{
-                    Text(self.barEntries[i].xLabel).minimumScaleFactor(1.00).frame(maxWidth: .infinity, alignment: .center) //.multilineTextAlignment(.center).lineLimit(3)
+                    Text(self.barEntries[i].xLabel).minimumScaleFactor(1.00).frame(maxWidth: .infinity, alignment: .center)//.rotationEffect(Angle(degrees: 45)) //.multilineTextAlignment(.center).lineLimit(3)
                     if i < self.barEntries.count - self.labelJump {
                         Spacer()
                     }
@@ -194,7 +207,7 @@ struct BarShape: View {
                 ForEach(0..<self.barEntry.yEntries.count, id: \.self) { i in
                     self.createStackRect(startHeight: self.heightHelper(maxHeight: geometry.size.height, index: i - 1), endHeight: self.heightHelper(maxHeight: geometry.size.height, index: i), width: geometry.size.width * 0.9).fill(self.barEntry.yEntries[i].color).rotationEffect(Angle(degrees: 180))
                         .transformEffect(CGAffineTransform(translationX: -geometry.size.width * 0.05, y: 0))
-                        .opacity(0.85)
+                        .opacity(0.95)
                 }
                 
             }

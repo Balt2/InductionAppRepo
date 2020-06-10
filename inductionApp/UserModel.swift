@@ -64,7 +64,7 @@ class User: ObservableObject, Equatable {
             print(self.testResultRefs)
             
             let actPerformanceTests: [ACTFormatedTestData] = tests.enumerated().map{(index, test) in
-                ACTFormatedTestData(test: test, index: index)
+                ACTFormatedTestData(test: test, index: index, tutorPDFName: "BreiteJ-CB1")
             }
             self.allACTPerformanceData = AllACTData(tests: actPerformanceTests)
            

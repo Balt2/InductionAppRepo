@@ -43,7 +43,16 @@ class PageModel: ObservableObject, Hashable, Identifiable {
     
 }
 
-class TestPDF {
+class TestPDF: Hashable {
+    static func == (lhs: TestPDF, rhs: TestPDF) -> Bool {
+        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+    }
+    
+    
+    var hashValue: Int {
+        return ObjectIdentifier(self).hashValue
+    }
+    
     var pages = [PageModel]()
     var pdfName = ""
     

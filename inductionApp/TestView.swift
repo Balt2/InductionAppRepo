@@ -29,10 +29,9 @@ struct TestView: View {
                 HStack{
                     if testData.showAnswerSheet == true{
                         
-                        List {
-                            
-                            Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")){
-                                ForEach(self.testData.currentSection!.questions, id: \.self){ question in
+                        List{
+                            Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
+                                ForEach(self.testData.currentSection!.questions, id: \.self){question in
                                     AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true)
                                 }
                             }.disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
@@ -73,7 +72,6 @@ struct TestView: View {
                                 tableView.contentInsetAdjustmentBehavior = .always
                                 if self.shouldScroll != tableView.isScrollEnabled{
                                     tableView.isScrollEnabled = self.shouldScroll
-                                    
                                 }
                                 //print("Before Table Content Inset: \(tableView.contentInset)")
                                 //print("Befeore TABLE CONTEENT OFFSET: \(tableView.contentOffset)")
