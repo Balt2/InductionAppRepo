@@ -190,7 +190,7 @@ class User: ObservableObject, Equatable {
                 }else{
                     print("PDF DATA: \(data)")
                     pdfD = data!
-                    completionHandler(pdfD)
+                    completionHandler(pdfD) //booooooli
                 }
             }
         }
