@@ -99,7 +99,7 @@ struct XAxisLabelView: View{
         HStack{
             ForEach(self.getStride(), id: \.self){i in
                 Group{
-                    Text(self.getAxisLabel(i: i)).minimumScaleFactor(0.40).frame(maxWidth: .infinity, alignment: .center).multilineTextAlignment(.center).lineLimit(3).fixedSize(horizontal: false, vertical: true)//.rotationEffect(Angle(degrees: 45))
+                    Text(self.getAxisLabel(i: i)).font(.system(size: self.fontSize())).frame(maxWidth: .infinity, alignment: .center).multilineTextAlignment(.center).lineLimit(3).fixedSize(horizontal: false, vertical: true)//.rotationEffect(Angle(degrees: -45), anchor: .center) minimumScaleFactor(0.40)
                     if i < self.data.barEntries.count - self.labelJump {
                         Spacer()
                     }
@@ -116,6 +116,15 @@ struct XAxisLabelView: View{
             return self.data.barEntries[i].xLabel
         }
         
+    }
+    func fontSize() -> CGFloat{
+        if data.barEntries.count < 4{
+            return 16.0
+        }else if  data.barEntries.count < 8{
+            return 13.0
+        }else{
+            return 10.0
+        }
     }
     
     func getStride() -> [Int] {
