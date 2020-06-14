@@ -29,11 +29,11 @@ struct PastPerformanceView: View {
                     VStack{
                         Spacer()
                         Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
-                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: allData!.overallPerformance!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: allData!.overallPerformance!).frame(width: UIScreen.main.bounds.width)
                         CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.sectionNames!).frame(width:  UIScreen.main.bounds.width)
                         HStack(spacing: 0){
                             ForEach(allData!.sectionNames!, id: \.self){sectionKey in
-                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.allData!.sectionsOverall![sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)
+                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.allData!.sectionsOverall![sectionKey]!).frame(width: UIScreen.main.bounds.width)
                             }
                             
                             
@@ -144,8 +144,10 @@ struct RawDataView: View{
             HStack(spacing: 0){
                 ForEach(self.sectionNames, id: \.self){sectionKey in
                     VStack{
-                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionGraphs[sectionKey]!, barChart: true).frame(width: UIScreen.main.bounds.width)//.id(UUID())
-                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionTime[sectionKey]!, barChart: false).frame(width: UIScreen.main.bounds.width)//.id(UUID())
+                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionGraphs[sectionKey]!).frame(width: UIScreen.main.bounds.width)//.id(UUID()
+                        ScatterPlot(data:self.data.subSectionTime[sectionKey]!).frame(width: UIScreen.main.bounds.width)
+                        //BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionTime[sectionKey]!, barChart: false).frame(width: UIScreen.main.bounds.width)//.id(UUID())
+                        
                     }.padding(.all, 0)
                 }
             }.offset(x: 0.5 * (CGFloat(self.data.sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset)

@@ -110,7 +110,7 @@ struct ACTFormatedTestData: Hashable, Identifiable{
                         print("Impossible Question State")
                     }
                 }
-            timingData.yAxisTotal = Int(timingDataYTotal)
+            timingData.yAxisTotal = Int(timingDataYTotal + 10) //TODO: Make a global variable with the radius of the scatter plot circles
             subSectionTime[section.name] = timingData
             
             var barData = BarData(title: "\(section.name) by sub section", xAxisLabel: "Categories", yAxisLabel: "Questions", yAxisSegments: 5, yAxisTotal: 0, barEntries: [])
