@@ -76,7 +76,7 @@ struct CanvasRepresentable: UIViewRepresentable {
                 }
                 print("After looping through points: \(numberOfPixels)")
                 if numberOfPixels > 100{
-                    if (parent.question.currentState == .ommited) {
+                    if (parent.question.currentState == .omitted) {
                         parent.question.userAnswer = question
                         parent.question.currentState = .selected
                         parent.question.secondsToAnswer += parent.section!.sectionTimer.timeDelta
@@ -109,7 +109,7 @@ struct CanvasRepresentable: UIViewRepresentable {
                         parent.question.answerOrdredIn += parent.section!.numAnsweredQuestions
                         
                     } else{ //There are non selected
-                        parent.question.currentState = .ommited
+                        parent.question.currentState = .omitted
                         
                     }
                 }

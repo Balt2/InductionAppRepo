@@ -36,7 +36,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     var answerOrdredIn = 0
     
     @Published var userAnswer = ""
-    @Published var currentState = QuestionState.ommited
+    @Published var currentState = QuestionState.omitted
     var finalState: QuestionState {
            get{
                //self.checkAnswer()
@@ -59,7 +59,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.location = ip
         self.isACTMath = isActMath
         self.secondsToAnswer = Double(q.secondsToAnswer ?? 0)
-        self.finalState = QuestionState(rawValue: q.finalState ?? "O") ?? QuestionState.ommited
+        self.finalState = QuestionState(rawValue: q.finalState ?? "O") ?? QuestionState.omitted
         
         if self.isACTMath && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D", "E"]
@@ -95,7 +95,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     }
     
     func checkAnswer() {
-        if (currentState == .invalidSelection || currentState == .ommited) {return}
+        if (currentState == .invalidSelection || currentState == .omitted) {return}
         else if (userAnswer == answer) {
             currentState = .right
         }else{
@@ -107,7 +107,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     func reset() {
         self.answerOrdredIn = 0
         self.userAnswer = ""
-        self.currentState = .ommited
+        self.currentState = .omitted
         self.secondsToAnswer = 0.0
         self.canvas = nil
     }
@@ -119,10 +119,10 @@ enum QuestionState : String {
     //Used when checking the answer and creating data
     case right = "R" //Right
     case wrong = "W" //Wrong
-    case ommited = "O" //Ommited
+    case omitted = "O" //omitted
     case invalidSelection = "I" //Invalid Selection
     
     //Used when still in test
-    ///.ommited = "O" is used here too
+    ///.omitted = "O" is used here too
     case selected = "S" //Selected
 }

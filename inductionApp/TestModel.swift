@@ -574,7 +574,7 @@ struct QuestionFromJson: Codable{
     //Values only in the test result JSON
     var studentAnswer: String?
     var secondsToAnswer: Int?
-    var finalState: String? //"R" for right, "W" for wrong, "O" for ommited
+    var finalState: String? //"R" for right, "W" for wrong, "O" for omitted
     var orderAnsweredInSection: Int?
 }
 

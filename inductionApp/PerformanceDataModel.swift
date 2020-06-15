@@ -98,7 +98,7 @@ struct ACTFormatedTestData: Hashable, Identifiable{
                         }
                         let barEntryTiming = BarEntry(xLabel: String(question.location.row + 1), yEntries: [(height: secondsToAnswerTemp, color: Color.red)])
                         timingData.barEntries.append(barEntryTiming)
-                    case .ommited: //Ommited
+                    case .omitted: //omitted
                         if data[question.officialSub] != nil{
                             data[question.officialSub]?.o+=1
                         }else{

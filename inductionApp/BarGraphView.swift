@@ -31,7 +31,16 @@ struct ScatterPlot: View{
                            ScatterGrid(data: self.data).padding(.trailing, 10)
                        }.padding([.trailing], 15)
                            
-                    Text(self.data.xAxisLabel).padding(.bottom, 25)
+                    Text(self.data.xAxisLabel)
+                    HStack{
+                        Circle().fill(Color.red).frame(width: 10, height: 10)
+                        Text("Wrong")
+                        Circle().fill(Color.green).frame(width: 10, height: 10)
+                        Text("Correct")
+                        Circle().fill(Color.gray).frame(width: 10, height: 10)
+                        Text("Omitted")
+                    }.padding(.bottom, 25)
+                    
                    }
                    
                }.cornerRadius(20.0).frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.width * 0.475)
@@ -44,6 +53,7 @@ struct BarChart: View {
     @Binding var allDataTestIndex: Int
     var ar: CGFloat = 2
     let data: BarData
+    var showLegend: Bool
     
     
     var body: some View {
@@ -62,8 +72,18 @@ struct BarChart: View {
                     Grid(data: self.data, horizontal: true, showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex).padding(.leading, 30).padding(.trailing, 10)
                 }.padding([.trailing], 15)
                     
+                Text(self.data.xAxisLabel).font(.system(size: 18.0)).padding(.bottom, self.showLegend == true ? 0.0 : 25.0)
                 
-                Text(self.data.xAxisLabel).padding(.bottom, 25)
+                if showLegend == true{
+                    HStack{
+                        Rectangle().fill(Color.red).frame(width: 50, height: 10)
+                        Text("Wrong")
+                        Rectangle().fill(Color.green).frame(width: 50, height: 10)
+                        Text("Correct")
+                        Rectangle().fill(Color.gray).frame(width: 50, height: 10)
+                        Text("Omitted")
+                    }.padding(.bottom, 25)
+                }
             }
             
         }.cornerRadius(20.0).frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.width * 0.475)
@@ -185,7 +205,7 @@ struct ScatterGrid: View{
                     XAxisLabelView(data: self.data, scale: false).frame(width: self.diameter * CGFloat(self.data.barEntries.count)).padding([.trailing, .leading], self.diameter / 2.0)
                     
                 }
-        }.frame(width: 850)
+        }.frame(width:  UIScreen.main.bounds.width * 0.8)
     }
     func createGridLines(geometry: CGSize) -> Path{
         var path = Path()
