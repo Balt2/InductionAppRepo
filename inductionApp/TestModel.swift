@@ -213,6 +213,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var numberOfSections: Int?
     var act: Bool?
     var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
+    var dateTaken: String?
     
     //Data about a test (probably just taken)
     var resultJson: Data{
@@ -288,13 +289,15 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     //Create Test from performacne JSONS
     init(jsonData: Data){
+        self.pdfImages = TestPDF(name: "1-ACT Exam 1904S").pages
         self.testFromJson = self.createTestFromJson(data: jsonData)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: false)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: true)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
             self.name = self.testFromJson!.name
         }
+        self.dateTaken = self.testFromJson?.dateTaken
         
         
     }

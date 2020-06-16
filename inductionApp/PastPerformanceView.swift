@@ -84,7 +84,12 @@ struct PastPerformanceView: View {
                         Image(systemName: "2.square.fill")
                         Text("PDF")
                     }
-                    Text("Actual Test")
+                    CorrectionView(testData: self.allData!.allTestData![allDataTestIndex])
+//                    ScrollView(.vertical){
+//                        ForEach(self.allData!.allTestData![allDataTestIndex].pdfImages, id: \.self){page in
+//                            PageView(model: page)
+//                        }
+//                    }
                     .tabItem {
                         Image(systemName: "3.square.fill")
                         Text("Test")
@@ -111,7 +116,7 @@ struct RawDataView: View{
                 RoundedRectangle(cornerRadius: 5)
                     .fill(Color("lightBlue"))
                     .font(.largeTitle)
-                Text("Test: \(data.name); Taken on: \(data.dateTaken)")
+                Text("Test: \(data.name); Taken on: \(data.dateTaken!)")
                     .font(.largeTitle)
                     .foregroundColor(Color.white)
             }
@@ -119,7 +124,7 @@ struct RawDataView: View{
                 Ellipse()
                     .fill(Color("lightBlue"))
                     .frame(width: 300, height: 100)
-                Text("Score: \(Int(self.data.overall.yEntries[0].height))")
+                Text("Score: \(Int(self.data.overall!.yEntries[0].height))")
                     .font(.largeTitle)
                     .foregroundColor(Color.white)
             }

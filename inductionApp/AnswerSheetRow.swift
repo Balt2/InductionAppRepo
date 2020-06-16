@@ -18,6 +18,7 @@ struct AnswerSheetRow: View {
     @ObservedObject var section: TestSection
     var xStepper: CGFloat = CGFloat(54.0)
     var actMath: Bool
+    var disabled: Bool = false
     
     
     var body: some View {
@@ -88,8 +89,11 @@ struct AnswerSheetRow: View {
                 }else {
                     Text(self.question.userAnswer).frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
                 }
-                
-                CanvasRepresentable(question: self.question, page: PageModel(image: UIImage(), pageID: -1), section: self.section, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: (self.actMath == true ? 40 : 54), height: geo.size.height/1.5), canvasGeo: CGSize())
+                if self.disabled == false{
+                    CanvasRepresentable(question: self.question, page: PageModel(image: UIImage(), pageID: -1), section: self.section, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: (self.actMath == true ? 40 : 54), height: geo.size.height/1.5), canvasGeo: CGSize())
+                }else{
+                    Image(systemName: "checkmark.circle").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.green)
+                }
                 
             }
 

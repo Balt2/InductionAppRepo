@@ -22,7 +22,7 @@ class AllACTData: ObservableObject{
             var overallBarData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [])
             var sectionEntries = [String: [BarEntry]]()
             for test in tests{
-                overallBarData.barEntries.append(test.overall)
+                overallBarData.barEntries.append(test.overall!)
                 for (key, sectionData) in test.sectionsOverall{
                     if sectionEntries[key] == nil{
                         sectionEntries[key] = [sectionData]
@@ -30,7 +30,6 @@ class AllACTData: ObservableObject{
                         sectionEntries[key]!.append(sectionData)
                     }
                 }
-                
             }
             var sectionGraphs = [String: BarData]()
             for (section, entries) in sectionEntries{
@@ -49,33 +48,44 @@ class AllACTData: ObservableObject{
 }
 
 
-struct ACTFormatedTestData: Hashable, Identifiable{
+class ACTFormatedTestData: Test{
     
-    static func == (lhs: ACTFormatedTestData, rhs: ACTFormatedTestData) -> Bool {
-        return lhs.id == rhs.id
-    }
+//    static func == (lhs: ACTFormatedTestData, rhs: ACTFormatedTestData) -> Bool {
+//        return lhs.id == rhs.id
+//    }
+//
+//    var id = UUID() //DELETE
+//    var name: String //DELETE
+    //var testPDF = [PageModel]() //DELETE
     
-    var id = UUID()
-    var name: String
-    var dateTaken: String //Todo make this a real date and sort by date
-    var overall: BarEntry //BarEntry(xLabel: date, yEntries: ([height: overallScore], orange)
+    
+    var overall: BarEntry? //BarEntry(xLabel: date, yEntries: ([height: overallScore], orange)
     //var overallTime: BarEntry //BarEntry(xLabel: date, yEntries: ([height: time], orange)
-    var sectionsOverall: [String: BarEntry] //(SectionName, Entry for the section)
-    var subSectionGraphs: [String: BarData] //(SectionName, BarData)
-    var subSectionTime: [String: BarData]
+    var sectionsOverall = [String: BarEntry]() //(SectionName, Entry for the section)
+    var subSectionGraphs = [String: BarData]() //(SectionName, BarData)
+    var subSectionTime = [String: BarData]()
     var tutorPDF: TestPDF
     
-    init(test: Test, index: Int, tutorPDFName: String) {
-        self.overall = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(test.overallScore), color: Color("salmon"))], index: index)
-        var sectionsOverall = [String : BarEntry]()
-        var subSectionGraphs = [String: BarData]()
-        var subSectionTime = [String: BarData]()
+    
+    init(data: Data, index: Int, tutorPDFName: String) {
+        self.tutorPDF = TestPDF(name: tutorPDFName)
+        super.init(jsonData: data)
+        self.createData(index: index)
+        self.startTest()
 
-        for section in test.sections{
+    }
+    
+    func createData(index: Int){
+        self.overall = BarEntry(xLabel: "\(self.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(self.overallScore), color: Color("salmon"))], index: index)
+//        var sectionsOverall = [String : BarEntry]()
+//        var subSectionGraphs = [String: BarData]()
+//        var subSectionTime = [String: BarData]()
+
+        for section in self.sections{
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
             var timingDataYTotal: CGFloat = 0
             var timingData = BarData(title: "\(section.name): Timing by Question", xAxisLabel: "Question #", yAxisLabel: "Seconds", yAxisSegments: 8, yAxisTotal: 0, barEntries: [])
-            let subSectionEntry = BarEntry(xLabel: "\(test.testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(section.scaledScore!), color: Color("salmon"))], index: index)
+            let subSectionEntry = BarEntry(xLabel: "\(testFromJson!.dateTaken!)", yEntries: [(height: CGFloat(section.scaledScore!), color: Color("salmon"))], index: index)
             sectionsOverall[section.name] = subSectionEntry
             for question in section.questions{
                 let secondsToAnswerTemp = CGFloat(question.secondsToAnswer)
@@ -124,19 +134,12 @@ struct ACTFormatedTestData: Hashable, Identifiable{
             }
             barData.yAxisTotal = yAxisMax
             subSectionGraphs[section.name] = barData
-            
         }
-        self.sectionsOverall = sectionsOverall
-        self.subSectionGraphs = subSectionGraphs
-        self.subSectionTime = subSectionTime
-        self.tutorPDF = TestPDF(name: tutorPDFName)
-        self.name = test.name
-        self.dateTaken = test.testFromJson!.dateTaken!
+//        self.sectionsOverall = sectionsOverall
+//        self.subSectionGraphs = subSectionGraphs
+//        self.subSectionTime = subSectionTime
         
     }
-    
-    
-
     
     
 }
