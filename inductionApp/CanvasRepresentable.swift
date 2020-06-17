@@ -133,7 +133,7 @@ struct CanvasRepresentable: UIViewRepresentable {
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
-            c.tool = PKInkingTool(.pen, color: .black, width: 1)
+            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             c.delegate = context.coordinator
             question.canvas = c
             print("ONE")
@@ -141,7 +141,7 @@ struct CanvasRepresentable: UIViewRepresentable {
         }else if isAnswerSheet == true{
             let c = question.canvas!
             c.delegate = context.coordinator
-            c.tool = PKInkingTool(.pen, color: .black, width: 1)
+            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             question.canvas = c
             print("TWO")
             return c
@@ -149,7 +149,7 @@ struct CanvasRepresentable: UIViewRepresentable {
             let c = PKCanvasView()
             c.isOpaque = false
             c.allowsFingerDrawing = true
-            c.tool = PKInkingTool(.pen, color: .black, width: 1)
+            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             c.isScrollEnabled = false
             print("THREE")
             c.delegate = context.coordinator
@@ -158,7 +158,7 @@ struct CanvasRepresentable: UIViewRepresentable {
         }else{
             let c = page.canvas!
             c.delegate = context.coordinator
-            c.tool = PKInkingTool(.pen, color: .black, width: 1)
+            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             page.canvas = c
             print("FOUR")
             return c

@@ -67,7 +67,8 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     
     
     
-    
+    var inkingTool: PKInkingTool //= PKInkingTool(.pen, color: .black, width: 1)
+    var eraserTool: PKEraserTool = PKEraserTool(.bitmap)
     var name: String
     var sectionIndex: Int
     var index: (start: Int, end: Int) //Index of pages in the pdf
@@ -77,7 +78,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     var numAnsweredQuestions = 0
     var timed: Bool?
     
-    init(sectionFromJson: TestSectionFromJson, pages: [PageModel] = [PageModel](), name: String, questions: [Question]) {
+    init(sectionFromJson: TestSectionFromJson, pages: [PageModel] = [PageModel](), name: String, questions: [Question], inkingTool: PKInkingTool) {
         self.allotedTime = Double(sectionFromJson.timeAllowed)
         self.leftOverTime = Double(sectionFromJson.timeAllowed)
         self.index = (start: sectionFromJson.startIndex, end: sectionFromJson.endIndex)
@@ -89,6 +90,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.timed = sectionFromJson.timed
         self.scaledScore = sectionFromJson.scaledScore
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
+        self.inkingTool = inkingTool
     }
     
     init(testSection: TestSection){
@@ -101,6 +103,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.questions = testSection.questions.map {Question(question: $0)}
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
         self.timed = testSection.timed
+        self.inkingTool = testSection.inkingTool
         
     }
 
@@ -191,11 +194,11 @@ class Test: ObservableObject, Hashable, Identifiable {
         didSet{
             for section in sections{
                 for question in section.questions{
-                    question.canvas?.tool =  isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, color: .black, width: 1)
+                    question.canvas?.tool =  isEraserEnabled ? section.eraserTool : section.inkingTool
                     //question.canvas?.__tool = isEraserEnabled ? PKEraserToolReference(eraserType: PKEraserTool(.bitmap)) : MyInkingTool(inkType: .pen, color: .black) //TODO: CHange width of pencil
                 }
                 for page in section.pages{
-                    page.canvas?.tool = isEraserEnabled ? PKEraserTool(.bitmap) : PKInkingTool(.pen, color: .black, width: 1)
+                    page.canvas?.tool = isEraserEnabled ? section.eraserTool : section.inkingTool
                     //page.canvas?.__tool = isEraserEnabled ? PKEraserToolReference(eraserType: PKEraserTool(.bitmap)) : MyInkingTool(inkType: .pen, color: .black)
                 }
             }
@@ -256,7 +259,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.testPDFFile = pdfFile
         self.pdfImages = TestPDF(name: pdfFile).pages
         self.testFromJson = self.createTestFromJson(fileName: jsonFile)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: true)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: false)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
@@ -275,7 +278,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.pdfImages = TestPDF(data: pdfData).pages
         
         self.testFromJson = self.createTestFromJson(data: jsonData)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: true)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: false)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
@@ -291,7 +294,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     init(jsonData: Data){
         self.pdfImages = TestPDF(name: "1-ACT Exam 1904S").pages
         self.testFromJson = self.createTestFromJson(data: jsonData)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, withPDF: true)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: true)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
@@ -312,6 +315,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.name = self.name + ": \(newSection.name)"
             
         }
+        
         self.act = test.act
         self.testFromJson = test.testFromJson
         self.numberOfSections = self.sections.count
@@ -420,7 +424,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     
-    func createSectionArray(testFromJson: TestFromJson, withPDF: Bool) -> [TestSection]{
+    func createSectionArray(testFromJson: TestFromJson, corrections: Bool) -> [TestSection]{
         var sections: [TestSection] = []
         
         for section in testFromJson.sections {
@@ -433,15 +437,11 @@ class Test: ObservableObject, Hashable, Identifiable {
                 let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
                 questionList.append(tempQuestion)
             }
-            if  withPDF == true{
                 let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
                 
-                let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList)
+            let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList, inkingTool: corrections ? PKInkingTool(.pen, color: .red, width: 1) : PKInkingTool(.pen, color: .black, width: 1))
                 sections.append(tempSection)
-            }else{
-                let tempSection = TestSection(sectionFromJson: section, name: section.name , questions: questionList)
-                sections.append(tempSection)
-            }
+            
             
         }
         return sections

@@ -86,7 +86,7 @@ struct TestView: View {
                         
                         VStack{
                             ForEach(self.testData.currentSection!.pages, id: \.self){ page in
-                                PageView(model: page).blur(radius: self.testData.begunTest ? 0 : 20)
+                                PageView(model: page, section: self.testData.currentSection!).blur(radius: self.testData.begunTest ? 0 : 20)
                                     .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
                                 
                             }.navigationBarItems(leading: self.testData.isFullTest == true ? AnyView(EndTestNavigationView(test: self.testData, shouldPopToRootFromNav: self.$shouldPopToRootView, submitComplete: false)) : AnyView(EmptyView()) ,
@@ -125,6 +125,8 @@ struct TestView: View {
 
 struct PageView: View{
     var model: PageModel
+    var section: TestSection?
+    
     @State private var canvas: PKCanvasView = PKCanvasView()
     
     var body: some View {
@@ -133,7 +135,7 @@ struct PageView: View{
             Image(uiImage: self.model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
             GeometryReader { geo in
-                CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true, isActMath: false), page: self.model, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
+                CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true, isActMath: false), page: self.model, section: self.section, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
             }
         }
     }

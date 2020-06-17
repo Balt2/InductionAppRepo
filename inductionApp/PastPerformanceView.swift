@@ -15,6 +15,16 @@ struct PastPerformanceView: View {
     @State var offset : CGFloat = 0
     @State var showDetailTest = false
     @State var allDataTestIndex = 0
+    @State var shouldScrollNav: Bool = true
+    @State var shouldScrollToTopNav: Bool =  true
+    
+    @State private var selection: Tabs = .analytics
+    
+    private enum Tabs: Hashable{
+        case analytics
+        case tutorPDF
+        case corrections
+    }
     
     var width = UIScreen.main.bounds.width
     
@@ -66,12 +76,12 @@ struct PastPerformanceView: View {
                     
                 }
             }else{
-                TabView{
+                TabView(selection: $selection){
                     RawDataView(index: self.index, offset: self.offset, sectionNames: self.allData!.sectionNames!, data: self.allData!.allTestData![allDataTestIndex])
                         .tabItem{
                             Image(systemName: "1.square.fill")
                             Text("Analytics")
-                    }
+                    }.tag(Tabs.analytics)
                     
                     ScrollView(.vertical){
                         
@@ -82,9 +92,11 @@ struct PastPerformanceView: View {
                     }
                     .tabItem {
                         Image(systemName: "2.square.fill")
-                        Text("PDF")
-                    }
+                        Text("Tutor PDF")
+                    }.tag(Tabs.tutorPDF)
                     CorrectionView(testData: self.allData!.allTestData![allDataTestIndex])
+//                        .navigationBarItems(leading: EmptyView(),
+//                        trailing: CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData))
 //                    ScrollView(.vertical){
 //                        ForEach(self.allData!.allTestData![allDataTestIndex].pdfImages, id: \.self){page in
 //                            PageView(model: page)
@@ -92,9 +104,10 @@ struct PastPerformanceView: View {
 //                    }
                     .tabItem {
                         Image(systemName: "3.square.fill")
-                        Text("Test")
-                    }
-                }
+                        Text("Corrections")
+                    }.tag(Tabs.corrections)
+                }.navigationBarItems(trailing: self.selection == .corrections ? AnyView(CorrectionNavigationBar(shouldScrollNav: self.$shouldScrollNav, shouldScrollToTopNav: self.$shouldScrollToTopNav, test: self.allData!.allTestData![allDataTestIndex])) : AnyView(EmptyView()))
+                //.navigationBarItems(trailing: self.selection == .corrections ? CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData) : EmptyView())
             }
         }
     }

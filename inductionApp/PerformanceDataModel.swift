@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import PencilKit
 
 class AllACTData: ObservableObject{
     
@@ -71,8 +72,19 @@ class ACTFormatedTestData: Test{
         self.tutorPDF = TestPDF(name: tutorPDFName)
         super.init(jsonData: data)
         self.createData(index: index)
-        self.startTest()
-
+        self.resetQuestions()
+    }
+    
+    func resetQuestions(){
+        for section in self.sections{
+            for question in section.questions{
+                if question.finalState != .right {
+                    question.userAnswer = ""
+                    question.finalState = .omitted // sets teh current state
+                }
+            }
+            section.inkingTool = PKInkingTool(.pen, color: .red, width: 1)
+        }
     }
     
     func createData(index: Int){

@@ -16,7 +16,7 @@ import Introspect
 struct CorrectionView: View {
     @State var shouldScroll: Bool = true
     @State var shouldScrollToTop: Bool = false
-    var testData: ACTFormatedTestData
+    @ObservedObject var testData: ACTFormatedTestData
     @State private var offset = CGSize.zero
     
     var body: some View {
@@ -69,14 +69,14 @@ struct CorrectionView: View {
                     ScrollView() {
                         VStack{
                             ForEach(self.testData.currentSection!.pages, id: \.self){ page in
-                                PageView(model: page)
+                                PageView(model: page, section: self.testData.currentSection!)
 
-                            }.navigationBarItems(leading: EmptyView(),
-                                                 trailing: CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData))
+                            }
                                 .foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
 
 
-                        }
+                        }.navigationBarItems(leading: EmptyView(),
+                        trailing: CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData))
                     }.gesture(self.shouldScroll == false ? nil : DragGesture()
                         .onChanged{_ in
                             //Should be be changing locations and scaling?
@@ -113,7 +113,7 @@ struct CorrectionNavigationBar: View {
     @Binding var shouldScrollToTopNav: Bool
     
     @EnvironmentObject var currentAuth: FirebaseManager
-    @ObservedObject var test: Test
+    @ObservedObject var test: ACTFormatedTestData
     @State private var now = ""
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
@@ -195,24 +195,8 @@ struct CorrectionNavigationBar: View {
                         print("Should never get here")
                     }
                 }){
-                    HStack{
-                        getControlButton(test: self.test)
-                    }
+                    getControlButton(test: self.test).padding(.trailing, 15)
                 }
-                
-                //Shows time text
-                
-                if self.test.testState == .inSection
-                    || self.test.testState == .lastSection {
-                    Text("\(now) left")
-                        .onReceive(timer) { _ in
-                            if self.test.currentSection!.sectionTimer.done == true{
-                                self.test.endSection(user: self.currentAuth.currentUser!)
-                            }
-                            self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
-                    }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
-                }
-                Spacer()
             }
         }
     }
