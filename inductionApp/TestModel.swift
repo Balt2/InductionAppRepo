@@ -36,6 +36,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
             if sectionOver == true{
                 sectionTimer.endTimer()
                 self.leftOverTime = sectionTimer.timeRemaining
+                breakTimer.startTimer()
                 print("Section OVER")
             }
         }
@@ -53,6 +54,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     @Published var sectionTimer: CustomTimer
     @Published var leftOverTime: Double
     
+    @Published var breakTimer: CustomTimer
     
     var rawScore: Int{
         var score = 0
@@ -91,6 +93,13 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.scaledScore = sectionFromJson.scaledScore
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
         self.inkingTool = inkingTool
+        
+        if self.name == "Math"{
+            self.breakTimer = CustomTimer(duration: 600)
+        }else{
+            self.breakTimer = CustomTimer(duration: 0)
+        }
+        
     }
     
     init(testSection: TestSection){
@@ -104,6 +113,12 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         self.sectionTimer = CustomTimer(duration: Int(allotedTime))
         self.timed = testSection.timed
         self.inkingTool = testSection.inkingTool
+        if self.name == "Math"{
+            self.breakTimer = CustomTimer(duration: 600)
+        }else{
+            self.breakTimer = CustomTimer(duration: 0)
+        }
+        
         
     }
 
@@ -216,7 +231,13 @@ class Test: ObservableObject, Hashable, Identifiable {
     var numberOfSections: Int?
     var act: Bool?
     var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
-    var dateTaken: String?
+    var dateTaken: Date?
+
+    
+    
+    
+    
+    
     
     //Data about a test (probably just taken)
     var resultJson: Data{
@@ -300,7 +321,11 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.act = self.testFromJson?.act
             self.name = self.testFromJson!.name
         }
-        self.dateTaken = self.testFromJson?.dateTaken
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM-dd-yyyy"
+        let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
+        self.dateTaken = date
+        //self.dateTaken = self.testFromJson?.dateTaken
         
         
     }
@@ -345,8 +370,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             sendResultJson(user: user)
             taken = true
             self.reset()
+        }else if currentSection!.breakTimer.timeRemaining != 0{
+            testState = .inBreak
         }else{
-            testState = .betweenSection
+            self.nextSection(fromStart: false)
         }
     }
     
@@ -358,8 +385,24 @@ class Test: ObservableObject, Hashable, Identifiable {
         testState = .testOver
         sendResultJson(user: user)
         taken = true
+        print("ENDED")
+        //self.saveWriting()
         self.reset()
     }
+    
+//    func saveWriting(){
+//
+//        let section1 = self.sections[0]
+//        for page in section1.pages{
+//            print("Inside Page loop")
+//            if let data = page.canvas?.drawing.dataRepresentation(){
+//                print("Inside if Let ")
+//                let filename = getDocumentsDirectory().appendingPathComponent("drawingData\(page.pageID).png")
+//                try? data.write(to: filename)
+//                print("after try")
+//            }
+//        }
+//    }
     
     //This is called when the user wants to begin the next section
     //The from start detemrines if we should incriment the currentSectionInndex
@@ -458,7 +501,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             sectionsForJson.append(temp)
         }
         //Todo: SAT
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore, dateTaken: Date().toString(dateFormat: "yyyy-MM-dd hh:mm:ss"))
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy hh:mm:ss"))
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -525,6 +568,7 @@ class Test: ObservableObject, Hashable, Identifiable {
 enum TestState{
     case notStarted
     case inSection
+    case inBreak
     case betweenSection
     case lastSection
     case testOver

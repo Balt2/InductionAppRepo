@@ -127,12 +127,15 @@ struct RawDataView: View{
         ScrollView(.vertical){
             ZStack{
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(Color("lightBlue"))
-                    .font(.largeTitle)
-                Text("Test: \(data.name); Taken on: \(data.dateTaken!)")
-                    .font(.largeTitle)
-                    .foregroundColor(Color.white)
-            }
+                   .fill(Color("lightBlue"))
+                   .font(.largeTitle)
+                Text("\(data.name) taken on: \(data.dateTaken!.toString(dateFormat: "EEEE, MMM d, yyyy"))")
+                .font(.largeTitle)
+                .foregroundColor(Color.white)
+            }.frame(width: 850).padding(.top, 10)
+                
+                
+            
             ZStack{
                 Ellipse()
                     .fill(Color("lightBlue"))

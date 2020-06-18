@@ -59,11 +59,11 @@ class User: ObservableObject, Equatable {
             self.getTestsComplete = true
         }
         
-        self.getTestResults{tests in
+        self.getTestResultsData{dataArr in
             print("BENJAIMIN")
             print(self.testResultRefs)
             
-            let actPerformanceTests: [ACTFormatedTestData] = tests.enumerated().map{(index, data) in
+            let actPerformanceTests: [ACTFormatedTestData] = dataArr.enumerated().map{(index, data) in
                 ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
             }
             self.allACTPerformanceData = AllACTData(tests: actPerformanceTests)
@@ -96,19 +96,19 @@ class User: ObservableObject, Equatable {
         }
     }
     
-    func getTestResults(completionHandler: @escaping  (_ completion: [Data]) -> ()){
+    func getTestResultsData(completionHandler: @escaping  (_ completion: [Data]) -> ()){
         var count = 0 //Used to determine if the array has been searched and we can have the completion handler
-        var tests = [Data]()
-        if testResultRefs.count == 0 {completionHandler(tests)} //Return if there are no tests in testRefs available
+        var dataArray = [Data]()
+        if testResultRefs.count == 0 {completionHandler(dataArray)} //Return if there are no tests in testRefs available
         for testResultRef in testResultRefs{
             let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/testResults/\(testResultRef).json")
             getFile(ref: refJson, pdf: false){jsonD in
                 guard let jsonData = jsonD else {return}
                 //let testResult = Test(jsonData: jsonData)
-                tests.append(jsonData)
+                dataArray.append(jsonData)
                 //self.testResults.append(testResult)
                 count += 1
-                if count == self.testResultRefs.count {completionHandler(tests)}
+                if count == self.testResultRefs.count {completionHandler(dataArray)}
             }
         }
     }

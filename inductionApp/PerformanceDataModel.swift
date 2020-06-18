@@ -18,11 +18,11 @@ class AllACTData: ObservableObject{
     var sectionsOverall: [String: BarData]?
     init(tests: [ACTFormatedTestData]){
         if tests.count > 0{
-            self.allTestData = tests
-            self.sectionNames = tests[0].sectionsOverall.map {$0.key}
+            self.allTestData = tests.sorted(by: {$0.dateTaken! < $1.dateTaken! })
+            self.sectionNames = self.allTestData![0].sectionsOverall.map {$0.key}
             var overallBarData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [])
             var sectionEntries = [String: [BarEntry]]()
-            for test in tests{
+            for test in self.allTestData!{
                 overallBarData.barEntries.append(test.overall!)
                 for (key, sectionData) in test.sectionsOverall{
                     if sectionEntries[key] == nil{

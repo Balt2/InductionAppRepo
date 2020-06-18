@@ -243,6 +243,12 @@ struct TimerNavigationView: View {
                     case .inSection:
                         self.shouldScrollNav = true
                         self.test.endSection(user: self.currentAuth.currentUser!)
+                    case .inBreak:
+                        self.shouldScrollToTopNav = true
+                        self.test.nextSection(fromStart: false)
+                        if self.test.showAnswerSheet == true {
+                            self.test.currentSection?.scalePages()
+                        }
                     case .betweenSection:
                         self.shouldScrollToTopNav = true
                         self.test.nextSection(fromStart: false)
@@ -265,13 +271,21 @@ struct TimerNavigationView: View {
                 //Shows time text
                 
                 if self.test.testState == .inSection
-                    || self.test.testState == .lastSection {
+                || self.test.testState == .lastSection || self.test.testState == .inBreak {
                     Text("\(now) left")
                         .onReceive(timer) { _ in
+                            
                             if self.test.currentSection!.sectionTimer.done == true{
                                 self.test.endSection(user: self.currentAuth.currentUser!)
+                            }else if self.test.currentSection!.breakTimer.done == true{
+                                self.test.nextSection(fromStart: false)
                             }
-                            self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
+                            
+                            if self.test.testState == .inBreak{
+                                self.now = self.test.currentSection!.breakTimer.timeLeftFormatted
+                            }else{
+                                self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
+                            }
                     }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
                 }
                 Spacer()
@@ -288,6 +302,7 @@ struct TimerNavigationView: View {
                 return AnyView(Text("Start Section"))
             }
         case .inSection: return AnyView(Text("End Section"))
+        case .inBreak: return AnyView(Text("End Break, Next Section"))
         case .betweenSection: return AnyView(Text("Start Next Section"))
         case .lastSection:
             return AnyView(EndTestNavigationView(test: self.test,

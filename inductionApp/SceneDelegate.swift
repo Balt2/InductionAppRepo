@@ -47,6 +47,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     //
     func windowScene(_ windowScene: UIWindowScene, didUpdate previousCoordinateSpace: UICoordinateSpace,
                      interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation, traitCollection previousTraitCollection: UITraitCollection){
+//        AppDelegate.orientationLock = UIInterfaceOrientationMask.landscapeLeft
+//        UIDevice.current.setValue(UIInterfaceOrientation.landscapeLeft, forKey: "orientation")
+//        UINavigationController.attemptRotationToDeviceOrientation()
         print("BEN")
         //didChangeModel.environment.toggle()
     }
