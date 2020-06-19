@@ -232,6 +232,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var act: Bool?
     var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
     var dateTaken: Date?
+    var timed: Bool = true
 
     
     
@@ -332,12 +333,13 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     //Creates a test from a section (or multiple ones) from a test
     init(testSections: [TestSection], test: Test) {
+        self.timed = Bool.random()
         for testSection in testSections{
             let newSection = TestSection(testSection: testSection)
             self.pdfImages.append(contentsOf: newSection.pages)
             self.questions.append(newSection.questions)
             self.sections.append(newSection)
-            self.name = self.name + ": \(newSection.name)"
+            self.name = self.name + ": \(newSection.name). Timed: \(self.timed)"
             
         }
         
