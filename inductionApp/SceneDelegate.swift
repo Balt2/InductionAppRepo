@@ -9,17 +9,42 @@
 import UIKit
 import SwiftUI
 import Combine
+import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     //var didChangeModel = DidChangeModel()
     
+    lazy var persistentContainer: NSPersistentContainer = {
+      let container = NSPersistentContainer(name: "InductionApp")
+      container.loadPersistentStores { _, error in
+        if let error = error as NSError? {
+          // You should add your own error handling code here.
+          fatalError("Unresolved error \(error), \(error.userInfo)")
+        }
+      }
+      return container
+    }()
+    
+    func saveContext() {
+        let context = persistentContainer.viewContext
+        if context.hasChanges {
+            do{
+                try context.save()
+            } catch{
+                let error = error
+                fatalError("FATAL ERROR 2")
+            }
+        }
+    }
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         var manager = FirebaseManager()
+        let context = persistentContainer.viewContext
         // Create the SwiftUI view that provides the window contents.
         
 
@@ -27,7 +52,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             window.rootViewController = UIHostingController(rootView: AppRootView()
-                .environmentObject(manager))
+                .environmentObject(manager).environment(\.managedObjectContext, context))
                 
             self.window = window
             window.makeKeyAndVisible()
@@ -36,9 +61,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func updateSceneDelegate(manager: FirebaseManager){
+        let context = persistentContainer.viewContext
+        
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: AppRootView().environmentObject(manager))
+            window.rootViewController = UIHostingController(rootView: AppRootView().environmentObject(manager).environment(\.managedObjectContext, context))
             self.window = window
             window.makeKeyAndVisible()
         }
@@ -80,7 +107,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        saveContext()
     }
+    
 
 
 }

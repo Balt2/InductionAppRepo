@@ -89,7 +89,8 @@ struct userFormField: View {
                     .padding(.horizontal)
                 
             } else {
-                TextField(fieldName, text: $fieldValue)                 .font(.system(size: 20, weight: .semibold, design: .rounded))
+                TextField(fieldName, text: $fieldValue)
+                    .font(.system(size: 20, weight: .semibold, design: .rounded))
                     .padding(.horizontal)
             }
             

@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+    <entity name="TestDocuments" representedClassName="TestDocuments" isAbstract="YES" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="originalJSON" optional="YES" attributeType="Binary"/>
+        <attribute name="originalPDF" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="resultJSON" optional="YES" attributeType="Binary"/>
+        <attribute name="resultPDF" optional="YES" attributeType="Binary"/>
+    </entity>
+    <elements>
+        <element name="TestDocuments" positionX="-63" positionY="-18" width="128" height="118"/>
+    </elements>
 </model>

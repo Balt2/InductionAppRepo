@@ -26,6 +26,8 @@
 		2F40C48E248E981F00DCCA58 /* PerformanceDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */; };
 		2F40C4902490786F00DCCA58 /* BreiteJ-CB1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */; };
 		2F40C4972491CD2700DCCA58 /* InductionApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2F40C4952491CD2700DCCA58 /* InductionApp.xcdatamodeld */; };
+		2F47B8CE24A3A41E001E9C1E /* TestDocuments+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B8CC24A3A41E001E9C1E /* TestDocuments+CoreDataClass.swift */; };
+		2F47B8D124A3A75B001E9C1E /* TestDocuments+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F47B8D024A3A75B001E9C1E /* TestDocuments+CoreDataProperties.swift */; };
 		2F56678D247A14780014F1ED /* ApplePencilReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56678C247A14780014F1ED /* ApplePencilReachability.swift */; };
 		2F5DB6D724718007009766A7 /* QuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D624718007009766A7 /* QuestionModel.swift */; };
 		2F5DB6D92471828B009766A7 /* CustomTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D82471828B009766A7 /* CustomTimer.swift */; };
@@ -70,6 +72,8 @@
 		2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceDataModel.swift; sourceTree = "<group>"; };
 		2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BreiteJ-CB1.pdf"; sourceTree = "<group>"; };
 		2F40C4962491CD2700DCCA58 /* InductionApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = InductionApp.xcdatamodel; sourceTree = "<group>"; };
+		2F47B8CC24A3A41E001E9C1E /* TestDocuments+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestDocuments+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		2F47B8D024A3A75B001E9C1E /* TestDocuments+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestDocuments+CoreDataProperties.swift"; sourceTree = SOURCE_ROOT; };
 		2F56678C247A14780014F1ED /* ApplePencilReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplePencilReachability.swift; sourceTree = "<group>"; };
 		2F5DB6D624718007009766A7 /* QuestionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionModel.swift; sourceTree = "<group>"; };
 		2F5DB6D82471828B009766A7 /* CustomTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTimer.swift; sourceTree = "<group>"; };
@@ -178,6 +182,8 @@
 		2F40C4942491CC6B00DCCA58 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2F47B8D024A3A75B001E9C1E /* TestDocuments+CoreDataProperties.swift */,
+				2F47B8CC24A3A41E001E9C1E /* TestDocuments+CoreDataClass.swift */,
 				03BEBC57244E7B6A001576EC /* LaunchScreen.storyboard */,
 				03BEBC52244E7B6A001576EC /* Assets.xcassets */,
 				2F40C4952491CD2700DCCA58 /* InductionApp.xcdatamodeld */,
@@ -347,9 +353,11 @@
 				2F7ACE2D2481970600D0D80A /* BarGraphView.swift in Sources */,
 				03BEBC4F244E7B69001576EC /* SceneDelegate.swift in Sources */,
 				2F2041A02472D93B002E811E /* PdfPageModel.swift in Sources */,
+				2F47B8D124A3A75B001E9C1E /* TestDocuments+CoreDataProperties.swift in Sources */,
 				2F40C4972491CD2700DCCA58 /* InductionApp.xcdatamodeld in Sources */,
 				2F945181244FFA33009521F7 /* TestView.swift in Sources */,
 				038753F8244E9AA900F85970 /* LoginView.swift in Sources */,
+				2F47B8CE24A3A41E001E9C1E /* TestDocuments+CoreDataClass.swift in Sources */,
 				03BEBC51244E7B69001576EC /* SignupView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -490,7 +498,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = InductionApp/InductionApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"inductionApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4P5YU9T8SH;
 				ENABLE_PREVIEWS = YES;
@@ -500,7 +508,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "jzb-me.com-jzb-me.com-jzb-me.com";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
@@ -516,7 +524,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = InductionApp/InductionApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"inductionApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4P5YU9T8SH;
 				ENABLE_PREVIEWS = YES;
@@ -526,7 +534,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.6;
+				MARKETING_VERSION = 1.0.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "jzb-me.com-jzb-me.com-jzb-me.com";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;

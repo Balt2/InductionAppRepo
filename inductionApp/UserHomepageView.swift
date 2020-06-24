@@ -11,6 +11,7 @@ import Firebase
 
 struct UserHomepageView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
+    @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var user: User
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
@@ -129,6 +130,15 @@ struct UserHomepageView: View {
             return AnyView(ActivityIndicator(isAnimating: true).configure { $0.color = .white })
         }
     }
+    
+    func saveContext() {
+      do {
+        try managedObjectContext.save()
+      } catch {
+        print("Error saving managed object context: \(error)")
+      }
+    }
+    
 }
 
 //Acitivity monitor helpers: https://stackoverflow.com/questions/56496638/activity-indicator-in-swiftui

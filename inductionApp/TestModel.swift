@@ -333,7 +333,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     //Creates a test from a section (or multiple ones) from a test
     init(testSections: [TestSection], test: Test) {
-        self.timed = Bool.random()
+        self.timed = false//Bool.random()
         for testSection in testSections{
             let newSection = TestSection(testSection: testSection)
             self.pdfImages.append(contentsOf: newSection.pages)

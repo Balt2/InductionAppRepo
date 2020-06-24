@@ -115,10 +115,7 @@ class FirebaseManager: ObservableObject {
                                                 ln: dataDescription!["lastN"] as! String,
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
-                                                testRefs: ["1904S", "1906ACT", "1912ACT"], testResultRefs: ["1912SFilled", "1906Filled"]) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
-                        print(dataDescription!["testResultRefs"])
-                        //self.currentUser?.testResultRefs = dataDescription!["testResultRefs"] as! [String]
-                        //self.currentUser?.testResultRefs = ["1904sFilled", "1912SFilled"]
+                                                testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String]) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
                         completionHandler(true)
                     }else{
                         //ERROR: No association found
@@ -140,7 +137,7 @@ class FirebaseManager: ObservableObject {
     //This creats a user in the database
     func createUser(uid: String, fn: String, ln: String, aid: String, handler: @escaping (_ success: Bool) -> Void){
         
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": [], "studyRefs": []]){ error in
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": ["1912SFilled", "1906Filled"], "studyResultRefs": [], "testRefs": ["1904S", "1906ACT", "1912ACT"], "studyRefs": []]){ error in
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)

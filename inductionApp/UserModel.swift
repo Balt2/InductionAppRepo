@@ -10,13 +10,16 @@ import Foundation
 import Firebase
 import UIKit
 import SwiftUI
+import CoreData
 
 
 
 class User: ObservableObject, Equatable {
+   
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
     }
+    
     
     let id: String
     let firstName: String
@@ -28,11 +31,12 @@ class User: ObservableObject, Equatable {
     @Published var getTestsComplete = false
     var performancePDF = [PageModel]()
     
+    @State var testDocuments: [TestDocuments] = []
     var testRefs: [String]
     var testResultRefs: [String]
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
-     
+    
     
     init(fn: String, ln: String, id: String, association: Association, testRefs: [String], testResultRefs: [String]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
         print("INIT USER")
@@ -45,6 +49,8 @@ class User: ObservableObject, Equatable {
         
         //Getting Associations image
         let imageRef: StorageReference = Storage.storage().reference().child(association.imagePath)
+        
+        
         self.getFile(ref: imageRef, pdf: false){image in
             //Image is data, the UI will turn it into a UIImage
             if let imageData = image{
@@ -196,6 +202,20 @@ class User: ObservableObject, Equatable {
         }
         
     }
+    
+//    func addTestCoreData(test: Test) {
+//      // 1
+//        let newTest = TestDocuments(context: managedObjectContext)
+//      //let newTest = Test(context: managedObjectContext)
+//
+//      // 2
+//      newMovie.title = title
+//      newMovie.genre = genre
+//      newMovie.releaseDate = releaseDate
+//
+//      // 3
+//      saveContext()
+//    }
     
 }
 
