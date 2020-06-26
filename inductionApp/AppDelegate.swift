@@ -13,7 +13,7 @@ import CoreData
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    static var orientationLock = UIInterfaceOrientationMask.landscape
+    //static var orientationLock = UIInterfaceOrientationMask.landscape
     
 //    lazy var persistenContainer: NSPersistentContainer = {
 //        let container = NSPersistentContainer(name: "InductionApp")

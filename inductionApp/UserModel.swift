@@ -168,6 +168,7 @@ class User: ObservableObject, Equatable {
         var count = 0 //Used to determine if the array has been searched and we can have the completion handler
         var dataArray = [Data]()
         if testResultRefs.count == 0 {completionHandler(dataArray)} //Return if there are no tests in testRefs available
+        print(testResultRefs)
         for testResultRef in testResultRefs{
             let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/testResults/\(testResultRef).json")
             let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(testResultRef).json")

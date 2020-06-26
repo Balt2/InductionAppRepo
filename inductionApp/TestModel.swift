@@ -271,7 +271,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var scoreConvertDict = [Int: (readingSectionTestScore: Int, mathSectionTestScore: Int, writingAndLanguageTestScore: Int, scienceTestScore: Int)]()
     
     
-    @Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
+    //@Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
 
     //Create a test from Files on the computer
     init(jsonFile: String, pdfFile: String){
@@ -325,6 +325,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy"
         let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
+        print("PONG")
+        print(date)
         self.dateTaken = date
         //self.dateTaken = self.testFromJson?.dateTaken
         
@@ -337,7 +339,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         for testSection in testSections{
             let newSection = TestSection(testSection: testSection)
             self.pdfImages.append(contentsOf: newSection.pages)
-            self.questions.append(newSection.questions)
+            //self.questions.append(newSection.questions)
             self.sections.append(newSection)
             self.name = self.name + ": \(newSection.name). Timed: \(self.timed)"
             
@@ -410,6 +412,10 @@ class Test: ObservableObject, Hashable, Identifiable {
     //The from start detemrines if we should incriment the currentSectionInndex
     func nextSection(fromStart: Bool){
          //Greater than or equal ensures if there is only one section
+        if fromStart == false{
+            sections.forEach{$0.questions.forEach {$0.canvas = nil }}
+            sections.forEach{$0.pages.forEach {$0.canvas = nil }}
+        }
         if currentSectionIndex >= numberOfSections! - 2  {
             if fromStart == false {
                 currentSectionIndex += 1
@@ -426,7 +432,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     
     func reset() {
-        questions.forEach { $0.forEach {$0.reset() } }
+        //questions.forEach { $0.forEach {$0.reset() } }
         sections.forEach {$0.reset() }
         testState = .notStarted
         currentSectionIndex = 0
@@ -503,7 +509,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             sectionsForJson.append(temp)
         }
         //Todo: SAT
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy hh:mm:ss"))
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -521,11 +527,12 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func sendResultJson(user: User) {
         //Name of result: NameOfTest-UserID-Currentdate
+        let nameOfFile = "\(name)-\(user.id)-\(Date().toString(dateFormat: "MM-dd-yyyy"))"
         let uploadRef = Storage.storage().reference(withPath:
-            "\(user.association.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(name)-\(user.id)-\(Date().toString(dateFormat: "dd-MMM-yyyy")).json")
+            "\(user.association.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(nameOfFile).json")
         
         if self.isFullTest == true {
-            user.testResultRefs.append(uploadRef.fullPath)
+            user.testResultRefs.append(nameOfFile)
             self.db.collection("users").document(user.id).updateData([
                 "testResultRefs" : user.testResultRefs
             ]){error in
@@ -563,6 +570,20 @@ class Test: ObservableObject, Hashable, Identifiable {
             print("Upload of JSON Success: \(String(describing: downloadMetadata))")
 
         }
+        
+        do{
+          print("Writing performance document to file manager")
+            let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(nameOfFile).json")
+          try resultJson.write(to: jsonURL)
+           print("Success Writing Document to file manager")
+        }catch{
+            print("ERROR Sending result json to local Storage")
+        }
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
     
 }
