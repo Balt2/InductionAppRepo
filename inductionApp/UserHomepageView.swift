@@ -36,7 +36,7 @@ struct UserHomepageView: View {
                             
                             NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
                                 HStack{
-                                    getLoadingIcon() //Folder or activity indicator saying it is loading
+                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
                                     Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
                                 }
                             }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
@@ -46,7 +46,7 @@ struct UserHomepageView: View {
                             
                             NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
                                 HStack{
-                                    getLoadingIcon() //Folder or activity indicator saying it is loading
+                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
                                     Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
                                 }
                             }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
@@ -54,10 +54,10 @@ struct UserHomepageView: View {
                             
                             NavigationLink(destination: PastPerformanceView(allData: (currentAuth.currentUser?.allACTPerformanceData))){
                                 HStack{
-                                    Image(systemName: "archivebox")
-                                    Text("Past Performance")
+                                    getLoadingIcon(imageName: "archivebox", checkBool: user.getPerformanceDataComplete)
+                                    Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")
                                 }
-                                }.buttonStyle(buttonBackgroundStyle())
+                            }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false))
 //                            Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
 //
 //                            }){
@@ -123,9 +123,9 @@ struct UserHomepageView: View {
         }.navigationViewStyle((StackNavigationViewStyle()))
     }
     
-    func getLoadingIcon() -> AnyView{
-        if user.getTestsComplete == true {
-            return AnyView(Image(systemName: "folder"))
+    func getLoadingIcon(imageName: String, checkBool: Bool) -> AnyView{
+        if checkBool == true {
+            return AnyView(Image(systemName: imageName))
         }else{
             return AnyView(ActivityIndicator(isAnimating: true).configure { $0.color = .white })
         }

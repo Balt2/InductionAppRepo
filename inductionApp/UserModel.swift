@@ -15,7 +15,7 @@ import CoreData
 
 
 class User: ObservableObject, Equatable {
-   
+    
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
     }
@@ -29,6 +29,7 @@ class User: ObservableObject, Equatable {
     @Published var tests: [Test] = []
     @Published var allACTPerformanceData: AllACTData?
     @Published var getTestsComplete = false
+    @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
     
     @State var testDocuments: [TestDocuments] = []
@@ -54,52 +55,113 @@ class User: ObservableObject, Equatable {
         self.getFile(ref: imageRef, pdf: false){image in
             //Image is data, the UI will turn it into a UIImage
             if let imageData = image{
+                print("Got Image, User Init")
                 self.association.image = UIImage(data: imageData)
             }
-            //self.association.image = UIImage(data: image!)
-            
         }
         
-        self.getTests{_ in
-            //If boolean is false then no tests exist
-            self.getTestsComplete = true
-        }
-        
-        self.getTestResultsData{dataArr in
-            print("BENJAIMIN")
-            print(self.testResultRefs)
-            
-            let actPerformanceTests: [ACTFormatedTestData] = dataArr.enumerated().map{(index, data) in
-                ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
-            }
-            self.allACTPerformanceData = AllACTData(tests: actPerformanceTests)
-           
-        }
-        print("DONE CREATING USER")
-        
-//        self.getPerformancePdf { pdf in
-//            self.performancePDF = TestPDF(data: pdf).pages
-//        }
-    }
-    
-    func getTests(completionHandler: @escaping (_ completion: Bool) -> ()) {
-        var count = 0 //Used to determine if the array has been searched and we can have the completion handler
-        if testRefs.count == 0 {completionHandler(false)} //Return if there are no tests in testRefs available
-        for testRef in self.testRefs {
-            let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef).json")
-            let refPdf: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef).pdf")
-            getFile(ref: refJson, pdf: false){jsonD in
-                guard let jsonData = jsonD else {return}
-                self.getFile(ref: refPdf, pdf: true){pdfD in
-                    guard let pdfData = pdfD else {return}
-                    let test = Test(jsonData: jsonData, pdfData: pdfData)
-                    print("TEST ADDED: \(refJson.fullPath)")
-                    self.tests.append(test)
-                    count += 1
-                    if count == self.testRefs.count {completionHandler(true)}
+        self.getTestData{testsData in
+            DispatchQueue.global(qos: .utility).async {
+                var tempArray: [Test] = []
+                if testsData != nil{
+                    for test in testsData!{
+                        let tempTest = Test(jsonData: test.json, pdfData: test.pdf)
+                        tempArray.append(tempTest)
+                    }
+                    //If boolean is false then no tests exist
+                    print("Got Tests, User Init")
+                    DispatchQueue.main.async {
+                        self.tests.append(contentsOf: tempArray)
+                        self.getTestsComplete = true
+                    }
+                }else{
+                    print("ERROR Getting tests")
+                    DispatchQueue.main.async {
+                        self.getTestsComplete = true
+                    }
                 }
             }
         }
+        
+        self.getTestResultsData{dataArr in
+            if !dataArr.isEmpty{
+                print("Got Result Jsons, User Init")
+                DispatchQueue.global(qos: .utility).async {
+                    let actPerformanceTests: [ACTFormatedTestData] = dataArr.enumerated().map{(index, data) in
+                        ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
+                    }
+                    DispatchQueue.main.async {
+                        self.allACTPerformanceData = AllACTData(tests: actPerformanceTests)
+                        self.getPerformanceDataComplete = true
+                        print("Finished Creating Result Data")
+                    }
+                }
+            }else{
+                self.getPerformanceDataComplete = true
+                print("Did not get result jsons")
+            }
+            
+            
+        }
+        print("DONE CREATING USER")
+    }
+    
+    func getTestData(completionHandler: @escaping (_ dataArray: [(pdf: Data, json: Data)]?) -> ()) {
+        var count = 0 //Used to determine if the array has been searched and we can have the completion handler
+        if testRefs.count == 0 {completionHandler(nil)} //Return if there are no tests in testRefs available
+        var sendArray: [(pdf: Data, json: Data)] = []
+        for testRef in self.testRefs {
+            print("STILL IN GET TETSTS")
+            
+            let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef).json")
+            let refPdf: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef).pdf")
+            let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef).json")
+            let pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef).pdf")
+            if FileManager.default.fileExists(atPath: jsonURL.path){
+                do {
+                    print("GETTING DOCUMENTS")
+                    let jsonData = try Data(contentsOf: jsonURL)
+                    let pdfData = try Data(contentsOf: pdfURL)
+                    sendArray.append((pdf: pdfData, json: jsonData))
+                    //let test = Test(jsonData: jsonData, pdfData: pdfData)
+                    //self.tests.append(test)
+                    count += 1
+                    print("GOT DOCUMENTs")
+                    print("COUNT: \(count)")
+                    if count == self.testRefs.count {completionHandler(sendArray)}
+                }  catch{
+                    print("ERROR Retriving data from local storage")
+                }
+            }else{
+                print("Getting json/pdf data from database")
+                   self.getFile(ref: refJson, pdf: false){jsonD in
+                       guard let jsonDataC = jsonD else {return}
+                       self.getFile(ref: refPdf, pdf: true){pdfD in
+                           guard let pdfDataC = pdfD else {return}
+                        print("GETTING TEST FROM DATABASE")
+                           sendArray.append((pdf: pdfDataC, json: jsonDataC))
+                           count += 1
+                           do {
+                               print("Writing document to file manager")
+                               try pdfDataC.write(to: pdfURL)
+                               try jsonDataC.write(to: jsonURL)
+                                print("Success Writing Document to file manager")
+                           }
+                           catch {
+                               print("ERROR WRITING DOCUMENT")
+                           }
+                        print("COUNT: \(count)")
+                        if count == self.testRefs.count {completionHandler(sendArray)}
+                       }
+                   }
+                
+            }
+        }
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
     
     func getTestResultsData(completionHandler: @escaping  (_ completion: [Data]) -> ()){
@@ -108,14 +170,36 @@ class User: ObservableObject, Equatable {
         if testResultRefs.count == 0 {completionHandler(dataArray)} //Return if there are no tests in testRefs available
         for testResultRef in testResultRefs{
             let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/testResults/\(testResultRef).json")
-            getFile(ref: refJson, pdf: false){jsonD in
-                guard let jsonData = jsonD else {return}
-                //let testResult = Test(jsonData: jsonData)
-                dataArray.append(jsonData)
-                //self.testResults.append(testResult)
-                count += 1
-                if count == self.testResultRefs.count {completionHandler(dataArray)}
+            let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(testResultRef).json")
+            
+            if FileManager.default.fileExists(atPath: jsonURL.path){
+                do{
+                    print("GETTING PERFORMANCE JSON FROM FILE MANAGER")
+                    let jsonData = try Data(contentsOf: jsonURL)
+                    dataArray.append(jsonData)
+                    count += 1
+                    if count == self.testResultRefs.count {completionHandler(dataArray)}
+                }catch{
+                    print("ERROR Retriving performance json from file manager")
+                }
+            }else{
+                getFile(ref: refJson, pdf: false){jsonD in
+                    print("GETTING TEST RESULT JSON")
+                    guard let jsonData = jsonD else {return}
+                    dataArray.append(jsonData)
+                    count += 1
+                    do {
+                        print("Writing document to file manager")
+                        try jsonData.write(to: jsonURL)
+                         print("Success Writing Document to file manager")
+                    }
+                    catch {
+                        print("ERROR WRITING DOCUMENT")
+                    }
+                    if count == self.testResultRefs.count {completionHandler(dataArray)}
+                }
             }
+
         }
     }
     
@@ -131,7 +215,7 @@ class User: ObservableObject, Equatable {
     }
     
     
-
+    
     //DONT USE ANYMORE. USINGN AS EXAMPLE OF LIST ALL
     func getTestPDFs(completionHandler: @escaping (_ jsons: [(Data, String)]) -> ()) {
         print("Getting PDFs...")
@@ -203,19 +287,19 @@ class User: ObservableObject, Equatable {
         
     }
     
-//    func addTestCoreData(test: Test) {
-//      // 1
-//        let newTest = TestDocuments(context: managedObjectContext)
-//      //let newTest = Test(context: managedObjectContext)
-//
-//      // 2
-//      newMovie.title = title
-//      newMovie.genre = genre
-//      newMovie.releaseDate = releaseDate
-//
-//      // 3
-//      saveContext()
-//    }
+    //    func addTestCoreData(test: Test) {
+    //      // 1
+    //        let newTest = TestDocuments(context: managedObjectContext)
+    //      //let newTest = Test(context: managedObjectContext)
+    //
+    //      // 2
+    //      newMovie.title = title
+    //      newMovie.genre = genre
+    //      newMovie.releaseDate = releaseDate
+    //
+    //      // 3
+    //      saveContext()
+    //    }
     
 }
 
