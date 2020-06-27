@@ -40,6 +40,7 @@ struct PastPerformanceView: View {
                         Spacer()
                         Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                         BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: allData!.overallPerformance!, showLegend: false).frame(width: UIScreen.main.bounds.width)
+                        .animation(.default)
                         CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.sectionNames!).frame(width:  UIScreen.main.bounds.width)
                         HStack(spacing: 0){
                             ForEach(allData!.sectionNames!, id: \.self){sectionKey in
@@ -47,7 +48,7 @@ struct PastPerformanceView: View {
                             }
                             
                             
-                        }.offset(x: 0.5 * (4-1) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
+                        }.offset(x: 0.5 * (CGFloat(self.allData?.sectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
                             .animation(.default)
                             .edgesIgnoringSafeArea(.all)
                             .padding(.all, 0)

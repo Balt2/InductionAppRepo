@@ -245,6 +245,7 @@ struct ScatterGrid: View{
 struct Grid: View {
     var data: BarData
     var horizontal: Bool
+    @State private var beingTapped = (isTapped: false, index: 0)
     @Binding var showDetailTest : Bool
     @Binding var allDataTestIndex: Int
     
@@ -259,15 +260,26 @@ struct Grid: View {
                             ForEach(0..<self.data.barEntries.count, id: \.self) { i in
                                 BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
                                     .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
+                                    .scaleEffect( (self.beingTapped.isTapped == true && self.beingTapped.index == i)  ? 0.9 : 1, anchor: .center)
                                     .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
-                                    .onTapGesture() {
+                                    .onTapGesture()
+                                        {
                                         print("TAPPPED")
                                         if self.data.barEntries[i].index != nil{
                                             self.allDataTestIndex = self.data.barEntries[i].index!
                                             self.showDetailTest = true
-                                            
                                         }
                                 }.disabled(self.allDataTestIndex < 0)
+                                    
+                                    .onLongPressGesture(pressing: { inProgress in
+                                        self.beingTapped = (isTapped: inProgress, index: i)
+                                    }) {
+                                        self.beingTapped = (isTapped: false, index: i)
+                                        self.allDataTestIndex = self.data.barEntries[i].index!
+                                        self.showDetailTest = true
+                                        print("OVER LONG PRESS")
+                                }.disabled(self.allDataTestIndex < 0)
+                                
                             }
                         }
                         HStack(alignment: .center, spacing: 10){

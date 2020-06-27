@@ -58,6 +58,7 @@ struct UserHomepageView: View {
                                     Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")
                                 }
                             }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false))
+                                .disabled(user.getPerformanceDataComplete == false)
 //                            Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
 //
 //                            }){
