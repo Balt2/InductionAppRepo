@@ -13,32 +13,6 @@ import CoreData
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    //static var orientationLock = UIInterfaceOrientationMask.landscape
-    
-//    lazy var persistenContainer: NSPersistentContainer = {
-//        let container = NSPersistentContainer(name: "InductionApp")
-//        container.loadPersistentStores(completionHandler: {
-//            (storeDescription, error) in
-//            if let error = error {
-//                fatalError("FATAL ERROR")
-//            }
-//        })
-//        return container
-//    }()
-//    
-//    func saveContext() {
-//        let context = persistenContainer.viewContext
-//        if context.hasChanges {
-//            do{
-//                try context.save()
-//            } catch{
-//                let error = error
-//                fatalError("FATAL ERROR 2")
-//            }
-//        }
-//    }
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         //Configures Firebase -- Connecting to the database
         FirebaseApp.configure()

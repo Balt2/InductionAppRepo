@@ -15,7 +15,6 @@ struct TestView: View {
     @State var shouldScroll: Bool = true
     @State var shouldScrollToTop: Bool = false
     @Binding var shouldPopToRootView : Bool
-    //@ObservedObject var testData = Test(jsonFile: "satPracticeTest1", pdfFile: "1-ACT Exam 1906")
     @ObservedObject var testData: Test
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var offset = CGSize.zero
@@ -47,8 +46,6 @@ struct TestView: View {
                                     //                                    }//Conditions to bring it back.
                                     
                             }.onEnded{gesture in
-                                print("END")
-                                print(gesture)
                                 
                                 if gesture.predictedEndLocation.x < -100 {
                                     self.testData.showAnswerSheet = false
@@ -65,8 +62,8 @@ struct TestView: View {
                                 //                                    self.offset = CGSize.zero
                                 //                                }
                                 
-                            })
-                        
+                                })
+                            
                             .offset(self.offset)
                             .introspectScrollView{tableView in
                                 tableView.contentInsetAdjustmentBehavior = .always
@@ -91,11 +88,7 @@ struct TestView: View {
                                 
                             }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView))
                                 .navigationBarBackButtonHidden(self.testData.timed)
-                            
-                            
-                            //.navigationBarItems(leading: self.testData.isFullTest == true ? AnyView(EndTestNavigationView(test: self.testData, shouldPopToRootFromNav: self.$shouldPopToRootView, submitComplete: false)) : AnyView(EmptyView()) ,
-//                                                 trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView))
-//                                .foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
+                                //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
                             
                             
                             
@@ -108,7 +101,7 @@ struct TestView: View {
                             self.testData.showAnswerSheet = true
                             self.testData.currentSection?.scalePages()
                         }
-                    }).introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
+                        }).introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
                             scrollView.contentInsetAdjustmentBehavior = .always
                             scrollView.isScrollEnabled = self.shouldScroll
                             if self.shouldScrollToTop == true{
@@ -196,7 +189,7 @@ struct TimerNavigationView: View {
                 }){
                     Image(systemName: "hand.draw")
                         .foregroundColor(self.shouldScrollNav == true ? .gray : .blue)
-                        .font(self.shouldScrollNav == true ? .title : .largeTitle)
+                        .font(.title)
                     
                 }.padding()
                 //.disabled(currentAuth.pencilManager.isPencilAvailable)
@@ -209,7 +202,7 @@ struct TimerNavigationView: View {
                 }){
                     Image(systemName: "pencil")
                         .foregroundColor(self.test.isEraserEnabled == false ? .blue : .gray)
-                        .font(self.test.isEraserEnabled == false ? .largeTitle : .title)
+                        .font(.title)
                 }.disabled(self.test.isEraserEnabled == false)
                     .padding()
                 
@@ -223,7 +216,7 @@ struct TimerNavigationView: View {
                     
                     Image("SingleEraser")
                         .foregroundColor(self.test.isEraserEnabled == true ? .blue : .gray)
-                        .font(self.test.isEraserEnabled == true ? .largeTitle : .title)
+                        .font(.title)
                 }.disabled(self.test.isEraserEnabled == true)
                     .padding()
                 
@@ -246,15 +239,9 @@ struct TimerNavigationView: View {
                     case .notStarted:
                         self.test.startTest()
                     case .inSection:
-                        self.shouldScrollNav = true
+                        self.shouldScrollToTopNav = true
                         self.test.endSection(user: self.currentAuth.currentUser!)
                     case .inBreak:
-                        self.shouldScrollToTopNav = true
-                        self.test.nextSection(fromStart: false)
-                        if self.test.showAnswerSheet == true {
-                            self.test.currentSection?.scalePages()
-                        }
-                    case .betweenSection:
                         self.shouldScrollToTopNav = true
                         self.test.nextSection(fromStart: false)
                         if self.test.showAnswerSheet == true {
@@ -308,7 +295,6 @@ struct TimerNavigationView: View {
             }
         case .inSection: return AnyView(Text("End Section"))
         case .inBreak: return AnyView(Text("End Break, Next Section"))
-        case .betweenSection: return AnyView(Text("Start Next Section"))
         case .lastSection:
             return AnyView(EndTestNavigationView(test: self.test,
                                                  shouldPopToRootFromNav: $shouldPopToRootView,
@@ -342,7 +328,7 @@ struct StudyTable: View {
     @Binding var rootIsActive: Bool
     var body: some View {
         List{
-            ForEach(user.tests ?? [], id: \.self){test in
+            ForEach(user.tests, id: \.self){test in
                 ForEach(test.sections, id: \.self){section in
                     NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: Test(testSections: [section], test: test))){
                         Text(" \(section.name) from \(test.name)")

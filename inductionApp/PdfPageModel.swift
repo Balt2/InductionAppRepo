@@ -11,18 +11,16 @@ import Firebase
 import PencilKit
 import Combine
 
+//Model for individual pdf pages
 class PageModel: ObservableObject, Hashable, Identifiable {
+    
     static func == (lhs: PageModel, rhs: PageModel) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
     
-    var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
-    }
-    
+
     var id = UUID()
     @Published var shouldScale = false
-         
     @Published var canvas: PKCanvasView?
     var uiImage: UIImage
     var pageID: Int
@@ -31,6 +29,7 @@ class PageModel: ObservableObject, Hashable, Identifiable {
         self.uiImage = image
         self.pageID = pageID
     }
+    
     init(page: PageModel){
         self.uiImage = page.uiImage
         self.pageID = page.pageID
@@ -40,17 +39,17 @@ class PageModel: ObservableObject, Hashable, Identifiable {
         canvas = nil
     }
     
-    
-}
-
-class TestPDF: Hashable {
-    static func == (lhs: TestPDF, rhs: TestPDF) -> Bool {
-        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
+    func hash(into hasher: inout Hasher){
+        hasher.combine(id)
     }
     
     
-    var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
+}
+
+//Model for a PDF with multiple pages
+class TestPDF: Hashable {
+    static func == (lhs: TestPDF, rhs: TestPDF) -> Bool {
+        return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
     
     var pages = [PageModel]()
@@ -72,9 +71,6 @@ class TestPDF: Hashable {
             while let pdfImage = createUIImage(document: document, page: pageCounter){
                 pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
                 pageCounter = pageCounter + 1
-//                if (pageCounter > 5){ //Get rid of this. Figure out why the PDF file is corrupted
-//                    break
-//                }
             }
         }
     }
@@ -107,5 +103,9 @@ class TestPDF: Hashable {
             ctx.cgContext.drawPDFPage(page)
         }
         return img
+    }
+    
+    func hash(into hasher: inout Hasher){
+        hasher.combine(pages)
     }
 }

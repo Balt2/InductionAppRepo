@@ -49,7 +49,7 @@ class ApplePencilReachability: NSObject, CBCentralManagerDelegate {
 
   private func checkAvailability() {
     let peripherals = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: "180A")])
-    let oldPencilAvailability = isPencilAvailable
+    //let oldPencilAvailability = isPencilAvailable
     isPencilAvailable = peripherals.contains(where: { $0.name == "Apple Pencil" })
     if isPencilAvailable {
       timer = nil // only if you want to stop once detected

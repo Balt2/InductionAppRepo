@@ -226,7 +226,7 @@ struct ScatterGrid: View{
         //Lines on bar
         
         
-        for (index, barEntry) in data.barEntries.enumerated() {
+        for (index, _) in data.barEntries.enumerated() {
             let xLoc = (self.diameter * (CGFloat(index) + 1))
             path.move(to: CGPoint(x: xLoc, y: 0))
             path.addLines([CGPoint(x: xLoc, y: 0), CGPoint(x: xLoc, y: geometry.height)])
@@ -332,7 +332,7 @@ struct Grid: View {
         //Lines on bar
         
         
-        for (index, barEntry) in data.barEntries.enumerated() {
+        for (index, _) in data.barEntries.enumerated() {
             let xLoc = (2.0 * CGFloat(index) * geometry.width + geometry.width) / (2.0 * CGFloat(self.data.barEntries.count))
             path.move(to: CGPoint(x: xLoc, y: 0))
             path.addLines([CGPoint(x: xLoc, y: 0), CGPoint(x: xLoc, y: geometry.height)])

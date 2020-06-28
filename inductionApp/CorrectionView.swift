@@ -187,12 +187,6 @@ struct CorrectionNavigationBar: View {
                         if self.test.showAnswerSheet == true {
                             self.test.currentSection?.scalePages()
                         }
-                    case .betweenSection:
-                        self.shouldScrollToTopNav = true
-                        self.test.nextSection(fromStart: false)
-                        if self.test.showAnswerSheet == true {
-                            self.test.currentSection?.scalePages()
-                        }
                     case .lastSection:
                         self.test.endSection(user: self.currentAuth.currentUser!)
                         //Naviagate back to the user hompage
@@ -217,7 +211,6 @@ struct CorrectionNavigationBar: View {
             }
         case .inSection: return AnyView(Text("End Section"))
         case .inBreak: return AnyView(Text("End Break, Next Section"))
-        case .betweenSection: return AnyView(Text("Start Next Section"))
         case .lastSection:
             return AnyView(Text("Last Section"))
             

@@ -32,7 +32,6 @@ class User: ObservableObject, Equatable {
     @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
     
-    @State var testDocuments: [TestDocuments] = []
     var testRefs: [String]
     var testResultRefs: [String]
     var studyRefs: [String] = []
@@ -207,7 +206,7 @@ class User: ObservableObject, Equatable {
     func getFile(ref: StorageReference, pdf: Bool, completionHandler: @escaping (_ completion: Data?) -> ()) {
         ref.getData(maxSize: pdf == true ? (40 * 1024 * 1024) : (1 * 1024 * 1024)){data, error in
             if let error = error {
-                print("error retriving file at: \(ref.fullPath)")
+                print("error retriving file at: \(ref.fullPath) with error: \(error)")
                 completionHandler(nil)
             }else{
                 completionHandler(data!)
@@ -218,89 +217,51 @@ class User: ObservableObject, Equatable {
     
     
     //DONT USE ANYMORE. USINGN AS EXAMPLE OF LIST ALL
-    func getTestPDFs(completionHandler: @escaping (_ jsons: [(Data, String)]) -> ()) {
-        print("Getting PDFs...")
-        var pdfDataList: [(Data, String)] = []
-        let storageRef = Storage.storage().reference().child("\(association.associationID)Files/testPDFS")
-        storageRef.listAll { (result, error) in
-            
-            if let error = error {
-                print("ERROR RETRIVEVING PDF's FROM DATABASE")
-                completionHandler(pdfDataList)
-            }
-            print("PDF Prefixes")
-            print(result.prefixes)
-            for prefix in result.prefixes {
-                // The prefixes under storageReference.
-                // You may call listAll(completion:) recursively on them.
-            }
-            print("PDFS ARRAY: \(result.items)")
-            for item in result.items {
-                print(item.name)
-                item.getData(maxSize: 40 * 1024 * 1024){data, error in
-                    if let error = error {
-                        print("Error retriving PDF")
-                    }else{
-                        print("PDF DATA: \(data)")
-                        pdfDataList.append( (data!, item.name))
-                        
-                        if pdfDataList.count == result.items.count {
-                            print("Done Loading PDFS")
-                            completionHandler(pdfDataList)
-                        }
-                        
-                    }
-                    
-                }
-                
-                
-            }
-            if result.items.count == 0 {
-                completionHandler(pdfDataList)
-            }
-        }
-        
-        //let storageRef = Storage.storage().reference(withPath: "\(associationID)Files")
-    }
-    
-    func getPerformancePdf(completionHandler: @escaping (_ pdf: Data) -> ()) {
-        print("Getting PDF Perforamce...")
-        var pdfD = Data()
-        let storageRef = Storage.storage().reference().child("\(association.associationID)Files/performancePdfs")
-        storageRef.listAll { (result, error) in
-            
-            if let error = error {
-                print("ERROR RETRIVEVING PDF's FROM DATABASE")
-                completionHandler(pdfD)
-            }
-            
-            print("PDFS ARRAY: \(result.items)")
-            result.items[0].getData(maxSize: 40 * 1024 * 1024){data, error in
-                if let error = error {
-                    print("Error retriving PDF")
-                }else{
-                    print("PDF DATA: \(data)")
-                    pdfD = data!
-                    completionHandler(pdfD) //booooooli
-                }
-            }
-        }
-        
-    }
-    
-    //    func addTestCoreData(test: Test) {
-    //      // 1
-    //        let newTest = TestDocuments(context: managedObjectContext)
-    //      //let newTest = Test(context: managedObjectContext)
-    //
-    //      // 2
-    //      newMovie.title = title
-    //      newMovie.genre = genre
-    //      newMovie.releaseDate = releaseDate
-    //
-    //      // 3
-    //      saveContext()
-    //    }
+//    func getTestPDFs(completionHandler: @escaping (_ jsons: [(Data, String)]) -> ()) {
+//        print("Getting PDFs...")
+//        var pdfDataList: [(Data, String)] = []
+//        let storageRef = Storage.storage().reference().child("\(association.associationID)Files/testPDFS")
+//        storageRef.listAll { (result, error) in
+//
+//            if let error = error {
+//                print("ERROR RETRIVEVING PDF's FROM DATABASE with error: \(error)")
+//                completionHandler(pdfDataList)
+//            }
+//            print("PDF Prefixes")
+//            print(result.prefixes)
+//            for prefix in result.prefixes {
+//                // The prefixes under storageReference.
+//                // You may call listAll(completion:) recursively on them.
+//            }
+//            print("PDFS ARRAY: \(result.items)")
+//            for item in result.items {
+//                print(item.name)
+//                item.getData(maxSize: 40 * 1024 * 1024){data, error in
+//                    if let error = error {
+//                        print("Error retriving PDF")
+//                    }else{
+//                        print("PDF DATA: \(data)")
+//                        pdfDataList.append( (data!, item.name))
+//
+//                        if pdfDataList.count == result.items.count {
+//                            print("Done Loading PDFS")
+//                            completionHandler(pdfDataList)
+//                        }
+//
+//                    }
+//
+//                }
+//
+//
+//            }
+//            if result.items.count == 0 {
+//                completionHandler(pdfDataList)
+//            }
+//        }
+//
+//        //let storageRef = Storage.storage().reference(withPath: "\(associationID)Files")
+//    }
+
     
 }
 

@@ -117,7 +117,6 @@ class FirebaseManager: ObservableObject {
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
                                                 testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String]) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
-                        print(dataDescription!["testRefs"]! as! [String])
                         completionHandler(true)
                     }else{
                         //ERROR: No association found

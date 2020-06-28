@@ -8,6 +8,8 @@
 
 import Foundation
 
+
+//Custom Timer for the test view
 class CustomTimer: ObservableObject {
     private var endDate: Date?
     private var timer: Timer?

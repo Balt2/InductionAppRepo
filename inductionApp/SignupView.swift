@@ -18,41 +18,38 @@ struct SignupView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var showingErrorCredentials = false
     
-    var db = Firestore.firestore()
-    
     var body: some View {
         NavigationView {
             VStack {
                 
                 VStack {
                     
-                    //.padding()
                     VStack {
                         HStack {
-                    FormField(fieldName: "First Name", fieldValue: $userRegistrationViewModel.firstName)
-                    FormField(fieldName: "Last Name", fieldValue: $userRegistrationViewModel.lastName)
+                            FormField(fieldName: "First Name", fieldValue: $userRegistrationViewModel.firstName)
+                            FormField(fieldName: "Last Name", fieldValue: $userRegistrationViewModel.lastName)
                         }
                     }
                     VStack {
                         HStack{
-                    FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
+                            FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
                             FormField(fieldName: "Association ID", fieldValue: $userRegistrationViewModel.associationID)
                         }
-                    RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
-                        .padding()
+                        RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
+                            .padding()
                     }
                     
                     HStack {
-                    VStack {
-                        FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
-                        RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordLengthValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 8 characters", isStrikeThrough: userRegistrationViewModel.isPasswordLengthValid)
-                        RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "One uppercase letter", isStrikeThrough: userRegistrationViewModel.isPasswordCapitalLetter)
-                    }
-                    .padding()
                         VStack {
-                    FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationViewModel.passwordConfirm, isSecure: true)
-                    RequirementText(iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "Your confirm password should be the same as password", isStrikeThrough: userRegistrationViewModel.isPasswordConfirmValid)
+                            FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
+                            RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordLengthValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 8 characters", isStrikeThrough: userRegistrationViewModel.isPasswordLengthValid)
+                            RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "One uppercase letter", isStrikeThrough: userRegistrationViewModel.isPasswordCapitalLetter)
+                        }
                         .padding()
+                        VStack {
+                            FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationViewModel.passwordConfirm, isSecure: true)
+                            RequirementText(iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "Your confirm password should be the same as password", isStrikeThrough: userRegistrationViewModel.isPasswordConfirmValid)
+                                .padding()
                         }
                     }
                     
@@ -60,12 +57,11 @@ struct SignupView: View {
                     Button(action: {
                         //Check if email is valid, check if password is minum 8 characters and has on upercase letter, Check confirm password is equal to password
                         if !(self.currentAuth.associations.contains(where: {$0.associationID == self.userRegistrationViewModel.associationID })){
-                            debugPrint(self.userRegistrationViewModel.associationID)
                             self.showingErrorCredentials = true
                         }
                         else if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
                             && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordConfirmValid && self.userRegistrationViewModel.isAssociationIDLengthValid){
-                                
+                            
                             self.currentAuth.signUp(userRegModel: self.userRegistrationViewModel) { succsess in
                                 if succsess == true{
                                     print("Signed UP and loged in")
@@ -108,7 +104,7 @@ struct SignupView: View {
                     }
                 }
                 Image("ilLogo").resizable()
-                .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fit)
                 // Spacer()
             }
             .padding()

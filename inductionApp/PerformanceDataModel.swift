@@ -54,7 +54,7 @@ class AllACTData: ObservableObject{
             }
             var sectionGraphs = [String: BarData]()
             for (section, entries) in sectionEntries{
-                var tempGraph = BarData(
+                let tempGraph = BarData(
                     title: "ACT \(section) Performance",
                     xAxisLabel: "Dates",
                     yAxisLabel: "Score",
@@ -135,7 +135,7 @@ class ACTFormatedTestData: Test{
                 yAxisSegments: 8,
                 yAxisTotal: 0,
                 barEntries: [])
-            var subSectionEntry = BarEntry(
+            let subSectionEntry = BarEntry(
                 xLabel: "\(testFromJson!.dateTaken!)",
                 yEntries: [(height: CGFloat(section.scaledScore!),
                 color: Color("salmon"))],

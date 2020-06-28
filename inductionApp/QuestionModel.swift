@@ -17,9 +17,8 @@ class Question: ObservableObject, Hashable, Identifiable {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
     
-    
-    var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
+    func hash(into hasher: inout Hasher){
+        hasher.combine(id)
     }
     
     var id = UUID()
@@ -95,7 +94,8 @@ class Question: ObservableObject, Hashable, Identifiable {
     }
     
     func checkAnswer() {
-        if (currentState == .invalidSelection || currentState == .omitted) {return}
+        if (currentState == .invalidSelection || currentState == .omitted)
+            {return}
         else if (userAnswer == answer) {
             currentState = .right
         }else{

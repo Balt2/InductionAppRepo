@@ -25,8 +25,9 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
     
-    var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
+
+    func hash(into hasher: inout Hasher){
+        hasher.combine(id)
     }
     var id = UUID()
     
@@ -190,8 +191,9 @@ class Test: ObservableObject, Hashable, Identifiable {
     static func == (lhs: Test, rhs: Test) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
-    var hashValue: Int {
-        return ObjectIdentifier(self).hashValue
+  
+    func hash(into hasher: inout Hasher){
+        hasher.combine(id)
     }
     var id = UUID()
     var db = Firestore.firestore() //Instance of database
@@ -325,9 +327,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy"
         let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
-        print("PONG")
-        print(date)
         self.dateTaken = date
+        print("Loaded in Performance Data: \(self.testFromJson?.dateTaken! ?? "No Time")")
         //self.dateTaken = self.testFromJson?.dateTaken
         
         
@@ -459,7 +460,6 @@ class Test: ObservableObject, Hashable, Identifiable {
             print("Failure reading JSON from File")
             return nil
         }
-        return nil
     }
     
     func createTestFromJson(data: Data) -> TestFromJson? {
@@ -471,7 +471,6 @@ class Test: ObservableObject, Hashable, Identifiable {
             print("Error loading IN Test from DATA")
             return nil
         }
-        return nil
     }
     
     
@@ -603,7 +602,6 @@ enum TestState{
     case notStarted
     case inSection
     case inBreak
-    case betweenSection
     case lastSection
     case testOver
 }
