@@ -16,7 +16,7 @@ struct UserHomepageView: View {
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
     var body: some View {
-        NavigationView{
+        NavigationView {
             HStack {
                 VStack {
                     HStack {

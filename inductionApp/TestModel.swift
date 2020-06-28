@@ -575,10 +575,21 @@ class Test: ObservableObject, Hashable, Identifiable {
           print("Writing performance document to file manager")
             let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(nameOfFile).json")
           try resultJson.write(to: jsonURL)
+            
            print("Success Writing Document to file manager")
         }catch{
             print("ERROR Sending result json to local Storage")
         }
+        user.getPerformanceDataComplete = false
+        DispatchQueue.global(qos: .utility).async {
+            user.allACTPerformanceData?.addTest(test: ACTFormatedTestData(data: self.resultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1"))
+            DispatchQueue.main.async {
+                user.getPerformanceDataComplete = true
+            }
+            
+        }
+        
+        
     }
     
     func getDocumentsDirectory() -> URL {
