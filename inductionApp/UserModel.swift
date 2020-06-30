@@ -69,13 +69,13 @@ class User: ObservableObject, Equatable {
                     }
                     //If boolean is false then no tests exist
                     print("Got Tests, User Init")
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         self.tests.append(contentsOf: tempArray)
                         self.getTestsComplete = true
                     }
                 }else{
                     print("ERROR Getting tests")
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         self.getTestsComplete = true
                     }
                 }
@@ -89,7 +89,7 @@ class User: ObservableObject, Equatable {
                     let actPerformanceTests: [ACTFormatedTestData] = dataArr.enumerated().map{(index, data) in
                         ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
                     }
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         self.allACTPerformanceData = AllACTData(tests: actPerformanceTests)
                         self.getPerformanceDataComplete = true
                         print("Finished Creating Result Data")

@@ -414,8 +414,8 @@ class Test: ObservableObject, Hashable, Identifiable {
     func nextSection(fromStart: Bool){
          //Greater than or equal ensures if there is only one section
         if fromStart == false{
-            sections.forEach{$0.questions.forEach {$0.canvas = nil }}
-            sections.forEach{$0.pages.forEach {$0.canvas = nil }}
+            currentSection?.questions.forEach{$0.canvas = nil}
+            currentSection?.pages.forEach{$0.canvas = nil}
         }
         if currentSectionIndex >= numberOfSections! - 2  {
             if fromStart == false {
@@ -560,8 +560,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         let uploadMetadata = StorageMetadata.init()
         uploadMetadata.contentType = "application/json"
-
-        uploadRef.putData(resultJson, metadata: uploadMetadata){ (downloadMetadata, error) in
+        let finalResultJson = resultJson
+        uploadRef.putData(finalResultJson, metadata: uploadMetadata){ (downloadMetadata, error) in
             if let error = error {
                 print("Error uploading JSON data \(error.localizedDescription)")
                 return
@@ -573,20 +573,22 @@ class Test: ObservableObject, Hashable, Identifiable {
         do{
           print("Writing performance document to file manager")
             let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(nameOfFile).json")
-          try resultJson.write(to: jsonURL)
+          try finalResultJson.write(to: jsonURL)
             
            print("Success Writing Document to file manager")
         }catch{
             print("ERROR Sending result json to local Storage")
         }
         user.getPerformanceDataComplete = false
+        
         DispatchQueue.global(qos: .utility).async {
-            user.allACTPerformanceData?.addTest(test: ACTFormatedTestData(data: self.resultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1"))
+            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
             DispatchQueue.main.async {
-                user.getPerformanceDataComplete = true
+                user.allACTPerformanceData?.addTest(test: tempTest , user: user)
             }
-            
         }
+        
+            
         
         
     }

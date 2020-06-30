@@ -20,19 +20,19 @@ class AllACTData: ObservableObject{
         if tests.count > 0{
             self.allTestData = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
             self.sectionNames = self.allTestData![0].sectionsOverall.map{$0.key}
-            self.createSelf()
+            self.createSelf(user: nil)
             
         }else{
             print("Invalid Creation of AllACTDATA: No tests")
         }
     }
     
-    func addTest(test: ACTFormatedTestData){
+    func addTest(test: ACTFormatedTestData, user: User){
         self.allTestData?.append(test)
-        self.createSelf()
+        self.createSelf(user: user)
     }
     
-    func createSelf(){
+    func createSelf(user: User?){
         DispatchQueue.global(qos: .utility).async {
             var overallBarData = BarData(
                 title: "ACT Performance",
@@ -63,9 +63,12 @@ class AllACTData: ObservableObject{
                     barEntries: entries)
                 sectionGraphs[section] = tempGraph
             }
-            DispatchQueue.main.async {
+            DispatchQueue.main.sync {
                 self.overallPerformance = overallBarData
                 self.sectionsOverall = sectionGraphs
+                if user != nil {
+                    user?.getPerformanceDataComplete = true
+                }
             }
         }
         
