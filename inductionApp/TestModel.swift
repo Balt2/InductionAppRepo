@@ -579,14 +579,15 @@ class Test: ObservableObject, Hashable, Identifiable {
         }catch{
             print("ERROR Sending result json to local Storage")
         }
-        user.getPerformanceDataComplete = false
         
-        DispatchQueue.global(qos: .utility).async {
-            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
-            DispatchQueue.main.async {
-                user.allACTPerformanceData?.addTest(test: tempTest , user: user)
-            }
-        }
+//        user.getPerformanceDataComplete = false
+//        
+//        DispatchQueue.global(qos: .utility).async {
+//            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
+//            DispatchQueue.main.async {
+//                user.allACTPerformanceData?.addTest(test: tempTest , user: user)
+//            }
+//        }
         
             
         

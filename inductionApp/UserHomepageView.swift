@@ -25,7 +25,7 @@ struct UserHomepageView: View {
                             .fontWeight(.bold)
                             .modifier(nameLabelStyle())
                         Spacer()
-                        Text("Tutor: \(currentAuth.currentUser!.association.name)")
+                        Text("Tutor: Induction Learning") //\(currentAuth.currentUser!.association.name)
                             .fontWeight(.bold)
                             .modifier(nameLabelStyle())
                     }
@@ -93,19 +93,19 @@ struct UserHomepageView: View {
                             .buttonStyle(buttonBackgroundStyle())
                             
                             Spacer()
-                            if user.association.image != nil{
-                                Image(uiImage: user.association.image!)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 100)
-                                    .padding()
-                            }else{
+//                            if user.association.image != nil{
+//                                Image(uiImage: user.association.image!)
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fit)
+//                                    .frame(width: 100)
+//                                    .padding()
+//                            }else{
                                 Image("ilLogo")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 100)
                                     .padding()
-                            }
+                            //}
                             
                             
                             
