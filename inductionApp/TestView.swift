@@ -87,7 +87,7 @@ struct TestView: View {
                                     .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
                                 
                             }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView))
-                                .navigationBarBackButtonHidden(self.testData.timed)
+                                .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
                                 //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
                             
                             
