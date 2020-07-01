@@ -14,6 +14,7 @@ class CustomTimer: ObservableObject {
     private var endDate: Date?
     private var timer: Timer?
     private var remainingTimeAtLastAnswer: Double
+    private var allotedTime: Double
     @Published var done = false
     
     var timeRemaining: Double {
@@ -34,6 +35,7 @@ class CustomTimer: ObservableObject {
     init(duration: Int) {
         self.timeRemaining = Double(duration)
         self.remainingTimeAtLastAnswer = Double(duration)
+        self.allotedTime = Double(duration)
     }
     
 
@@ -54,6 +56,10 @@ class CustomTimer: ObservableObject {
         }
         RunLoop.current.add(self.timer!, forMode: .common)
     }
+    
+//    func reset(){
+//        self.timeRemaining = Double(d)
+//    }
 
     private func setRemaining() {
         let min = max(floor(self.timeRemaining / 60),0)

@@ -173,7 +173,15 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     }
     
     func reset(){
-        leftOverTime = allotedTime
+        self.leftOverTime = allotedTime
+        
+        if self.name == "Math"{
+            self.breakTimer = CustomTimer(duration: 600)
+        }else{
+            self.breakTimer = CustomTimer(duration: 0)
+        }
+        self.sectionTimer = CustomTimer(duration: Int(self.leftOverTime))
+    
         begunSection = false
         sectionOver = false
         pages.forEach {$0.reset()}
@@ -201,6 +209,9 @@ class Test: ObservableObject, Hashable, Identifiable {
     //Variables used in UI
     @Published var currentSectionIndex = 0
     var currentSection: TestSection?{
+        print("GOT CURRENT SECTION")
+        print(currentSectionIndex)
+        print(sections.count)
         return sections[currentSectionIndex]
     }
     @Published var begunTest = false
@@ -434,12 +445,13 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func reset() {
         //questions.forEach { $0.forEach {$0.reset() } }
-        sections.forEach {$0.reset() }
+        
         testState = .notStarted
         currentSectionIndex = 0
         begunTest = false
         taken = false
         showAnswerSheet = true
+        sections.forEach {$0.reset() }
     }
     
     

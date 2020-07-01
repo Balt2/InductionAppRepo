@@ -12,7 +12,7 @@ import SwiftUI
 enum SectionName: Int, CaseIterable, Hashable, Identifiable {
     case overall = 0
     case reading
-    case writing
+    case english
     case math
     case science
     
@@ -24,34 +24,34 @@ enum SectionName: Int, CaseIterable, Hashable, Identifiable {
 }
 
 
-enum Days: CaseIterable, Hashable, Identifiable {
+enum Days: String, CaseIterable, Hashable, Identifiable {
     
-    case CSE
-    case POW
-    case KOL
+//    case CSE
+//    case POW
+//    case KOL
+//
+//    case KID
+//    case IK
+//    case CS
+//
+//    case IES
+//    case Alg
+//    case Geom
+//    case Func
+//    case Modeling
+//    case NQ
+//
+//    case IOD
+//    case SI
+//    case EM
     
-    case KID
-    case IK
-    case CS
-    
-    case IES
-    case Alg
-    case Geom
-    case Func
-    case Modeling
-    case NQ
-    
-    case IOD
-    case SI
-    case EM
-    
-    case ACT1
-    case ACT2
-    case ACT3
+    case ACT1 = "02-05-20"
+    case ACT2 = "05-05-20"
+    //case ACT3
     
     
     var shortName: String {
-        return String("\(self)".prefix(4)).capitalized
+        return self.rawValue
     }
     var id: Days {self}
     
@@ -68,41 +68,41 @@ struct BarContentView: View {
                 (
                     SectionName.overall,
                         [
-                            (Days.ACT1, 28),
-                            (Days.ACT2, 34),
-                            (Days.ACT3, 36)
+                            (Days.ACT1, 26),
+                            (Days.ACT2, 27),
+                            //(Days.ACT3, 36)
                         ]
                 ),
                 (
                     SectionName.reading,
                         [
-                            (Days.ACT1, 28),
-                            (Days.ACT2, 32),
-                            (Days.ACT3, 35)
+                            (Days.ACT1, 25),
+                            (Days.ACT2, 24),
+                            //(Days.ACT3, 35)
                         ]
                 ),
                 (
-                    SectionName.writing,
+                    SectionName.english,
                         [
-                            (Days.ACT1, 26),
-                            (Days.ACT2, 33),
-                            (Days.ACT3, 36)
+                            (Days.ACT1, 28),
+                            (Days.ACT2, 25),
+                            //(Days.ACT3, 36)
                         ]
                 ),
                 (
                     SectionName.math,
                         [
-                            (Days.ACT1, 25),
-                            (Days.ACT2, 34),
-                            (Days.ACT3, 36)
+                            (Days.ACT1, 31),
+                            (Days.ACT2, 26),
+                            //(Days.ACT3, 36)
                         ]
                 ),
                 (
                     SectionName.science,
                         [
-                            (Days.ACT1, 30),
-                            (Days.ACT2, 32),
-                            (Days.ACT3, 36)
+                            (Days.ACT1, 21),
+                            (Days.ACT2, 35),
+                            //(Days.ACT3, 36)
                         ]
                 )
                 
