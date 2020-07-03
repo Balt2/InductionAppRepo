@@ -52,7 +52,7 @@ struct UserHomepageView: View {
                             }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
                                 .disabled(user.getTestsComplete == false)
                             
-                            NavigationLink(destination: PastPerformanceView(allData: (currentAuth.currentUser?.allACTPerformanceData))){
+                            NavigationLink(destination: PastPerformanceView(allData: (currentAuth.currentUser?.allSATPerformanceData))){ //allACTPerformanceData
                                 HStack{
                                     getLoadingIcon(imageName: "archivebox", checkBool: user.getPerformanceDataComplete)
                                     Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")

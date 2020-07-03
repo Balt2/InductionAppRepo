@@ -10,19 +10,28 @@ import Foundation
 import SwiftUI
 import PencilKit
 
-class AllACTData: ObservableObject{
+class AllACTData{
     
     var allTestData: [ACTFormatedTestData]?
     var sectionNames: [String]?
+    var higherSectionNames: [String]? //SAT only has math and english while act should have all for sub sections for this
     var overallPerformance: BarData?
     var sectionsOverall: [String: BarData]?
-    init(tests: [ACTFormatedTestData]){
+    var isACT: Bool
+    init(tests: [ACTFormatedTestData], isACT: Bool){
         if tests.count > 0{
+            self.isACT = isACT
             self.allTestData = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
-            self.sectionNames = self.allTestData![0].sectionsOverall.map{$0.key}
+            print("CHECKING SECTION NAMES")
+            print(self.allTestData![0].act)
+            print(self.allTestData![0].sectionsOverall)
+            print(self.allTestData![0].sectionsOverall.map{$0.key})
+            self.sectionNames = Array(self.allTestData![0].subSectionGraphs.keys)
+            self.higherSectionNames = self.allTestData![0].sectionsOverall.map{$0.key}
             self.createSelf(user: nil)
             
         }else{
+            self.isACT = isACT
             print("Invalid Creation of AllACTDATA: No tests")
         }
     }
@@ -35,13 +44,14 @@ class AllACTData: ObservableObject{
     func createSelf(user: User?){
         DispatchQueue.global(qos: .utility).async {
             var overallBarData = BarData(
-                title: "ACT Performance",
+                title: self.isACT ? "ACT Performance" : "SAT Performance",
                 xAxisLabel: "Dates",
                 yAxisLabel: "Score",
                 yAxisSegments: 4,
-                yAxisTotal: 36,
+                yAxisTotal: self.isACT ? 36 : 1600,
                 barEntries: [])
             var sectionEntries = [String: [BarEntry]]()
+            print(self.allTestData)
             for test in self.allTestData!{
                 overallBarData.barEntries.append(test.overall!)
                 for (key, sectionData) in test.sectionsOverall{
@@ -53,16 +63,20 @@ class AllACTData: ObservableObject{
                 }
             }
             var sectionGraphs = [String: BarData]()
+            
             for (section, entries) in sectionEntries{
                 let tempGraph = BarData(
-                    title: "ACT \(section) Performance",
+                    title: "\(self.isACT ? "ACT" : "SAT") \(section) Performance",
                     xAxisLabel: "Dates",
                     yAxisLabel: "Score",
                     yAxisSegments: 4,
-                    yAxisTotal: 36,
+                    yAxisTotal: self.isACT ? 36 : 1600,
                     barEntries: entries)
                 sectionGraphs[section] = tempGraph
             }
+            
+            
+            
             DispatchQueue.main.sync {
                 self.overallPerformance = overallBarData
                 self.sectionsOverall = sectionGraphs
@@ -71,23 +85,20 @@ class AllACTData: ObservableObject{
                 }
             }
         }
-        
-        
     }
-    
-        
-
 }
+
+
 
 
 class ACTFormatedTestData: Test{
     
-//    static func == (lhs: ACTFormatedTestData, rhs: ACTFormatedTestData) -> Bool {
-//        return lhs.id == rhs.id
-//    }
-//
-//    var id = UUID() //DELETE
-//    var name: String //DELETE
+    //    static func == (lhs: ACTFormatedTestData, rhs: ACTFormatedTestData) -> Bool {
+    //        return lhs.id == rhs.id
+    //    }
+    //
+    //    var id = UUID() //DELETE
+    //    var name: String //DELETE
     //var testPDF = [PageModel]() //DELETE
     
     
@@ -122,13 +133,29 @@ class ACTFormatedTestData: Test{
         self.overall = BarEntry(
             xLabel: "\(self.testFromJson!.dateTaken!)",
             yEntries: [(height: CGFloat(self.overallScore),
-            color: Color("salmon"))],
+                        color: Color("salmon"))],
             index: index)
-//        var sectionsOverall = [String : BarEntry]()
-//        var subSectionGraphs = [String: BarData]()
-//        var subSectionTime = [String: BarData]()
 
+        
+        //Only for SAT:
+        if self.act == false{
+            let englishSectionEntry = BarEntry(
+            xLabel: "\(testFromJson!.dateTaken!)",
+                yEntries: [(height: CGFloat(self.englishScore!),
+                        color: Color("salmon"))],
+            index: index)
+            sectionsOverall["English"] = englishSectionEntry
+            let mathSectionEntry = BarEntry(
+            xLabel: "\(testFromJson!.dateTaken!)",
+                yEntries: [(height: CGFloat(self.mathScore!),
+                        color: Color("salmon"))],
+            index: index)
+            sectionsOverall["Math"] = mathSectionEntry
+        }
+        
         for section in self.sections{
+            print("PRINGTING SECTION NAME")
+            print(section.name)
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
             var timingDataYTotal: CGFloat = 0
             var timingData = BarData(
@@ -138,53 +165,56 @@ class ACTFormatedTestData: Test{
                 yAxisSegments: 8,
                 yAxisTotal: 0,
                 barEntries: [])
-            let subSectionEntry = BarEntry(
-                xLabel: "\(testFromJson!.dateTaken!)",
-                yEntries: [(height: CGFloat(section.scaledScore!),
-                color: Color("salmon"))],
-                index: index)
-            sectionsOverall[section.name] = subSectionEntry
+            //Only for ACT because all 4 sections have their own scaled score
+            if self.act == true{
+                let subSectionEntry = BarEntry(
+                    xLabel: "\(testFromJson!.dateTaken!)",
+                    yEntries: [(height: CGFloat(section.scaledScore!),
+                                color: Color("salmon"))],
+                    index: index)
+                sectionsOverall[section.name] = subSectionEntry
+            }
             for question in section.questions{
                 let secondsToAnswerTemp = CGFloat(question.secondsToAnswer)
                 timingDataYTotal = timingDataYTotal < secondsToAnswerTemp ? secondsToAnswerTemp : timingDataYTotal
                 switch question.finalState{
-                    case .right:
-                        if data[question.officialSub] != nil{
-                            data[question.officialSub]?.r+=1
-                        }else{
-                            data[question.officialSub] = (r:1, w: 0, o: 0)
-                        }
-                        
-                        let barEntryTiming = BarEntry(
-                            xLabel: String(question.location.row + 1),
-                            yEntries: [(height: secondsToAnswerTemp,
-                            color: Color.green)])
-                        timingData.barEntries.append(barEntryTiming)
-                    case .wrong:
-                        if data[question.officialSub] != nil{
-                            data[question.officialSub]?.w+=1
-                        }else{
-                            data[question.officialSub] = (r:0, w: 1, o: 0)
-                        }
-                        let barEntryTiming = BarEntry(
-                            xLabel: String(question.location.row + 1),
-                            yEntries: [(height: secondsToAnswerTemp,
-                            color: Color.red)])
-                        timingData.barEntries.append(barEntryTiming)
-                    case .omitted: //omitted
-                        if data[question.officialSub] != nil{
-                            data[question.officialSub]?.o+=1
-                        }else{
-                            data[question.officialSub] = (r:0, w: 0, o: 1)
-                        }
-                        let barEntryTiming = BarEntry(
-                            xLabel: String(question.location.row + 1),
-                            yEntries: [(height: 0, color: Color.gray)])
-                        timingData.barEntries.append(barEntryTiming)
-                    default:
-                        print("Impossible Question State")
+                case .right:
+                    if data[question.officialSub] != nil{
+                        data[question.officialSub]?.r+=1
+                    }else{
+                        data[question.officialSub] = (r:1, w: 0, o: 0)
                     }
+                    
+                    let barEntryTiming = BarEntry(
+                        xLabel: String(question.location.row + 1),
+                        yEntries: [(height: secondsToAnswerTemp,
+                                    color: Color.green)])
+                    timingData.barEntries.append(barEntryTiming)
+                case .wrong:
+                    if data[question.officialSub] != nil{
+                        data[question.officialSub]?.w+=1
+                    }else{
+                        data[question.officialSub] = (r:0, w: 1, o: 0)
+                    }
+                    let barEntryTiming = BarEntry(
+                        xLabel: String(question.location.row + 1),
+                        yEntries: [(height: secondsToAnswerTemp,
+                                    color: Color.red)])
+                    timingData.barEntries.append(barEntryTiming)
+                case .omitted: //omitted
+                    if data[question.officialSub] != nil{
+                        data[question.officialSub]?.o+=1
+                    }else{
+                        data[question.officialSub] = (r:0, w: 0, o: 1)
+                    }
+                    let barEntryTiming = BarEntry(
+                        xLabel: String(question.location.row + 1),
+                        yEntries: [(height: 0, color: Color.gray)])
+                    timingData.barEntries.append(barEntryTiming)
+                default:
+                    print("Impossible Question State")
                 }
+            }
             timingData.yAxisTotal = Int(timingDataYTotal + 10) //TODO: Make a global variable with the radius of the scatter plot circles
             subSectionTime[section.name] = timingData
             
@@ -210,14 +240,15 @@ class ACTFormatedTestData: Test{
             barData.yAxisTotal = yAxisMax
             subSectionGraphs[section.name] = barData
         }
-//        self.sectionsOverall = sectionsOverall
-//        self.subSectionGraphs = subSectionGraphs
-//        self.subSectionTime = subSectionTime
+        //        self.sectionsOverall = sectionsOverall
+        //        self.subSectionGraphs = subSectionGraphs
+        //        self.subSectionTime = subSectionTime
         
     }
     
     
 }
+
 
 struct BarData: Hashable, Identifiable{
     static func == (lhs: BarData, rhs: BarData) -> Bool {

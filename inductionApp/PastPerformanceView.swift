@@ -41,14 +41,14 @@ struct PastPerformanceView: View {
                         Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
                         BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: allData!.overallPerformance!, showLegend: false).frame(width: UIScreen.main.bounds.width)
                         .animation(.default)
-                        CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.sectionNames!).frame(width:  UIScreen.main.bounds.width)
+                        CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.higherSectionNames!).frame(width:  UIScreen.main.bounds.width)
                         HStack(spacing: 0){
-                            ForEach(allData!.sectionNames!, id: \.self){sectionKey in
+                            ForEach(allData!.higherSectionNames!, id: \.self){sectionKey in
                                 BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.allData!.sectionsOverall![sectionKey]!, showLegend: false).frame(width: UIScreen.main.bounds.width)
                             }
                             
                             
-                        }.offset(x: 0.5 * (CGFloat(self.allData?.sectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
+                        }.offset(x: 0.5 * (CGFloat(self.allData?.higherSectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
                             .animation(.default)
                             .edgesIgnoringSafeArea(.all)
                             .padding(.all, 0)
@@ -145,23 +145,49 @@ struct RawDataView: View{
                     .font(.largeTitle)
                     .foregroundColor(Color.white)
             }
-            HStack{
-                Spacer()
-                ForEach(self.sectionNames, id: \.self){sectionKey in
-                    Group{
+            if data.act == false{
+                HStack{
+                    Spacer()
+                    //Group{
+                       ZStack{
+                           RoundedRectangle(cornerRadius: 5)
+                               .fill(Color("lightBlue"))
+                               .font(.largeTitle)
+                        Text("English: \(self.data.englishScore!)")
+                               .font(.largeTitle)
+                               .foregroundColor(Color.white)
+                       }
+                       Spacer()
                         ZStack{
                             RoundedRectangle(cornerRadius: 5)
                                 .fill(Color("lightBlue"))
                                 .font(.largeTitle)
-                            Text("\(sectionKey): \(Int(self.data.sectionsOverall[sectionKey]!.yEntries[0].height))")
+                            Text("Math: \(self.data.mathScore!)")
                                 .font(.largeTitle)
                                 .foregroundColor(Color.white)
                         }
                         Spacer()
+                    //}
+                }.frame(maxWidth: UIScreen.main.bounds.width)
+            }else{
+                HStack{
+                    Spacer()
+                    ForEach(self.sectionNames, id: \.self){sectionKey in
+                        Group{
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Color("lightBlue"))
+                                    .font(.largeTitle)
+                                Text("\(sectionKey): \(Int(self.data.sectionsOverall[sectionKey]!.yEntries[0].height))")
+                                    .font(.largeTitle)
+                                    .foregroundColor(Color.white)
+                            }
+                            Spacer()
+                        }
                     }
-                }
-                Spacer()
-            }.frame(maxWidth: UIScreen.main.bounds.width)
+                    Spacer()
+                }.frame(maxWidth: UIScreen.main.bounds.width)
+            }
             CostumeBarView(index: self.$index, offset: self.$offset, headers: self.sectionNames).frame(width: UIScreen.main.bounds.width)
             HStack(spacing: 0){
                 ForEach(self.sectionNames, id: \.self){sectionKey in
@@ -172,7 +198,7 @@ struct RawDataView: View{
                         
                     }.padding(.all, 0)
                 }
-            }.offset(x: 0.5 * (CGFloat(self.data.sectionsOverall.count) - 1) * UIScreen.main.bounds.width + self.offset)
+            }.offset(x: 0.5 * (CGFloat(self.sectionNames.count) - 1) * UIScreen.main.bounds.width + self.offset)
                 .animation(.default)
                 .edgesIgnoringSafeArea(.all)
                 .padding(.all, 0)

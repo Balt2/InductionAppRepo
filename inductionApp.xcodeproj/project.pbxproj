@@ -64,7 +64,7 @@
 		2F0DD2C9244F5F6300AFFADE /* TestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestModel.swift; path = InductionApp/TestModel.swift; sourceTree = SOURCE_ROOT; };
 		2F19DACF2497B5DD0004E943 /* CorrectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrectionView.swift; sourceTree = "<group>"; };
 		2F20419F2472D93B002E811E /* PdfPageModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PdfPageModel.swift; sourceTree = "<group>"; };
-		2F2041A12472F00C002E811E /* InductionApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = InductionApp.entitlements; path = InductionApp/InductionApp.entitlements; sourceTree = "<group>"; };
+		2F2041A12472F00C002E811E /* InductionApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = InductionApp.entitlements; sourceTree = "<group>"; };
 		2F33DCDC245D1E5600239E69 /* satPracticeTest1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = satPracticeTest1.json; path = InductionApp/satPracticeTest1.json; sourceTree = SOURCE_ROOT; };
 		2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceDataModel.swift; sourceTree = "<group>"; };
 		2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BreiteJ-CB1.pdf"; sourceTree = "<group>"; };

@@ -28,6 +28,7 @@ class User: ObservableObject, Equatable {
     
     @Published var tests: [Test] = []
     @Published var allACTPerformanceData: AllACTData?
+    @Published var allSATPerformanceData: AllACTData?
     @Published var getTestsComplete = false
     @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
@@ -52,6 +53,7 @@ class User: ObservableObject, Equatable {
         
         
         self.getFile(ref: imageRef, pdf: false){image in
+            print("IMAGEEE")
             //Image is data, the UI will turn it into a UIImage
             if let imageData = image{
                 print("Got Image, User Init")
@@ -89,8 +91,13 @@ class User: ObservableObject, Equatable {
                     let actPerformanceTests: [ACTFormatedTestData] = dataArr.enumerated().map{(index, data) in
                         ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
                     }
-                    DispatchQueue.main.sync {
-                        self.allACTPerformanceData = AllACTData(tests: actPerformanceTests)
+                    DispatchQueue.main.sync{
+                        self.allACTPerformanceData = AllACTData(tests: actPerformanceTests.filter {$0.act == true}, isACT: true)
+                        print(actPerformanceTests.filter {$0.act == true})
+                        print(self.allACTPerformanceData?.sectionNames)
+                        self.allSATPerformanceData = AllACTData(tests: actPerformanceTests.filter{$0.act == false}, isACT: false)
+                        print(actPerformanceTests.filter{$0.act == false})
+                        print(self.allSATPerformanceData?.sectionNames)
                         self.getPerformanceDataComplete = true
                         print("Finished Creating Result Data")
                     }
@@ -111,6 +118,7 @@ class User: ObservableObject, Equatable {
         var sendArray: [(pdf: Data, json: Data)] = []
         for testRef in self.testRefs {
             print("STILL IN GET TETSTS")
+            print(testRef)
             
             let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef).json")
             let refPdf: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef).pdf")
@@ -133,7 +141,10 @@ class User: ObservableObject, Equatable {
                 }
             }else{
                 print("Getting json/pdf data from database")
+                print(refJson)
+                print(refPdf)
                    self.getFile(ref: refJson, pdf: false){jsonD in
+                    
                        guard let jsonDataC = jsonD else {return}
                        self.getFile(ref: refPdf, pdf: true){pdfD in
                            guard let pdfDataC = pdfD else {return}
@@ -172,7 +183,7 @@ class User: ObservableObject, Equatable {
             let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/testResults/\(testResultRef).json")
             let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(testResultRef).json")
             
-            if FileManager.default.fileExists(atPath: jsonURL.path){
+            if !FileManager.default.fileExists(atPath: jsonURL.path){
                 do{
                     print("GETTING PERFORMANCE JSON FROM FILE MANAGER")
                     let jsonData = try Data(contentsOf: jsonURL)
@@ -206,6 +217,8 @@ class User: ObservableObject, Equatable {
     func getFile(ref: StorageReference, pdf: Bool, completionHandler: @escaping (_ completion: Data?) -> ()) {
         ref.getData(maxSize: pdf == true ? (40 * 1024 * 1024) : (1 * 1024 * 1024)){data, error in
             if let error = error {
+                print(pdf)
+                print(ref)
                 print("error retriving file at: \(ref.fullPath) with error: \(error)")
                 completionHandler(nil)
             }else{

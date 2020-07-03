@@ -157,17 +157,25 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     
     func setScaledScore(test: Test){
         //ACT
-        if name == "English"{
+        if name == "English" && test.act == true{
             scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
-        }else if name == "Science"{
+        }else if name == "Science" && test.act == true{
             scaledScore = test.scoreConvertDict[rawScore]?.scienceTestScore
-        }else if name == "Math"{
+        }else if name == "Math" && test.act == true{
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
-        }else if name == "Reading"{
+        }else if name == "Reading" && test.act == true{
             scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
+        }else if name == "Reading" && test.act == false{
+            scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
+        }else if name == "Writing" && test.act == false{
+            scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
+        }else if name == "Math No Calculator" && test.act == false{
+            scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
+        }else if name == "Math Calculator" && test.act == false{
+            scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else{
-            //TODO: SAT
-            
+            print("ERROR PRONE MESSAGE")
+            fatalError("ERRROR")
         }
         
     }
@@ -209,9 +217,6 @@ class Test: ObservableObject, Hashable, Identifiable {
     //Variables used in UI
     @Published var currentSectionIndex = 0
     var currentSection: TestSection?{
-        print("GOT CURRENT SECTION")
-        print(currentSectionIndex)
-        print(sections.count)
         return sections[currentSectionIndex]
     }
     @Published var begunTest = false
@@ -266,20 +271,17 @@ class Test: ObservableObject, Hashable, Identifiable {
             }
             return sum / numberOfSections!
         }else{
-            
-            //TODO: SAT
-            return 0
+            if let mScore = mathScore, let
+                eScore = englishScore {
+                return mScore + eScore
+            }else{
+                return 0
+            }
         }
     }
-    var mathScore: Int?{
-        //TODO: SAT
-        return nil
-    }
+    var mathScore: Int? = nil
     
-    var scienceScore: Int?{
-        //TODO: SAT
-        return nil
-    }
+    var englishScore: Int? = nil
     
     var scoreConvertDict = [Int: (readingSectionTestScore: Int, mathSectionTestScore: Int, writingAndLanguageTestScore: Int, scienceTestScore: Int)]()
     
@@ -300,7 +302,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.act = self.testFromJson?.act
             self.name = self.testFromJson!.name
             for convertEach in testFromJson!.answerConverter! {
-                scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore)
+                scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore ?? 0)
             }
         }
                 
@@ -319,7 +321,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.act = self.testFromJson?.act
             self.name = self.testFromJson!.name
             for convertEach in testFromJson!.answerConverter! {
-                scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore)
+                scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore ?? 0)
             }
         }
         print("donne: \(self.name)")
@@ -334,12 +336,17 @@ class Test: ObservableObject, Hashable, Identifiable {
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
             self.name = self.testFromJson!.name
+            self.englishScore = self.testFromJson?.english
+            self.mathScore = self.testFromJson?.math
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM-dd-yyyy"
+            let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
+            self.dateTaken = date
+            print("TEST FROM JSON IS NIL")
         }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM-dd-yyyy"
-        let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
-        self.dateTaken = date
+        
         print("Loaded in Performance Data: \(self.testFromJson?.dateTaken! ?? "No Time")")
+        
         //self.dateTaken = self.testFromJson?.dateTaken
         
         
@@ -475,6 +482,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     func createTestFromJson(data: Data) -> TestFromJson? {
+
         do{
             let decoder = JSONDecoder()
             let testFromJson = try decoder.decode(TestFromJson.self, from: data)
@@ -488,7 +496,6 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func createSectionArray(testFromJson: TestFromJson, corrections: Bool) -> [TestSection]{
         var sections: [TestSection] = []
-        
         for section in testFromJson.sections {
             
             var questionList: [Question] = []
@@ -516,11 +523,22 @@ class Test: ObservableObject, Hashable, Identifiable {
         var sectionsForJson = [TestSectionFromJson]()
         for section in sections {
             section.setScaledScore(test: self)
+            if section.name == "English" || section.name == "Writing"{
+                englishScore = englishScore ?? 0 + section.scaledScore!
+                
+            }else if section.name == "Math No Calculator" || section.name == "Math Calculator" {
+                mathScore = mathScore ?? 0 + section.rawScore
+            }
             let temp = section.makeTestSectionForJson()
             sectionsForJson.append(temp)
         }
-        //Todo: SAT
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, science: scienceScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
+        if englishScore != nil{
+            englishScore = englishScore! * 10
+        }
+        if mathScore != nil{
+            mathScore = self.scoreConvertDict[mathScore!]?.mathSectionTestScore
+        }
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -592,14 +610,14 @@ class Test: ObservableObject, Hashable, Identifiable {
             print("ERROR Sending result json to local Storage")
         }
         
-//        user.getPerformanceDataComplete = false
-//        
-//        DispatchQueue.global(qos: .utility).async {
-//            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
-//            DispatchQueue.main.async {
-//                user.allACTPerformanceData?.addTest(test: tempTest , user: user)
-//            }
-//        }
+        user.getPerformanceDataComplete = false
+        
+        DispatchQueue.global(qos: .utility).async {
+            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
+            DispatchQueue.main.async {
+                user.allACTPerformanceData?.addTest(test: tempTest , user: user)
+            }
+        }
         
             
         
@@ -635,7 +653,7 @@ struct TestFromJson: Codable {
     //Values only in the test result JSON
     var overallScore: Int? //SAT and ACT
     var math: Int? //SAT
-    var science: Int? //SAT
+    var english: Int? //SAT
     var dateTaken: String?
     
 }
@@ -678,7 +696,9 @@ struct ScoreConverter: Codable {
     var readingSectionTestScore: Int
     var mathSectionTestScore: Int
     var writingAndLanguageTestScore: Int
-    var scienceTestScore: Int
+    var scienceTestScore: Int?
+    
+    
 }
 
 extension Date
