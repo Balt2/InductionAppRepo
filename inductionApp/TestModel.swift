@@ -134,6 +134,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     }
     
     func makeTestSectionForJson() -> TestSectionFromJson{
+        print("MAKING TEST SECTION FOR JSON")
         var questionsForJson = [QuestionFromJson]()
         for question in self.questions{
             question.checkAnswer()
@@ -510,6 +511,8 @@ class Test: ObservableObject, Hashable, Identifiable {
                 let splitArray = question.id.split(separator: "_")
                 let questionNum = Int(splitArray[2])!
                 let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
+                print("CHECKING THE QUESTION FINAL STATE")
+                print(tempQuestion.finalState)
                 questionList.append(tempQuestion)
             }
                 let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]

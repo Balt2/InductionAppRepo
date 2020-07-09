@@ -123,9 +123,10 @@ class ACTFormatedTestData: Test{
         self.tutorPDF = TestPDF(name: tutorPDFName)
         super.init(jsonData: data)
         //self.createData(index: index)
-        self.resetQuestions()
+        //self.resetQuestions()
     }
     
+    //For corrections
     func resetQuestions(){
         for section in self.sections{
             for question in section.questions{
@@ -163,6 +164,7 @@ class ACTFormatedTestData: Test{
         }
         
         for section in self.sections{
+            
             print("PRINGTING SECTION NAME")
             print(section.name)
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
@@ -186,8 +188,13 @@ class ACTFormatedTestData: Test{
             for question in section.questions{
                 let secondsToAnswerTemp = CGFloat(question.secondsToAnswer)
                 timingDataYTotal = timingDataYTotal < secondsToAnswerTemp ? secondsToAnswerTemp : timingDataYTotal
+                print("QUESTION CHECK")
+                print(question.userAnswer)
+                print(question.currentState)
+                print(question.finalState)
                 switch question.finalState{
                 case .right:
+                    print("CASE RIGHT")
                     if data[question.officialSub] != nil{
                         data[question.officialSub]?.r+=1
                     }else{
@@ -200,6 +207,7 @@ class ACTFormatedTestData: Test{
                                     color: Color.green)])
                     timingData.barEntries.append(barEntryTiming)
                 case .wrong:
+                    print("CASE WRONG")
                     if data[question.officialSub] != nil{
                         data[question.officialSub]?.w+=1
                     }else{
@@ -211,6 +219,7 @@ class ACTFormatedTestData: Test{
                                     color: Color.red)])
                     timingData.barEntries.append(barEntryTiming)
                 case .omitted: //omitted
+                    print("CASE OMITTED")
                     if data[question.officialSub] != nil{
                         data[question.officialSub]?.o+=1
                     }else{
