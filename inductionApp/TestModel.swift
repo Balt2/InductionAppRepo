@@ -342,7 +342,6 @@ class Test: ObservableObject, Hashable, Identifiable {
             dateFormatter.dateFormat = "MM-dd-yyyy"
             let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
             self.dateTaken = date
-            print("TEST FROM JSON IS NIL")
         }
         
         print("Loaded in Performance Data: \(self.testFromJson?.dateTaken! ?? "No Time")")
@@ -613,9 +612,12 @@ class Test: ObservableObject, Hashable, Identifiable {
         user.getPerformanceDataComplete = false
         
         DispatchQueue.global(qos: .utility).async {
-            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
+            print("START ASYNC ADDING TEST")
+            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allSATPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1") //TODO: This allSAT needs to be the same ast he other instance
+            tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
             DispatchQueue.main.async {
-                user.allACTPerformanceData?.addTest(test: tempTest , user: user)
+                print("START MAIN ADDING TEST")
+                user.allSATPerformanceData?.addTest(test: tempTest , user: user)
             }
         }
         

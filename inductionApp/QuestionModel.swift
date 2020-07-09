@@ -30,7 +30,9 @@ class Question: ObservableObject, Hashable, Identifiable {
     let location: IndexPath
     let isACT: Bool
     let isACTMath: Bool
+    let freeResponse: Bool //This variable determines whether a the question needs a free response answer sheet cell
     var answerLetters = ["A", "B", "C", "D"]
+    
    
     var answerOrdredIn = 0
     
@@ -53,6 +55,11 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.officialSub = q.officialSub
         self.tutorSub = q.tutorSub
         self.answer = q.answer
+        if q.answer.isDouble || q.answer.count > 1{
+            self.freeResponse = true
+        }else{
+            self.freeResponse = false
+        }
         self.reason = q.reason
         self.isACT = act
         self.location = ip
@@ -77,6 +84,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.officialSub = question.officialSub
         self.tutorSub = question.tutorSub
         self.answer = question.answer
+        self.freeResponse = question.freeResponse
         self.reason = question.reason
         self.isACT = question.isACT
         self.location = question.location
@@ -98,8 +106,14 @@ class Question: ObservableObject, Hashable, Identifiable {
             {return}
         else if (userAnswer == answer) {
             currentState = .right
-        }else{
-            currentState = .wrong
+        }else {
+            let answerArray = answer.split(separator: ",")
+            let answerArrayStr = answerArray.map {String($0)}
+            if answerArrayStr.contains(userAnswer) {
+                currentState = .right
+            }else{
+                currentState = .wrong
+            }
         }
     
     }
@@ -125,4 +139,10 @@ enum QuestionState : String {
     //Used when still in test
     ///.omitted = "O" is used here too
     case selected = "S" //Selected
+}
+
+extension String {
+    var isInteger: Bool { return Int(self) != nil }
+    var isFloat: Bool { return Float(self) != nil }
+    var isDouble: Bool { return Double(self) != nil }
 }

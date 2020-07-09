@@ -21,7 +21,11 @@ class AllACTData{
     init(tests: [ACTFormatedTestData], isACT: Bool){
         if tests.count > 0{
             self.isACT = isACT
-            self.allTestData = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
+            let tempTests = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
+            for (index, test) in tempTests.enumerated(){
+                test.createData(index: index)
+            }
+            self.allTestData = tempTests //TODO: Two many loops
             print("CHECKING SECTION NAMES")
             print(self.allTestData![0].act)
             print(self.allTestData![0].sectionsOverall)
@@ -37,6 +41,7 @@ class AllACTData{
     }
     
     func addTest(test: ACTFormatedTestData, user: User){
+        //test.createData(index: <#T##Int#>)
         self.allTestData?.append(test)
         self.createSelf(user: user)
     }
@@ -81,6 +86,7 @@ class AllACTData{
                 self.overallPerformance = overallBarData
                 self.sectionsOverall = sectionGraphs
                 if user != nil {
+                    print("SETTING PERFORAMNCE BACK")
                     user?.getPerformanceDataComplete = true
                 }
             }
@@ -113,7 +119,7 @@ class ACTFormatedTestData: Test{
     init(data: Data, index: Int, tutorPDFName: String) {
         self.tutorPDF = TestPDF(name: tutorPDFName)
         super.init(jsonData: data)
-        self.createData(index: index)
+        //self.createData(index: index)
         self.resetQuestions()
     }
     

@@ -88,6 +88,7 @@ class User: ObservableObject, Equatable {
             if !dataArr.isEmpty{
                 print("Got Result Jsons, User Init")
                 DispatchQueue.global(qos: .utility).async {
+                    
                     let actPerformanceTests: [ACTFormatedTestData] = dataArr.enumerated().map{(index, data) in
                         ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
                     }
