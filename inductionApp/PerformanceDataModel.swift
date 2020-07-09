@@ -41,8 +41,11 @@ class AllACTData{
     }
     
     func addTest(test: ACTFormatedTestData, user: User){
-        //test.createData(index: <#T##Int#>)
-        self.allTestData?.append(test)
+        if self.allTestData == nil {
+            self.allTestData = [test]
+        }else{
+            self.allTestData!.append(test)
+        }
         self.createSelf(user: user)
     }
     
@@ -119,7 +122,7 @@ class ACTFormatedTestData: Test{
     init(data: Data, index: Int, tutorPDFName: String) {
         self.tutorPDF = TestPDF(name: tutorPDFName)
         super.init(jsonData: data)
-        //self.createData(index: index)
+        self.createData(index: index)
         self.resetQuestions()
     }
     

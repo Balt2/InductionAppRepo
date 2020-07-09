@@ -611,10 +611,10 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         user.getPerformanceDataComplete = false
         
-        DispatchQueue.global(qos: .utility).async {
+        DispatchQueue.global(qos: .utility).async { //TODO: Work when allSAT Performance is empty
             print("START ASYNC ADDING TEST")
             let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allSATPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1") //TODO: This allSAT needs to be the same ast he other instance
-            tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
+            //tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
             DispatchQueue.main.async {
                 print("START MAIN ADDING TEST")
                 user.allSATPerformanceData?.addTest(test: tempTest , user: user)
