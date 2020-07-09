@@ -137,6 +137,9 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         var questionsForJson = [QuestionFromJson]()
         for question in self.questions{
             question.checkAnswer()
+            print(question.finalState.rawValue)
+            print(question.currentState)
+            print(question.finalState)
             let temp = QuestionFromJson(id: question.officialID,
                                         officialSub: question.officialSub, tutorSub: question.tutorSub,
                                         answer: question.answer, reason: question.reason,
@@ -165,6 +168,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else if name == "Reading" && test.act == true{
             scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
+        //SAT
         }else if name == "Reading" && test.act == false{
             scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
         }else if name == "Writing" && test.act == false{
@@ -194,6 +198,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         sectionOver = false
         pages.forEach {$0.reset()}
         questions.forEach {$0.reset() }
+        
     }
     
     
@@ -458,6 +463,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         taken = false
         showAnswerSheet = true
         sections.forEach {$0.reset() }
+        englishScore = nil
+        mathScore = nil
     }
     
     
@@ -520,23 +527,26 @@ class Test: ObservableObject, Hashable, Identifiable {
     func createResultJson() -> Data {
         //Creating encodable object from test
         var sectionsForJson = [TestSectionFromJson]()
+        
         for section in sections {
             section.setScaledScore(test: self)
-            if section.name == "English" || section.name == "Writing"{
+            if section.name == "Reading" || section.name == "Writing"{
                 englishScore = englishScore ?? 0 + section.scaledScore!
-                
             }else if section.name == "Math No Calculator" || section.name == "Math Calculator" {
                 mathScore = mathScore ?? 0 + section.rawScore
             }
             let temp = section.makeTestSectionForJson()
             sectionsForJson.append(temp)
         }
+        
         if englishScore != nil{
             englishScore = englishScore! * 10
         }
+        
         if mathScore != nil{
             mathScore = self.scoreConvertDict[mathScore!]?.mathSectionTestScore
         }
+        
         let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
         //Encoding information
         let encoder = JSONEncoder()
@@ -614,10 +624,17 @@ class Test: ObservableObject, Hashable, Identifiable {
         DispatchQueue.global(qos: .utility).async { //TODO: Work when allSAT Performance is empty
             print("START ASYNC ADDING TEST")
             let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allSATPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1") //TODO: This allSAT needs to be the same ast he other instance
-            //tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
+            tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
             DispatchQueue.main.async {
                 print("START MAIN ADDING TEST")
-                user.allSATPerformanceData?.addTest(test: tempTest , user: user)
+                print((user.allSATPerformanceData?.allTestData?.count) ?? 0)
+                if user.allSATPerformanceData == nil{
+                    user.allSATPerformanceData = AllACTData(tests: [tempTest], isACT: false)
+                    user.getPerformanceDataComplete = true
+                }else{
+                    user.allSATPerformanceData!.addTest(test: tempTest , user: user)
+                }
+
             }
         }
         

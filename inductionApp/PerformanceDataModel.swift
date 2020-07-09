@@ -33,7 +33,6 @@ class AllACTData{
             self.sectionNames = Array(self.allTestData![0].subSectionGraphs.keys)
             self.higherSectionNames = self.allTestData![0].sectionsOverall.map{$0.key}
             self.createSelf(user: nil)
-            
         }else{
             self.isACT = isACT
             print("Invalid Creation of AllACTDATA: No tests")
@@ -41,15 +40,16 @@ class AllACTData{
     }
     
     func addTest(test: ACTFormatedTestData, user: User){
-        if self.allTestData == nil {
-            self.allTestData = [test]
-        }else{
-            self.allTestData!.append(test)
-        }
+        print("IN ADD TEST")
+        print("ALLTESTDATA NOT NIL")
+        self.allTestData!.append(test)
+        
+        print("CREATING SELF")
         self.createSelf(user: user)
     }
     
     func createSelf(user: User?){
+        print("CREATE SELF!")
         DispatchQueue.global(qos: .utility).async {
             var overallBarData = BarData(
                 title: self.isACT ? "ACT Performance" : "SAT Performance",
@@ -122,7 +122,7 @@ class ACTFormatedTestData: Test{
     init(data: Data, index: Int, tutorPDFName: String) {
         self.tutorPDF = TestPDF(name: tutorPDFName)
         super.init(jsonData: data)
-        self.createData(index: index)
+        //self.createData(index: index)
         self.resetQuestions()
     }
     
@@ -156,7 +156,7 @@ class ACTFormatedTestData: Test{
             sectionsOverall["English"] = englishSectionEntry
             let mathSectionEntry = BarEntry(
             xLabel: "\(testFromJson!.dateTaken!)",
-                yEntries: [(height: CGFloat(self.mathScore!),
+                yEntries: [(height: CGFloat(self.mathScore!), //TODO Sometime mathScore will crash bc its nil
                         color: Color("salmon"))],
             index: index)
             sectionsOverall["Math"] = mathSectionEntry
@@ -249,6 +249,7 @@ class ACTFormatedTestData: Test{
             barData.yAxisTotal = yAxisMax
             subSectionGraphs[section.name] = barData
         }
+        print("FINNISHED CREATE DATA")
         //        self.sectionsOverall = sectionsOverall
         //        self.subSectionGraphs = subSectionGraphs
         //        self.subSectionTime = subSectionTime

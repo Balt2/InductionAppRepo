@@ -102,16 +102,23 @@ class Question: ObservableObject, Hashable, Identifiable {
     }
     
     func checkAnswer() {
+        
         if (currentState == .invalidSelection || currentState == .omitted)
             {return}
         else if (userAnswer == answer) {
             currentState = .right
         }else {
+            print("CHECKING WRONG ANSWER")
             let answerArray = answer.split(separator: ",")
             let answerArrayStr = answerArray.map {String($0)}
             if answerArrayStr.contains(userAnswer) {
+                print("CORRECT")
                 currentState = .right
             }else{
+                print(answerArray)
+                print(answer)
+                print(answerArrayStr)
+                print("WRONG")
                 currentState = .wrong
             }
         }
