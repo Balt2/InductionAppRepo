@@ -93,12 +93,9 @@ class User: ObservableObject, Equatable {
                         ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
                     }
                     DispatchQueue.main.sync{
+                        //Loading in the performance PDFs
                         self.allACTPerformanceData = AllACTData(tests: actPerformanceTests.filter {$0.act == true}, isACT: true)
-                        print(actPerformanceTests.filter {$0.act == true})
-                        print(self.allACTPerformanceData?.sectionNames)
                         self.allSATPerformanceData = AllACTData(tests: actPerformanceTests.filter{$0.act == false}, isACT: false)
-                        print(actPerformanceTests.filter{$0.act == false})
-                        print(self.allSATPerformanceData?.sectionNames)
                         self.getPerformanceDataComplete = true
                         print("Finished Creating Result Data")
                     }

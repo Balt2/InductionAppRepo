@@ -26,6 +26,8 @@ struct ScatterPlot: View{
                            Text(self.data.yAxisLabel)
                                .rotationEffect(Angle(degrees: -90), anchor: .trailing)
                                .font(.system(.subheadline))
+                                .padding(.leading, CGFloat(-4 * self.data.yAxisLabel.count)) //Offsets the large rectange box created by rotating the text view
+                                .padding(.trailing, 10) //Give space between text and graph
                         YAXisLabelView(data: self.data, scale: true).padding(.bottom, 10).padding(.top, -10).padding(.leading, 20).padding(.trailing, 5)
                         
                            ScatterGrid(data: self.data).padding(.trailing, 10)
@@ -69,6 +71,8 @@ struct BarChart: View {
                     Text(self.data.yAxisLabel)
                         .rotationEffect(Angle(degrees: -90), anchor: .trailing)
                         .font(.system(.subheadline))
+                        .padding(.leading, CGFloat(-4 * self.data.yAxisLabel.count)) //Offsets the large rectange box created by rotating the text view
+                        .padding(.trailing, 10) //Give space between text and graph
                     Grid(data: self.data, horizontal: true, showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex).padding(.leading, 30).padding(.trailing, 10)
                 }.padding([.trailing], 15)
                     
@@ -298,7 +302,9 @@ struct Grid: View {
     }
     
     func paddingForY() -> CGFloat{
-        if data.yAxisTotal > 99{
+        if data.yAxisTotal > 999 {
+            return -45
+        }else if data.yAxisTotal > 99{
             return -35
         }else if data.yAxisTotal > 9{
             return -25

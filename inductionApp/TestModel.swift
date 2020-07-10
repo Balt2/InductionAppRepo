@@ -624,26 +624,47 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         user.getPerformanceDataComplete = false
         
-        DispatchQueue.global(qos: .utility).async { //TODO: Work when allSAT Performance is empty
+        DispatchQueue.global(qos: .utility).async { //TODO: Make  functions to get rid of duplicate code
             print("START ASYNC ADDING TEST")
-            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allSATPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1") //TODO: This allSAT needs to be the same ast he other instance
-            tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
+            
+            let tempTest = self.getTempTest(finalResultJson: finalResultJson, user: user)
+            
+            
             DispatchQueue.main.async {
                 print("START MAIN ADDING TEST")
-                print((user.allSATPerformanceData?.allTestData?.count) ?? 0)
-                if user.allSATPerformanceData == nil{
-                    user.allSATPerformanceData = AllACTData(tests: [tempTest], isACT: false)
-                    user.getPerformanceDataComplete = true
+                if self.act == true{
+                    if user.allACTPerformanceData == nil{
+                        print("ACT IS NIL")
+                        print(user.allACTPerformanceData?.allTestData)
+                        user.allACTPerformanceData = AllACTData(tests: [tempTest], isACT: false)
+                        user.getPerformanceDataComplete = true
+                    }else{
+                        print("ACT IS NOT NIL")
+                        print(user.allACTPerformanceData?.allTestData)
+                        user.allACTPerformanceData!.addTest(test: tempTest , user: user)
+                    }
                 }else{
-                    user.allSATPerformanceData!.addTest(test: tempTest , user: user)
+                    if user.allSATPerformanceData == nil{
+                        user.allSATPerformanceData = AllACTData(tests: [tempTest], isACT: false)
+                        user.getPerformanceDataComplete = true
+                    }else{
+                        user.allSATPerformanceData!.addTest(test: tempTest , user: user)
+                    }
                 }
-
             }
         }
-        
-            
-        
-        
+    }
+    
+    func getTempTest(finalResultJson: Data, user: User) -> ACTFormatedTestData{
+        if self.act == true{
+            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
+            tempTest.createData(index: (user.allACTPerformanceData?.allTestData?.count) ?? 0)
+            return tempTest
+        }else{
+            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allSATPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
+            tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
+            return tempTest
+        }
     }
     
     func getDocumentsDirectory() -> URL {
