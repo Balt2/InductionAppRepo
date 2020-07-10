@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct PastPerformanceView: View {
-    var allData: AllACTData?
+    @ObservedObject var user: User
     
     @State var index = 0
     @State var offset : CGFloat = 0
@@ -38,17 +38,43 @@ struct PastPerformanceView: View {
                 ScrollView(.vertical) {
                     VStack{
                         Spacer()
-                        Text("RESULTS").font(.system(.largeTitle)).foregroundColor(.red)
-                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: allData!.overallPerformance!, showLegend: false).frame(width: UIScreen.main.bounds.width)
-                        .animation(.default)
-                        CostumeBarView(index: self.$index, offset: self.$offset, headers: allData!.higherSectionNames!).frame(width:  UIScreen.main.bounds.width)
-                        HStack(spacing: 0){
-                            ForEach(allData!.higherSectionNames!, id: \.self){sectionKey in
-                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.allData!.sectionsOverall![sectionKey]!, showLegend: false).frame(width: UIScreen.main.bounds.width)
+                        HStack{
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 5)
+                                .fill(Color("lightBlue"))
+                                    .font(.largeTitle)
+                                    .frame(width: 300)
+                                    Text("\(user.showACTData! ? "ACT" : "SAT") Results").font(.system(.largeTitle)).foregroundColor(.red)
                             }
                             
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 5)
+                                .fill(Color("lightBlue"))
+                                    .font(.largeTitle)
+                                    .frame(width: 200)
+                                Text("Show \(user.showACTData! ? "SAT" : "ACT") Results").font(.system(.caption)).foregroundColor(.white)
+                            }.onTapGesture {
+                                print("TAPING DATA CHANGE")
+                                self.user.showACTData!.toggle()
+                                if self.user.currentPerformanceData == nil {
+                                    self.user.showACTData!.toggle()
+                                }
+                            }
                             
-                        }.offset(x: 0.5 * (CGFloat(self.allData?.higherSectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
+                        }
+                        
+                        
+                        
+                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentPerformanceData!.overallPerformance!, showLegend: false).frame(width: UIScreen.main.bounds.width)
+                        .animation(.default)
+                        
+                        CostumeBarView(index: self.$index, offset: self.$offset, headers: user.currentPerformanceData!.higherSectionNames!).frame(width:  UIScreen.main.bounds.width)
+                        
+                        HStack(spacing: 0){
+                            ForEach(user.currentPerformanceData!.higherSectionNames!, id: \.self){sectionKey in
+                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.user.currentPerformanceData!.sectionsOverall![sectionKey]!, showLegend: false).frame(width: UIScreen.main.bounds.width)
+                            }
+                        }.offset(x: 0.5 * (CGFloat(self.user.currentPerformanceData!.higherSectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
                             .animation(.default)
                             .edgesIgnoringSafeArea(.all)
                             .padding(.all, 0)
@@ -78,7 +104,7 @@ struct PastPerformanceView: View {
                 }
             }else{
                 TabView(selection: $selection){
-                    RawDataView(index: self.index, offset: self.offset, sectionNames: self.allData!.sectionNames!, data: self.allData!.allTestData![allDataTestIndex])
+                    RawDataView(index: self.index, offset: self.offset, sectionNames: self.user.currentPerformanceData!.sectionNames!, data: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
                         .tabItem{
                             Image(systemName: "1.square.fill")
                             Text("Analytics")
@@ -86,7 +112,7 @@ struct PastPerformanceView: View {
                     
                     ScrollView(.vertical){
                         
-                        ForEach(self.allData!.allTestData![allDataTestIndex].tutorPDF.pages, id: \.self){ page in
+                        ForEach(self.user.currentPerformanceData!.allTestData![allDataTestIndex].tutorPDF.pages, id: \.self){ page in
                                 PageView(model: page)
                             
                         }
@@ -95,11 +121,11 @@ struct PastPerformanceView: View {
                         Image(systemName: "2.square.fill")
                         Text("Tutor PDF")
                     }.tag(Tabs.tutorPDF)
-                    CorrectionView(testData: self.allData!.allTestData![allDataTestIndex])
+                    CorrectionView(testData: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
 //                        .navigationBarItems(leading: EmptyView(),
 //                        trailing: CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData))
 //                    ScrollView(.vertical){
-//                        ForEach(self.allData!.allTestData![allDataTestIndex].pdfImages, id: \.self){page in
+//                        ForEach(self.user.currentPerformanceData!.allTestData![allDataTestIndex].pdfImages, id: \.self){page in
 //                            PageView(model: page)
 //                        }
 //                    }
@@ -107,7 +133,7 @@ struct PastPerformanceView: View {
                         Image(systemName: "3.square.fill")
                         Text("Corrections")
                     }.tag(Tabs.corrections)
-                }.navigationBarItems(trailing: self.selection == .corrections ? AnyView(CorrectionNavigationBar(shouldScrollNav: self.$shouldScrollNav, shouldScrollToTopNav: self.$shouldScrollToTopNav, test: self.allData!.allTestData![allDataTestIndex])) : AnyView(EmptyView()))
+                }.navigationBarItems(trailing: self.selection == .corrections ? AnyView(CorrectionNavigationBar(shouldScrollNav: self.$shouldScrollNav, shouldScrollToTopNav: self.$shouldScrollToTopNav, test: self.user.currentPerformanceData!.allTestData![allDataTestIndex])) : AnyView(EmptyView()))
                 //.navigationBarItems(trailing: self.selection == .corrections ? CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData) : EmptyView())
             }
         }
@@ -218,7 +244,7 @@ struct CostumeBarView : View {
     var body: some View{
                     
             HStack{
-                ForEach(0..<self.headers.count){ i in
+                ForEach(0..<self.headers.count, id: \.self){ i in
                     
                     Button(action: {
                         

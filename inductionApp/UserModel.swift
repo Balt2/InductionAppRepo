@@ -27,8 +27,21 @@ class User: ObservableObject, Equatable {
     var association: Association
     
     @Published var tests: [Test] = []
+    
+    
     @Published var allACTPerformanceData: AllACTData?
     @Published var allSATPerformanceData: AllACTData?
+    @Published var showACTData: Bool?
+    var currentPerformanceData: AllACTData?{
+        if showACTData == true{
+            return allACTPerformanceData
+        }else if showACTData == false{
+            return allSATPerformanceData
+        }else{
+            return nil
+        }
+    }
+    
     @Published var getTestsComplete = false
     @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
@@ -96,7 +109,14 @@ class User: ObservableObject, Equatable {
                         //Loading in the performance PDFs
                         self.allACTPerformanceData = AllACTData(tests: actPerformanceTests.filter {$0.act == true}, isACT: true)
                         self.allSATPerformanceData = AllACTData(tests: actPerformanceTests.filter{$0.act == false}, isACT: false)
+                        
+                        if self.allACTPerformanceData != nil {
+                            self.showACTData = true
+                        }else if self.allSATPerformanceData != nil {
+                            self.showACTData = false
+                        }
                         self.getPerformanceDataComplete = true
+                        
                         print("Finished Creating Result Data")
                     }
                 }

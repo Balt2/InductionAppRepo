@@ -65,10 +65,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.location = ip
         self.isACTMath = isActMath
         self.secondsToAnswer = Double(q.secondsToAnswer ?? 0)
-        print("CHECKING IN INIT")
-        print(q.finalState)
         self.finalState = QuestionState(rawValue: q.finalState ?? "O") ?? QuestionState.omitted
-        print(self.finalState)
         
         if self.isACTMath && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D", "E"]

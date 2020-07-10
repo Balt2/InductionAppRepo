@@ -511,8 +511,6 @@ class Test: ObservableObject, Hashable, Identifiable {
                 let splitArray = question.id.split(separator: "_")
                 let questionNum = Int(splitArray[2])!
                 let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
-                print("CHECKING THE QUESTION FINAL STATE")
-                print(tempQuestion.finalState)
                 questionList.append(tempQuestion)
             }
                 let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
@@ -636,7 +634,10 @@ class Test: ObservableObject, Hashable, Identifiable {
                     if user.allACTPerformanceData == nil{
                         print("ACT IS NIL")
                         print(user.allACTPerformanceData?.allTestData)
-                        user.allACTPerformanceData = AllACTData(tests: [tempTest], isACT: false)
+                        user.allACTPerformanceData = AllACTData(tests: [tempTest], isACT: true)
+                        if user.showACTData == nil{
+                            user.showACTData = true
+                        }
                         user.getPerformanceDataComplete = true
                     }else{
                         print("ACT IS NOT NIL")
@@ -646,6 +647,9 @@ class Test: ObservableObject, Hashable, Identifiable {
                 }else{
                     if user.allSATPerformanceData == nil{
                         user.allSATPerformanceData = AllACTData(tests: [tempTest], isACT: false)
+                        if user.showACTData == nil{
+                            user.showACTData = false
+                        }
                         user.getPerformanceDataComplete = true
                     }else{
                         user.allSATPerformanceData!.addTest(test: tempTest , user: user)

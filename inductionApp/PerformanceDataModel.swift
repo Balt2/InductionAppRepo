@@ -59,7 +59,6 @@ class AllACTData{
                 yAxisTotal: self.isACT ? 36 : 1600,
                 barEntries: [])
             var sectionEntries = [String: [BarEntry]]()
-            print(self.allTestData)
             for test in self.allTestData!{
                 overallBarData.barEntries.append(test.overall!)
                 for (key, sectionData) in test.sectionsOverall{
@@ -188,13 +187,9 @@ class ACTFormatedTestData: Test{
             for question in section.questions{
                 let secondsToAnswerTemp = CGFloat(question.secondsToAnswer)
                 timingDataYTotal = timingDataYTotal < secondsToAnswerTemp ? secondsToAnswerTemp : timingDataYTotal
-                print("QUESTION CHECK")
-                print(question.userAnswer)
-                print(question.currentState)
-                print(question.finalState)
+
                 switch question.finalState{
                 case .right:
-                    print("CASE RIGHT")
                     if data[question.officialSub] != nil{
                         data[question.officialSub]?.r+=1
                     }else{
@@ -207,7 +202,6 @@ class ACTFormatedTestData: Test{
                                     color: Color.green)])
                     timingData.barEntries.append(barEntryTiming)
                 case .wrong:
-                    print("CASE WRONG")
                     if data[question.officialSub] != nil{
                         data[question.officialSub]?.w+=1
                     }else{
@@ -219,7 +213,6 @@ class ACTFormatedTestData: Test{
                                     color: Color.red)])
                     timingData.barEntries.append(barEntryTiming)
                 case .omitted: //omitted
-                    print("CASE OMITTED")
                     if data[question.officialSub] != nil{
                         data[question.officialSub]?.o+=1
                     }else{

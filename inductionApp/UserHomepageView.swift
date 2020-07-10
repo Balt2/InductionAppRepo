@@ -44,21 +44,21 @@ struct UserHomepageView: View {
                             
                             
                             
-                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
-                                HStack{
-                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
-                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
-                                }
-                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
-                                .disabled(user.getTestsComplete == false)
+//                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
+//                                HStack{
+//                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
+//                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
+//                                }
+//                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+//                                .disabled(user.getTestsComplete == false)
                             
-                            NavigationLink(destination: PastPerformanceView(allData: (currentAuth.currentUser?.allSATPerformanceData))){ //allSATPerformanceData
+                            NavigationLink(destination: PastPerformanceView(user: user)){ //allSATPerformanceData
                                 HStack{
                                     getLoadingIcon(imageName: "archivebox", checkBool: user.getPerformanceDataComplete)
                                     Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")
                                 }
-                            }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false))
-                                .disabled(user.getPerformanceDataComplete == false)
+                            }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false || user.showACTData == nil))
+                                .disabled(user.getPerformanceDataComplete == false || user.showACTData == nil)
 //                            Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
 //
 //                            }){
@@ -68,15 +68,15 @@ struct UserHomepageView: View {
 //                                }
 //                            }.buttonStyle(buttonBackgroundStyle())
                             
-                            Button(action: {
-                                //what the button does
-                            }) {
-                                HStack {
-                                    Image(systemName: "lightbulb")
-                                    Text("Reccomended Study")
-                                }
-                            }
-                            .buttonStyle(buttonBackgroundStyle())
+//                            Button(action: {
+//                                //what the button does
+//                            }) {
+//                                HStack {
+//                                    Image(systemName: "lightbulb")
+//                                    Text("Reccomended Study")
+//                                }
+//                            }
+//                            .buttonStyle(buttonBackgroundStyle())
                             
                             Button(action: {
                                 if self.currentAuth.signOut() == true {
