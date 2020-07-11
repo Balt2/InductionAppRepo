@@ -88,6 +88,7 @@ struct CorrectionView: View {
                     }).introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
                             scrollView.contentInsetAdjustmentBehavior = .always
                             scrollView.isScrollEnabled = self.shouldScroll
+                            
                             if self.shouldScrollToTop == true{
                                 scrollView.scrollToTop(adjustedContentOffset: scrollView.adjustedContentInset.top)
                                 self.shouldScrollToTop = false
@@ -174,51 +175,38 @@ struct CorrectionNavigationBar: View {
                 
             }
             HStack {
-                Button(action: {
-                    switch self.test.testState{
-                    case .notStarted:
-                        self.test.startTest()
-                    case .inSection:
-                        self.shouldScrollNav = true
-                        self.test.endSection(user: self.currentAuth.currentUser!)
-                    case .inBreak:
+                ForEach(self.test.sections, id: \.self){section in
+                    Button(action:{
                         self.shouldScrollToTopNav = true
-                        self.test.nextSection(fromStart: false)
-                        if self.test.showAnswerSheet == true {
-                            self.test.currentSection?.scalePages()
-                        }
-                    case .lastSection:
-                        self.test.endSection(user: self.currentAuth.currentUser!)
-                        //Naviagate back to the user hompage
-                    //UserHomepageView(user: self.user)
-                    case .testOver:
-                        print("Should never get here")
-                    }
-                }){
-                    getControlButton(test: self.test).padding(.trailing, 15)
+                        self.shouldScrollNav = true
+                        self.test.setCorrectionTestView(index: section.sectionIndex)
+                    }){
+                        Text(section.name )
+                    }.disabled(self.test.currentSectionIndex == section.sectionIndex)
                 }
-            }
-        }
-    }
-    func getControlButton(test: Test) -> AnyView {
-        
-        switch self.test.testState{
-        case .notStarted:
-            if test.isFullTest == true {
-                return AnyView(Text("Start Test"))
-            }else{
-                return AnyView(Text("Start Section"))
-            }
-        case .inSection: return AnyView(Text("End Section"))
-        case .inBreak: return AnyView(Text("End Break, Next Section"))
-        case .lastSection:
-            return AnyView(Text("Last Section"))
-            
-        case .testOver:
-            if test.isFullTest == true {
-                return AnyView(Text("Test Over"))
-            }else{
-                return AnyView(Text("Study Section Over"))
+//                Button(action: {
+//                    switch self.test.testState{
+//                    case .notStarted:
+//                        self.test.startTest()
+//                    case .inSection:
+//                        self.shouldScrollNav = true
+//                        self.test.endSection(user: self.currentAuth.currentUser!)
+//                    case .inBreak:
+//                        self.shouldScrollToTopNav = true
+//                        self.test.nextSection(fromStart: false)
+//                        if self.test.showAnswerSheet == true {
+//                            self.test.currentSection?.scalePages()
+//                        }
+//                    case .lastSection:
+//                        self.test.endSection(user: self.currentAuth.currentUser!)
+//                        //Naviagate back to the user hompage
+//                    //UserHomepageView(user: self.user)
+//                    case .testOver:
+//                        print("Should never get here")
+//                    }
+//                }){
+//                    getControlButton(test: self.test).padding(.trailing, 15)
+//                }
             }
         }
     }

@@ -454,6 +454,12 @@ class Test: ObservableObject, Hashable, Identifiable {
         currentSection?.begunSection = true
     }
     
+    func setCorrectionTestView(index: Int){
+        currentSection?.questions.forEach{$0.canvas = nil}
+        currentSection?.pages.forEach{$0.canvas = nil}
+        currentSectionIndex = index
+    }
+    
     
     func reset() {
         //questions.forEach { $0.forEach {$0.reset() } }
