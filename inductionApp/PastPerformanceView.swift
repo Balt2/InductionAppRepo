@@ -110,17 +110,17 @@ struct PastPerformanceView: View {
                             Text("Analytics")
                     }.tag(Tabs.analytics)
                     
-                    ScrollView(.vertical){
-                        
-                        ForEach(self.user.currentPerformanceData!.allTestData![allDataTestIndex].tutorPDF.pages, id: \.self){ page in
-                                PageView(model: page)
-                            
-                        }
-                    }
-                    .tabItem {
-                        Image(systemName: "2.square.fill")
-                        Text("Tutor PDF")
-                    }.tag(Tabs.tutorPDF)
+//                    ScrollView(.vertical){
+//
+//                        ForEach(self.user.currentPerformanceData!.allTestData![allDataTestIndex].tutorPDF.pages, id: \.self){ page in
+//                                PageView(model: page)
+//
+//                        }
+//                    }
+//                    .tabItem {
+//                        Image(systemName: "2.square.fill")
+//                        Text("Tutor PDF")
+//                    }.tag(Tabs.tutorPDF)
                     CorrectionView(testData: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
 //                        .navigationBarItems(leading: EmptyView(),
 //                        trailing: CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData))
@@ -130,7 +130,7 @@ struct PastPerformanceView: View {
 //                        }
 //                    }
                     .tabItem {
-                        Image(systemName: "3.square.fill")
+                        Image(systemName: "2.square.fill")
                         Text("Corrections")
                     }.tag(Tabs.corrections)
                 }.navigationBarItems(trailing: self.selection == .corrections ? AnyView(CorrectionNavigationBar(shouldScrollNav: self.$shouldScrollNav, shouldScrollToTopNav: self.$shouldScrollToTopNav, test: self.user.currentPerformanceData!.allTestData![allDataTestIndex])) : AnyView(EmptyView()))

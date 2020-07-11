@@ -31,7 +31,7 @@ struct CorrectionView: View {
                         List{
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
-                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true, disabled: question.finalState == .right)
+                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true, disabled: true)
                                 }
                             }.disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
 

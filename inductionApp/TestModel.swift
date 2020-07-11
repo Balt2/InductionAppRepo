@@ -511,6 +511,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 let splitArray = question.id.split(separator: "_")
                 let questionNum = Int(splitArray[2])!
                 let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
+                tempQuestion.userAnswer = question.studentAnswer ?? ""
                 questionList.append(tempQuestion)
             }
                 let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
@@ -554,7 +555,6 @@ class Test: ObservableObject, Hashable, Identifiable {
         do{
             let tempData = try encoder.encode(testForJson)
             return tempData
-            
         } catch let error {
             print("ERROR CREATING RESULT JSON: \(error)")
         }

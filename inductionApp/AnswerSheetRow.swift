@@ -18,7 +18,7 @@ struct AnswerSheetRow: View {
     @ObservedObject var section: TestSection
     var xStepper: CGFloat = CGFloat(54.0)
     var actMath: Bool
-    var disabled: Bool = false
+    var disabled: Bool = false //is it for correction view? if true it is
     
     
     
@@ -73,14 +73,14 @@ struct AnswerSheetRow: View {
                             Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 165, y: geo.size.height/1.5))
                         }
                     }else{
-                        SatFreeResponse(question: self.question, section: self.section)
+                        SatFreeResponse(question: self.question, section: self.section, disabled: self.disabled)
                     }
                     
                 }
                 
-                if (self.question.currentState == .invalidSelection){
+                if (self.question.currentState == .invalidSelection && self.disabled == false){
                     Image(systemName: "nosign").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.red)
-                }else if (self.question.freeResponse == false)  {
+                }else if (self.question.freeResponse == false && self.disabled == false)  {
                     Text(self.question.userAnswer).frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40))
                 }
                 
@@ -88,8 +88,14 @@ struct AnswerSheetRow: View {
                     CanvasRepresentable(question: self.question, page: PageModel(image: UIImage(), pageID: -1), section: self.section, isAnswerSheet: true, protoRect: CGRect(x: 20, y: 20, width: (self.actMath == true ? 40 : 54), height: geo.size.height/1.5), canvasGeo: CGSize())
                 }
                 
-                if self.disabled == true{
-                    Image(systemName: "checkmark.circle").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.green)
+                if self.disabled == true && self.question.freeResponse == false{
+                    if self.question.finalState == .right {
+                        Image(systemName: "checkmark.circle").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.green)
+                    }else if self.question.finalState == .wrong{
+                        Image(systemName: "xmark.circle").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.red)
+                    }else{
+                        Image(systemName: "nosign").frame(width: 20, height: 20).position(CGPoint(x: 250, y: 40)).foregroundColor(.gray)
+                    }
                 }
                 
             }
@@ -102,6 +108,7 @@ struct SatFreeResponse: View {
     
     @ObservedObject var question: Question
     @ObservedObject var section: TestSection
+    var disabled: Bool
     
     @State var firstCircle = ""
     @State var secondCircle = ""
@@ -117,19 +124,28 @@ struct SatFreeResponse: View {
                 Text(String(question.location.row + 1)).padding(.trailing, 15)
                 ZStack{
                     Rectangle().stroke()
-                    Text(firstCircle).font(.system(size: 20))
+                    Text(self.disabled ? question.userAnswer[0] : firstCircle).font(.system(size: 20))
                 }
                 ZStack{
                     Rectangle().stroke()
-                    Text(secondCircle).font(.system(size: 20))
+                    Text(self.disabled ? question.userAnswer[1] : secondCircle).font(.system(size: 20))
                 }
                 ZStack{
                     Rectangle().stroke()
-                    Text(thirdCircle).font(.system(size: 20))
+                    Text(self.disabled ? question.userAnswer[2] : thirdCircle).font(.system(size: 20))
                 }
                 ZStack{
                     Rectangle().stroke()
-                    Text(fourthCicle).font(.system(size: 20))
+                    Text(self.disabled ? question.userAnswer[3] : fourthCicle).font(.system(size: 20))
+                }
+                if self.disabled == true{
+                    if self.question.finalState == .right {
+                        Image(systemName: "checkmark.circle").frame(width: 20, height: 20).foregroundColor(.green).padding(.leading, 5)
+                    }else if self.question.finalState == .wrong{
+                        Image(systemName: "xmark.circle").frame(width: 20, height: 20).foregroundColor(.red).padding(.leading, 5)
+                    }else{
+                        Image(systemName: "nosign").frame(width: 20, height: 20).foregroundColor(.gray).padding(.leading, 5)
+                    }
                 }
             }.frame(width: 270, height: 50)
             HStack{
@@ -174,7 +190,7 @@ struct SatFreeResponse: View {
                             }.frame(width: 30, height: 30)
                         }
                     }.padding([.leading, .trailing], 10)
-                }
+                }.disabled(self.disabled)
             }.frame(width: 270)
         }.frame(width: 270)
         
@@ -217,6 +233,33 @@ extension String{
         } else {
             return 3
         }
+    }
+}
+
+extension String {
+
+    var length: Int {
+        return count
+    }
+
+    subscript (i: Int) -> String {
+        return self[i ..< i + 1]
+    }
+
+    func substring(fromIndex: Int) -> String {
+        return self[min(fromIndex, length) ..< length]
+    }
+
+    func substring(toIndex: Int) -> String {
+        return self[0 ..< max(0, toIndex)]
+    }
+
+    subscript (r: Range<Int>) -> String {
+        let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
+                                            upper: min(length, max(0, r.upperBound))))
+        let start = index(startIndex, offsetBy: range.lowerBound)
+        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
+        return String(self[start ..< end])
     }
 }
 
