@@ -138,6 +138,7 @@ class ACTFormatedTestData: Test{
         }
     }
     
+    
     func createData(index: Int){
         self.overall = BarEntry(
             xLabel: "\(self.testFromJson!.dateTaken!)",

@@ -14,8 +14,12 @@ import Combine
 import Introspect
 
 struct CorrectionView: View {
-    @State var shouldScroll: Bool = true
-    @State var shouldScrollToTop: Bool = false
+    @Binding var shouldScroll: Bool
+    @Binding var shouldScrollToTop: Bool
+    
+    @Binding var showPopUp: Bool
+    @State var popUpQuestionIndex: Int = 0
+    
     @ObservedObject var testData: ACTFormatedTestData
     @State private var offset = CGSize.zero
     
@@ -23,7 +27,8 @@ struct CorrectionView: View {
         ZStack {
             Rectangle()
                 .edgesIgnoringSafeArea(.all)
-                .foregroundColor(.black)
+                .foregroundColor(self.shouldScrollToTop ? .black : .black)
+            
             VStack{
                 HStack{
                     if testData.showAnswerSheet == true{
@@ -31,25 +36,30 @@ struct CorrectionView: View {
                         List{
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
-                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true, disabled: true)
+                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true, disabled: true, shouldScroll: self.$shouldScroll, showPopUp: self.$showPopUp, popUpQuestionIndex: self.$popUpQuestionIndex)
+//                                    .onTapGesture {
+//                                            print("CORRECTION CELL TAPPED")
+//                                            self.popUpQuestionIndex = question.location.row
+//                                            self.togglePopUp(showPopUp: true)
+//                                        print(self.showPopUp)
+//                                    }
                                 }
-                            }.disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
+                            }
 
                         }.frame(width: 300 + offset.width)
-                            .gesture(self.shouldScroll == false ? nil : DragGesture()
-                                .onChanged{gesture in
-                                    print(gesture)
-
-                            }.onEnded{gesture in
-                                print("END")
-                                print(gesture)
-
-                                if gesture.predictedEndLocation.x < -100 {
-                                    self.testData.showAnswerSheet = false
-                                    self.testData.currentSection?.scalePages()
-
-                                }
-                            })
+                            
+//                            .gesture(self.shouldScroll == false ? nil : DragGesture()
+//                                .onChanged{gesture in
+//                                    print(gesture)
+//
+//                            }.onEnded{gesture in
+//
+//                                if gesture.predictedEndLocation.x < -100 {
+//                                    self.testData.showAnswerSheet = false
+//                                    self.testData.currentSection?.scalePages()
+//
+//                                }
+//                            })
 
                             .offset(self.offset)
                             .introspectScrollView{tableView in
@@ -65,40 +75,62 @@ struct CorrectionView: View {
 
                     }
                     
-                    //Text("DNAIEL")
                     ScrollView() {
                         VStack{
                             ForEach(self.testData.currentSection!.pages, id: \.self){ page in
                                 PageView(model: page, section: self.testData.currentSection!)
 
                             }
-                                .foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
 
 
-                        }.navigationBarItems(leading: EmptyView(),
-                        trailing: CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData))
-                    }.gesture(self.shouldScroll == false ? nil : DragGesture()
-                        .onChanged{_ in
-                            //Should be be changing locations and scaling?
-                    }.onEnded(){gesture in
-                        if self.testData.showAnswerSheet == false && gesture.predictedEndLocation.x > 400{
-                            self.testData.showAnswerSheet = true
-                            self.testData.currentSection?.scalePages()
                         }
-                    }).introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
+                    }.onTapGesture {
+                        if self.showPopUp == true{
+                            self.togglePopUp(showPopUp: false)
+                        }
+                    }.introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
                             scrollView.contentInsetAdjustmentBehavior = .always
                             scrollView.isScrollEnabled = self.shouldScroll
-                            
                             if self.shouldScrollToTop == true{
                                 scrollView.scrollToTop(adjustedContentOffset: scrollView.adjustedContentInset.top)
                                 self.shouldScrollToTop = false
-                            }
+                        }
                     }
-                    
                 }
-                
+            }
+            if self.showPopUp {
+                ZStack {
+                    Color.white
+                    ScrollView(.vertical) {
+                        Text("Question \(popUpQuestionIndex + 1)")
+                        Spacer()
+                        HStack{
+                            Text("Your Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].userAnswer)")
+                            Text("Time to Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].secondsToAnswer)")
+                        }
+                        Spacer()
+                        HStack{
+                            Text("Correct Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].answer)")
+                            Text("Order of Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].secondsToAnswer)")
+                        }
+                        Spacer()
+                        Text("Official Sub Section: \(self.testData.currentSection!.questions[popUpQuestionIndex].officialSub)")
+                        Spacer()
+                        Text(self.testData.currentSection!.questions[popUpQuestionIndex].reason).lineLimit(nil)
+                        
+                    }.padding()
+                }
+                .frame(width: 700, height: 400)
+                .cornerRadius(20).shadow(radius: 25)
+            .offset(x: 120, y: 0)
             }
         }
+       
+    }
+    
+    func togglePopUp(showPopUp: Bool){
+        self.shouldScroll = !showPopUp
+        self.showPopUp = showPopUp
     }
 }
 
@@ -111,12 +143,12 @@ struct CorrectionView: View {
 
 struct CorrectionNavigationBar: View {
     @Binding var shouldScrollNav: Bool
-    @Binding var shouldScrollToTopNav: Bool
+    @Binding var shouldScrollToTop: Bool
+    @Binding var showPopUp: Bool
     
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: ACTFormatedTestData
-    @State private var now = ""
-    let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
+
     
     var body: some View {
         
@@ -130,7 +162,7 @@ struct CorrectionNavigationBar: View {
                 }){
                     Image(systemName: "hand.draw")
                         .foregroundColor(self.shouldScrollNav == true ? .gray : .blue)
-                        .font(self.shouldScrollNav == true ? .title : .largeTitle)
+                        .font(.title)
                     
                 }.padding()
                 //.disabled(currentAuth.pencilManager.isPencilAvailable)
@@ -143,7 +175,7 @@ struct CorrectionNavigationBar: View {
                 }){
                     Image(systemName: "pencil")
                         .foregroundColor(self.test.isEraserEnabled == false ? .blue : .gray)
-                        .font(self.test.isEraserEnabled == false ? .largeTitle : .title)
+                        .font(.title)
                 }.disabled(self.test.isEraserEnabled == false)
                     .padding()
                 
@@ -157,7 +189,7 @@ struct CorrectionNavigationBar: View {
                     
                     Image("SingleEraser")
                         .foregroundColor(self.test.isEraserEnabled == true ? .blue : .gray)
-                        .font(self.test.isEraserEnabled == true ? .largeTitle : .title)
+                        .font(.title)
                 }.disabled(self.test.isEraserEnabled == true)
                     .padding()
                 
@@ -177,40 +209,20 @@ struct CorrectionNavigationBar: View {
             HStack {
                 ForEach(self.test.sections, id: \.self){section in
                     Button(action:{
-                        self.shouldScrollToTopNav = true
+                        self.showPopUp = false
                         self.shouldScrollNav = true
+                        self.shouldScrollToTop = true
                         self.test.setCorrectionTestView(index: section.sectionIndex)
                     }){
-                        Text(section.name )
+                        Text(section.name)
                     }.disabled(self.test.currentSectionIndex == section.sectionIndex)
                 }
-//                Button(action: {
-//                    switch self.test.testState{
-//                    case .notStarted:
-//                        self.test.startTest()
-//                    case .inSection:
-//                        self.shouldScrollNav = true
-//                        self.test.endSection(user: self.currentAuth.currentUser!)
-//                    case .inBreak:
-//                        self.shouldScrollToTopNav = true
-//                        self.test.nextSection(fromStart: false)
-//                        if self.test.showAnswerSheet == true {
-//                            self.test.currentSection?.scalePages()
-//                        }
-//                    case .lastSection:
-//                        self.test.endSection(user: self.currentAuth.currentUser!)
-//                        //Naviagate back to the user hompage
-//                    //UserHomepageView(user: self.user)
-//                    case .testOver:
-//                        print("Should never get here")
-//                    }
-//                }){
-//                    getControlButton(test: self.test).padding(.trailing, 15)
-//                }
             }
         }
     }
 }
+
+
 
 
 

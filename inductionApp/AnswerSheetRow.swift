@@ -19,6 +19,9 @@ struct AnswerSheetRow: View {
     var xStepper: CGFloat = CGFloat(54.0)
     var actMath: Bool
     var disabled: Bool = false //is it for correction view? if true it is
+    @Binding var shouldScroll: Bool
+    @Binding var showPopUp: Bool
+    @Binding var popUpQuestionIndex: Int
     
     
     
@@ -32,9 +35,13 @@ struct AnswerSheetRow: View {
                     
                     if self.actMath == true && self.question.answer.count == 1 {
                         Group{
+                            self.showAnswerButton()
                             Text(String(self.question.location.row + 1))
                             .frame(width: 25, height: 10, alignment: .trailing)
                             .position(CGPoint(x: 10, y: geo.size.height / 2))
+                                
+                            
+                            
                             
                             Group{
                                 Text(self.question.answerLetters[0]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper, y: geo.size.height / 4.37))
@@ -55,9 +62,10 @@ struct AnswerSheetRow: View {
                         }
                     }else if self.question.freeResponse == false{
                         Group{
-                            Text(String(self.question.location.row + 1))
-                            .frame(width: 25, height: 10, alignment: .trailing)
-                            .position(CGPoint(x: 10, y: geo.size.height / 2))
+                            self.showAnswerButton()
+                               Text(String(self.question.location.row + 1))
+                               .frame(width: 25, height: 10, alignment: .trailing)
+                               .position(CGPoint(x: 10, y: geo.size.height / 2))
                             
                             
                             Text(self.question.answerLetters[0]).frame(width: 15, height: 10, alignment: .center).position(CGPoint(x: self.xStepper, y: geo.size.height / 4.37))
@@ -73,6 +81,7 @@ struct AnswerSheetRow: View {
                             Circle().stroke().frame(width: 20, height: 20).position(CGPoint(x: self.xStepper + 165, y: geo.size.height/1.5))
                         }
                     }else{
+                        self.showAnswerButton()
                         SatFreeResponse(question: self.question, section: self.section, disabled: self.disabled)
                     }
                     
@@ -101,6 +110,24 @@ struct AnswerSheetRow: View {
             }
 
         }.frame(width: 270, height: self.question.freeResponse == false ? 80 : 530)
+    }
+    
+    func showAnswerButton() -> AnyView {
+        if self.disabled == true {
+            return AnyView(
+                Button(action: {
+                    self.shouldScroll = false
+                    self.showPopUp = true
+                    self.popUpQuestionIndex = self.question.location.row
+                }){
+                    Text(self.question.freeResponse ? "" : "Show Answer").lineLimit(2).foregroundColor(Color.blue).font(.system(size: 13.0))
+                }.frame(width: 50, alignment: .trailing)
+                    .position(CGPoint(x: 7, y: 11))
+            )
+        }else{
+            return AnyView(EmptyView())
+        }
+        
     }
 }
 

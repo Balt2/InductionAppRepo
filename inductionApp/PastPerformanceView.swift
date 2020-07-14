@@ -17,6 +17,7 @@ struct PastPerformanceView: View {
     @State var allDataTestIndex = 0
     @State var shouldScrollNav: Bool = true
     @State var shouldScrollToTopNav: Bool =  true
+    @State var popUpShow: Bool = false
     
     @State private var selection: Tabs = .analytics
     
@@ -121,20 +122,13 @@ struct PastPerformanceView: View {
 //                        Image(systemName: "2.square.fill")
 //                        Text("Tutor PDF")
 //                    }.tag(Tabs.tutorPDF)
-                    CorrectionView(testData: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
-//                        .navigationBarItems(leading: EmptyView(),
-//                        trailing: CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData))
-//                    ScrollView(.vertical){
-//                        ForEach(self.user.currentPerformanceData!.allTestData![allDataTestIndex].pdfImages, id: \.self){page in
-//                            PageView(model: page)
-//                        }
-//                    }
+                    CorrectionView(shouldScroll: self.$shouldScrollNav, shouldScrollToTop: self.$shouldScrollToTopNav, showPopUp: self.$popUpShow,  testData: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
+
                     .tabItem {
                         Image(systemName: "2.square.fill")
                         Text("Corrections")
                     }.tag(Tabs.corrections)
-                }.navigationBarItems(trailing: self.selection == .corrections ? AnyView(CorrectionNavigationBar(shouldScrollNav: self.$shouldScrollNav, shouldScrollToTopNav: self.$shouldScrollToTopNav, test: self.user.currentPerformanceData!.allTestData![allDataTestIndex])) : AnyView(EmptyView()))
-                //.navigationBarItems(trailing: self.selection == .corrections ? CorrectionNavigationBar(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData) : EmptyView())
+                }.navigationBarItems(trailing: self.selection == .corrections ? AnyView(CorrectionNavigationBar(shouldScrollNav: self.$shouldScrollNav, shouldScrollToTop: self.$shouldScrollToTopNav, showPopUp: self.$popUpShow, test: self.user.currentPerformanceData!.allTestData![allDataTestIndex])) : AnyView(EmptyView()))
             }
         }
     }

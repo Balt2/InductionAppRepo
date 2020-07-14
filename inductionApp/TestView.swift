@@ -14,6 +14,7 @@ import Introspect
 struct TestView: View {
     @State var shouldScroll: Bool = true
     @State var shouldScrollToTop: Bool = false
+    @State var neverUseIndex: Int = -1
     @Binding var shouldPopToRootView : Bool
     @ObservedObject var testData: Test
     @EnvironmentObject var currentAuth: FirebaseManager
@@ -31,7 +32,7 @@ struct TestView: View {
                         List{
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
-                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true)
+                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true, shouldScroll: self.$shouldScroll, showPopUp: self.$shouldScroll, popUpQuestionIndex: self.$neverUseIndex)
                                 }
                             }.disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
                             
