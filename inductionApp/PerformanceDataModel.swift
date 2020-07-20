@@ -17,11 +17,11 @@ class AllACTData{
     var higherSectionNames: [String]? //SAT only has math and english while act should have all for sub sections for this
     var overallPerformance: BarData?
     var sectionsOverall: [String: BarData]?
-    var isACT: Bool
+    var isACT: Bool?
     var user: User?
-    init(tests: [ACTFormatedTestData], isACT: Bool, user: User){
+    init(tests: [ACTFormatedTestData], user: User){
         if tests.count > 0{
-            self.isACT = isACT
+            self.isACT = tests[0].act!
             let tempTests = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
             for (index, test) in tempTests.enumerated(){
                 test.createData(index: index)
@@ -36,7 +36,6 @@ class AllACTData{
             self.higherSectionNames = self.allTestData![0].sectionsOverall.map{$0.key}
             self.createSelf()
         }else{
-            self.isACT = isACT
             print("Invalid Creation of AllACTDATA: No tests")
         }
     }
@@ -54,11 +53,11 @@ class AllACTData{
         print("CREATE SELF!")
         DispatchQueue.global(qos: .utility).async {
             var overallBarData = BarData(
-                title: self.isACT ? "ACT Performance" : "SAT Performance",
+                title: self.isACT! ? "ACT Performance" : "SAT Performance",
                 xAxisLabel: "Dates",
                 yAxisLabel: "Score",
                 yAxisSegments: 4,
-                yAxisTotal: self.isACT ? 36 : 1600,
+                yAxisTotal: self.isACT! ? 36 : 1600,
                 barEntries: [])
             var sectionEntries = [String: [BarEntry]]()
             for test in self.allTestData!{
@@ -75,11 +74,11 @@ class AllACTData{
             
             for (section, entries) in sectionEntries{
                 let tempGraph = BarData(
-                    title: "\(self.isACT ? "ACT" : "SAT") \(section) Performance",
+                    title: "\(self.isACT! ? "ACT" : "SAT") \(section) Performance",
                     xAxisLabel: "Dates",
                     yAxisLabel: "Score",
                     yAxisSegments: 4,
-                    yAxisTotal: self.isACT ? 36 : 1600,
+                    yAxisTotal: self.isACT! ? 36 : 1600,
                     barEntries: entries)
                 sectionGraphs[section] = tempGraph
             }

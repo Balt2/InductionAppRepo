@@ -319,19 +319,19 @@ struct TestTable: View {
     @State var showPicker = false
     var body: some View {
         List(user.tests){test in
-            //if test.name == "CB1"{
-//                Button(action: {
-//                    self.showPicker.toggle()
-//                }){
-//                    Text("HELLO WORLD").frame(height: 90)
-//                }.sheet(isPresented: self.$showPicker){
-//                    DocumentPicker()
-//                }
-            //}else{
+            if test.name == "CB1"{
+                Button(action: {
+                    self.showPicker.toggle()
+                }){
+                    Text("HELLO WORLD").frame(height: 90)
+                }.sheet(isPresented: self.$showPicker){
+                    DocumentPicker()
+                }
+            }else{
                 NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
                     Text(test.name)
                 }.isDetailLink(false).frame(height: 90)
-            //}
+            }
         }.navigationBarTitle(Text("Choose Test to Take"))
     }
 }

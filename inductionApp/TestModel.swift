@@ -636,7 +636,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 if self.act == true{
                     if user.allACTPerformanceData == nil{
                         print("ACT IS NIL")
-                        user.allACTPerformanceData = AllACTData(tests: [tempTest], isACT: true, user: user)
+                        user.allACTPerformanceData = AllACTData(tests: [tempTest], user: user)
                         if user.showACTData == nil{
                             user.showACTData = true
                         }
@@ -648,7 +648,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                     }
                 }else{
                     if user.allSATPerformanceData == nil{
-                        user.allSATPerformanceData = AllACTData(tests: [tempTest], isACT: false, user: user)
+                        user.allSATPerformanceData = AllACTData(tests: [tempTest], user: user)
                         if user.showACTData == nil{
                             user.showACTData = false
                         }

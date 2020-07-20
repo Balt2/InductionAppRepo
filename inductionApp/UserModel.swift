@@ -113,11 +113,11 @@ class User: ObservableObject, Equatable {
                         let satTests = actPerformanceTests.filter {$0.act == false}
                         
                         if actTests.count != 0 {
-                            self.allSATPerformanceData = AllACTData(tests: actTests, isACT: false, user: self)
+                            self.allACTPerformanceData = AllACTData(tests: actTests, user: self)
                         }
                         
                         if satTests.count != 0 {
-                           self.allACTPerformanceData = AllACTData(tests: actTests, isACT: false, user: self)
+                           self.allSATPerformanceData = AllACTData(tests: satTests, user: self)
                         }
 
                         
