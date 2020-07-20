@@ -18,7 +18,8 @@ class AllACTData{
     var overallPerformance: BarData?
     var sectionsOverall: [String: BarData]?
     var isACT: Bool
-    init(tests: [ACTFormatedTestData], isACT: Bool){
+    var user: User?
+    init(tests: [ACTFormatedTestData], isACT: Bool, user: User){
         if tests.count > 0{
             self.isACT = isACT
             let tempTests = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
@@ -26,29 +27,30 @@ class AllACTData{
                 test.createData(index: index)
             }
             self.allTestData = tempTests //TODO: Two many loops
+            self.user = user
             print("CHECKING SECTION NAMES")
             print(self.allTestData![0].act)
             print(self.allTestData![0].sectionsOverall)
             print(self.allTestData![0].sectionsOverall.map{$0.key})
             self.sectionNames = Array(self.allTestData![0].subSectionGraphs.keys)
             self.higherSectionNames = self.allTestData![0].sectionsOverall.map{$0.key}
-            self.createSelf(user: nil)
+            self.createSelf()
         }else{
             self.isACT = isACT
             print("Invalid Creation of AllACTDATA: No tests")
         }
     }
     
-    func addTest(test: ACTFormatedTestData, user: User){
+    func addTest(test: ACTFormatedTestData){
         print("IN ADD TEST")
         print("ALLTESTDATA NOT NIL")
         self.allTestData!.append(test)
         
         print("CREATING SELF")
-        self.createSelf(user: user)
+        self.createSelf()
     }
     
-    func createSelf(user: User?){
+    func createSelf(){
         print("CREATE SELF!")
         DispatchQueue.global(qos: .utility).async {
             var overallBarData = BarData(
@@ -84,12 +86,14 @@ class AllACTData{
             
             
             
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 self.overallPerformance = overallBarData
                 self.sectionsOverall = sectionGraphs
-                if user != nil {
+                print("OVERALL PERFORMANCE")
+                print(self.overallPerformance)
+                if self.user != nil {
                     print("SETTING PERFORAMNCE BACK")
-                    user?.getPerformanceDataComplete = true
+                    self.user!.getPerformanceDataComplete = true
                 }
             }
         }

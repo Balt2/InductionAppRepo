@@ -10,6 +10,7 @@ import SwiftUI
 import PencilKit
 import Combine
 import Introspect
+import MobileCoreServices
 
 struct TestView: View {
     @State var shouldScroll: Bool = true
@@ -205,7 +206,7 @@ struct TimerNavigationView: View {
                         .foregroundColor(self.test.isEraserEnabled == false ? .blue : .gray)
                         .font(.title)
                 }.disabled(self.test.isEraserEnabled == false)
-                    .padding()
+                    .padding()   
                 
                 
                 //Eraser Button - Enables the eraser
@@ -315,11 +316,22 @@ struct TimerNavigationView: View {
 struct TestTable: View {
     @ObservedObject var user: User
     @Binding var rootIsActive: Bool
+    @State var showPicker = false
     var body: some View {
         List(user.tests){test in
-            NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
-                Text(test.name)
-            }.isDetailLink(false).frame(height: 90)
+            //if test.name == "CB1"{
+//                Button(action: {
+//                    self.showPicker.toggle()
+//                }){
+//                    Text("HELLO WORLD").frame(height: 90)
+//                }.sheet(isPresented: self.$showPicker){
+//                    DocumentPicker()
+//                }
+            //}else{
+                NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
+                    Text(test.name)
+                }.isDetailLink(false).frame(height: 90)
+            //}
         }.navigationBarTitle(Text("Choose Test to Take"))
     }
 }
@@ -360,6 +372,39 @@ extension UIScrollView {
         let desiredOffset = CGPoint(x: 0, y: -contentInset.top - adjustedContentOffset)
         setContentOffset(desiredOffset, animated: true)
     }
+}
+
+struct DocumentPicker: UIViewControllerRepresentable{
+    func makeCoordinator() -> Coordinator {
+        return DocumentPicker.Coordinator(parent1: self)
+    }
+    
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker = UIDocumentPickerViewController(documentTypes: [String(kUTTypePDF)], in: .open)
+        //kUTYPEITEM - Anything
+        picker.allowsMultipleSelection = false
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    
+    func updateUIViewController(_ uiViewController: UIDocumentPickerViewController, context: UIViewControllerRepresentableContext<DocumentPicker>) {
+        
+    }
+    
+    class Coordinator: NSObject, UIDocumentPickerDelegate {
+        var parent: DocumentPicker
+        init(parent1: DocumentPicker){
+            parent = parent1
+        }
+        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+            
+            print(urls)
+            //This is where we upload and do all that stuff.
+        }
+    }
+    
+    
 }
 
 

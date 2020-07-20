@@ -553,7 +553,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         if mathScore != nil{
             mathScore = self.scoreConvertDict[mathScore!]?.mathSectionTestScore
         }
-        
+        print("TESTING ACT BOOLEAN")
+        print(self.act)
         let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
         //Encoding information
         let encoder = JSONEncoder()
@@ -639,7 +640,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                     if user.allACTPerformanceData == nil{
                         print("ACT IS NIL")
                         print(user.allACTPerformanceData?.allTestData)
-                        user.allACTPerformanceData = AllACTData(tests: [tempTest], isACT: true)
+                        user.allACTPerformanceData = AllACTData(tests: [tempTest], isACT: true, user: user)
                         if user.showACTData == nil{
                             user.showACTData = true
                         }
@@ -647,17 +648,17 @@ class Test: ObservableObject, Hashable, Identifiable {
                     }else{
                         print("ACT IS NOT NIL")
                         print(user.allACTPerformanceData?.allTestData)
-                        user.allACTPerformanceData!.addTest(test: tempTest , user: user)
+                        user.allACTPerformanceData!.addTest(test: tempTest)
                     }
                 }else{
                     if user.allSATPerformanceData == nil{
-                        user.allSATPerformanceData = AllACTData(tests: [tempTest], isACT: false)
+                        user.allSATPerformanceData = AllACTData(tests: [tempTest], isACT: false, user: user)
                         if user.showACTData == nil{
                             user.showACTData = false
                         }
                         user.getPerformanceDataComplete = true
                     }else{
-                        user.allSATPerformanceData!.addTest(test: tempTest , user: user)
+                        user.allSATPerformanceData!.addTest(test: tempTest)
                     }
                 }
             }

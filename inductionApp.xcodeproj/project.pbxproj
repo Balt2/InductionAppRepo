@@ -104,7 +104,6 @@
 		03BEBC40244E7B69001576EC = {
 			isa = PBXGroup;
 			children = (
-				2F2041A12472F00C002E811E /* InductionApp.entitlements */,
 				03BEBC4B244E7B69001576EC /* inductionApp */,
 				03BEBC4A244E7B69001576EC /* Products */,
 				FB7AFA6E04B931067D513379 /* Pods */,
@@ -123,6 +122,7 @@
 		03BEBC4B244E7B69001576EC /* inductionApp */ = {
 			isa = PBXGroup;
 			children = (
+				2F2041A12472F00C002E811E /* InductionApp.entitlements */,
 				2FAB71EB247D57A100955B02 /* GraphView.swift */,
 				2F6A7D1C2474CCF200BFD3FA /* BarGraphViews.swift */,
 				2F20419F2472D93B002E811E /* PdfPageModel.swift */,

@@ -117,6 +117,9 @@ class FirebaseManager: ObservableObject {
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
                                                 testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String]) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
+                        let testRefMapD = (dataDescription?["testRefsMap"])! as! [String: Bool]
+                        self.currentUser?.testRefsMap = testRefMapD
+                        print(self.currentUser?.testRefsMap)
                         completionHandler(true)
                     }else{
                         //ERROR: No association found
@@ -138,7 +141,7 @@ class FirebaseManager: ObservableObject {
     //This creats a user in the database
     func createUser(uid: String, fn: String, ln: String, aid: String, handler: @escaping (_ success: Bool) -> Void){
         
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1906ACT", "1912ACT", "cb1"], "studyRefs": []]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1906ACT", "1912ACT", "cb1"], "studyRefs": [] , "testRefsMap": ["1906ACT": false, "1912ACT": false, "cb1": false]]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)

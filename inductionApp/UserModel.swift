@@ -20,7 +20,7 @@ class User: ObservableObject, Equatable {
         return lhs.id == rhs.id
     }
     
-    
+    var db = Firestore.firestore() //Instance of database
     let id: String
     let firstName: String
     let lastName: String
@@ -47,6 +47,7 @@ class User: ObservableObject, Equatable {
     var performancePDF = [PageModel]()
     
     var testRefs: [String]
+    var testRefsMap: [String: Bool]?
     var testResultRefs: [String]
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
@@ -107,14 +108,19 @@ class User: ObservableObject, Equatable {
                     }
                     DispatchQueue.main.sync{
                         //Loading in the performance PDFs
-                        self.allACTPerformanceData = AllACTData(tests: actPerformanceTests.filter {$0.act == true}, isACT: true)
-                        self.allSATPerformanceData = AllACTData(tests: actPerformanceTests.filter{$0.act == false}, isACT: false)
+                        self.allACTPerformanceData = AllACTData(tests: actPerformanceTests.filter {$0.act == true}, isACT: true, user: self)
+                        self.allSATPerformanceData = AllACTData(tests: actPerformanceTests.filter{$0.act == false}, isACT: false, user: self)
                         
                         if self.allACTPerformanceData != nil {
                             self.showACTData = true
+                            print("SHOW ACT TRUE")
+                            print(self.allACTPerformanceData)
+                            print(self.allACTPerformanceData!.overallPerformance)
                         }else if self.allSATPerformanceData != nil {
                             self.showACTData = false
+                            print("SHOW SAT TRUE")
                         }
+                        print(actPerformanceTests.count)
                         self.getPerformanceDataComplete = true
                         
                         print("Finished Creating Result Data")
@@ -241,6 +247,21 @@ class User: ObservableObject, Equatable {
                 completionHandler(nil)
             }else{
                 completionHandler(data!)
+            }
+        }
+    }
+    
+    func uploadedTestPDF(testRef: String, completionHander: @escaping (_ completition: Bool) -> ()){
+        self.testRefsMap![testRef] = true
+        self.db.collection("users").document(self.id).updateData([
+            "testRefsMap": self.testRefsMap!
+        ]){error in
+            if let error = error{
+                self.testRefsMap![testRef] = false
+                print("ERROR Updating testRefsMap")
+                completionHander(false)
+            }else{
+                completionHander(true)
             }
         }
     }
