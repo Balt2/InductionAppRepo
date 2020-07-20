@@ -106,16 +106,26 @@ class User: ObservableObject, Equatable {
                     let actPerformanceTests: [ACTFormatedTestData] = dataArr.enumerated().map{(index, data) in
                         ACTFormatedTestData(data: data, index: index, tutorPDFName: "BreiteJ-CB1")
                     }
-                    DispatchQueue.main.sync{
+                    DispatchQueue.main.async{
                         //Loading in the performance PDFs
-                        self.allACTPerformanceData = AllACTData(tests: actPerformanceTests.filter {$0.act == true}, isACT: true, user: self)
-                        self.allSATPerformanceData = AllACTData(tests: actPerformanceTests.filter{$0.act == false}, isACT: false, user: self)
+                        print(actPerformanceTests)
+                        let actTests = actPerformanceTests.filter {$0.act == true}
+                        let satTests = actPerformanceTests.filter {$0.act == false}
+                        
+                        if actTests.count != 0 {
+                            self.allSATPerformanceData = AllACTData(tests: actTests, isACT: false, user: self)
+                        }
+                        
+                        if satTests.count != 0 {
+                           self.allACTPerformanceData = AllACTData(tests: actTests, isACT: false, user: self)
+                        }
+
                         
                         if self.allACTPerformanceData != nil {
                             self.showACTData = true
                             print("SHOW ACT TRUE")
                             print(self.allACTPerformanceData)
-                            print(self.allACTPerformanceData!.overallPerformance)
+                            print(self.allACTPerformanceData!.allTestData?.count)
                         }else if self.allSATPerformanceData != nil {
                             self.showACTData = false
                             print("SHOW SAT TRUE")

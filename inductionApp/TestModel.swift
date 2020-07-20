@@ -138,9 +138,6 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         var questionsForJson = [QuestionFromJson]()
         for question in self.questions{
             question.checkAnswer()
-            print(question.finalState.rawValue)
-            print(question.currentState)
-            print(question.finalState)
             let temp = QuestionFromJson(id: question.officialID,
                                         officialSub: question.officialSub, tutorSub: question.tutorSub,
                                         answer: question.answer, reason: question.reason,
@@ -639,7 +636,6 @@ class Test: ObservableObject, Hashable, Identifiable {
                 if self.act == true{
                     if user.allACTPerformanceData == nil{
                         print("ACT IS NIL")
-                        print(user.allACTPerformanceData?.allTestData)
                         user.allACTPerformanceData = AllACTData(tests: [tempTest], isACT: true, user: user)
                         if user.showACTData == nil{
                             user.showACTData = true

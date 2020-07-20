@@ -169,8 +169,6 @@ class ACTFormatedTestData: Test{
         
         for section in self.sections{
             
-            print("PRINGTING SECTION NAME")
-            print(section.name)
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
             var timingDataYTotal: CGFloat = 0
             var timingData = BarData(

@@ -59,6 +59,7 @@ struct PastPerformanceView: View {
                                 self.user.showACTData!.toggle()
                                 if self.user.currentPerformanceData == nil {
                                     self.user.showACTData!.toggle()
+                                    print("Toggling back because invalid")
                                 }
                             }
                             

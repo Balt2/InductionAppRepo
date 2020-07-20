@@ -127,7 +127,6 @@ struct CanvasRepresentable: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> PKCanvasView {
-        print("Make UIView")
         //if isAnswerSheet {
         if question.canvas == nil && isAnswerSheet == true {
             let c = PKCanvasView()
@@ -136,14 +135,12 @@ struct CanvasRepresentable: UIViewRepresentable {
             c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             c.delegate = context.coordinator
             question.canvas = c
-            print("ONE")
             return c
         }else if isAnswerSheet == true{
             let c = question.canvas!
             c.delegate = context.coordinator
             c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             question.canvas = c
-            print("TWO")
             return c
         }else if page.canvas == nil {
             let c = PKCanvasView()
@@ -151,7 +148,6 @@ struct CanvasRepresentable: UIViewRepresentable {
             c.allowsFingerDrawing = true
             c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             c.isScrollEnabled = false
-            print("THREE")
             c.delegate = context.coordinator
             page.canvas = c
             return c
@@ -160,7 +156,6 @@ struct CanvasRepresentable: UIViewRepresentable {
             c.delegate = context.coordinator
             c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             page.canvas = c
-            print("FOUR")
             return c
         }
     }
