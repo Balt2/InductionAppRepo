@@ -53,6 +53,7 @@ struct ScatterPlot: View{
 struct BarChart: View {
     @Binding var showDetailTest : Bool
     @Binding var allDataTestIndex: Int
+    var width: CGFloat?
     var ar: CGFloat = 2
     let data: BarData
     var showLegend: Bool
@@ -90,7 +91,7 @@ struct BarChart: View {
                 }
             }
             
-        }.cornerRadius(20.0).frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.width * 0.475)
+        }.cornerRadius(20.0).frame(width: (width ?? UIScreen.main.bounds.width) * 0.95, height: (width ?? UIScreen.main.bounds.width) * 0.475)
             .aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
     }
     

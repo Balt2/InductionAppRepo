@@ -317,6 +317,7 @@ struct TestTable: View {
     @ObservedObject var user: User
     @Binding var rootIsActive: Bool
     @State var showPicker = false
+    @State var showErrorPDF = false
     var body: some View {
         List(user.tests){test in
             if self.user.testRefsMap![test.testFromJson!.testRefName!] == false{
@@ -325,7 +326,11 @@ struct TestTable: View {
                 }){
                     Text("Download: \(test.name)").frame(minWidth: 0, maxWidth: .infinity).frame(height: 90).background(Color.gray)
                 }.sheet(isPresented: self.$showPicker){
-                    DocumentPicker(testRefString: test.testFromJson!.testRefName!, user: self.user)
+                    DocumentPicker(testRefString: test.testFromJson!.testRefName!, user: self.user, showErrorPDF: self.$showErrorPDF)
+                }.alert(isPresented: self.$showErrorPDF) {
+                    Alert(title: Text("You uploaded the wrong test PDF"),
+                          message: Text("Please upload the correct PDF for the chosen test."),
+                          dismissButton: .default(Text("OK")))
                 }
                     
                 
@@ -379,6 +384,7 @@ extension UIScrollView {
 struct DocumentPicker: UIViewControllerRepresentable{
     var testRefString: String
     var user: User
+    @Binding var showErrorPDF: Bool
     func makeCoordinator() -> Coordinator {
         return DocumentPicker.Coordinator(parent1: self)
     }
@@ -402,10 +408,18 @@ struct DocumentPicker: UIViewControllerRepresentable{
             parent = parent1
         }
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            parent.user.uploadedTestPDF(testRef: parent.testRefString){b in
-                print("UPdated testRefMap: \(b)")
+            if "\(parent.testRefString).pdf" == urls[0].lastPathComponent{
+                parent.user.uploadedTestPDF(testRef: parent.testRefString){b in
+                    print("UPdated testRefMap: \(b)")
+                }
+            }else{
+                print("WRONG PDF UPLOADED")
+                parent.showErrorPDF = true
             }
+            
             print(urls)
+            print(urls[0].baseURL)
+            print(urls[0].lastPathComponent)
             //This is where we upload and do all that stuff.
         }
     }

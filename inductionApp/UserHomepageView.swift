@@ -15,23 +15,30 @@ struct UserHomepageView: View {
     @ObservedObject var user: User
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
+    
+    //NOT USED
+    @State var showDetailTest = false
+    @State var allDataTestIndex = -1
+    //var emptyBarEntry = BarEntry(xLabel: "No Date", yEntries: [(height: 0, color: Color.gray)])
+    var emptyData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [BarEntry(xLabel: "No Date", yEntries: [(height: 0, color: Color.gray)])])
+    
     var body: some View {
         NavigationView {
-            HStack {
-                VStack {
-                    HStack {
+           //HStack {
+                VStack(alignment: .center) {
+                    //HStack {
                         
-                        Text("Name: \(currentAuth.currentUser!.firstName)") //
+                        Text("Hello: \(currentAuth.currentUser!.firstName)") //
                             .fontWeight(.bold)
                             .modifier(nameLabelStyle())
-                        Spacer()
-                        Text("Tutor: Induction Learning") //\(currentAuth.currentUser!.association.name)
-                            .fontWeight(.bold)
-                            .modifier(nameLabelStyle())
-                    }
-                    .padding()
-                    HStack(alignment: .top) {
-                        VStack (alignment: .leading) {
+//                        Spacer()
+//                        Text("Tutor: Induction Learning") //\(currentAuth.currentUser!.association.name)
+//                            .fontWeight(.bold)
+//                            .modifier(nameLabelStyle())
+                    //}
+                    //.padding()
+                    HStack() {
+                        //VStack (alignment: .leading) {
                             
                             
                             NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
@@ -92,7 +99,7 @@ struct UserHomepageView: View {
                             }
                             .buttonStyle(buttonBackgroundStyle())
                             
-                            Spacer()
+                            //Spacer()
 //                            if user.association.image != nil{
 //                                Image(uiImage: user.association.image!)
 //                                    .resizable()
@@ -100,27 +107,29 @@ struct UserHomepageView: View {
 //                                    .frame(width: 100)
 //                                    .padding()
 //                            }else{
-                                Image("ilLogo")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 100)
-                                    .padding()
+                                
                             //}
                             
                             
                             
-                        }
-                        .padding()
+//                        }
+//                        .padding()
                         
-                        VStack {
-                            BarContentView()
-                            Spacer()
-                        }
-                        Spacer()
+//                        VStack {
+//                            //BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: $allDataTestIndex, width: UIScreen.main.bounds.width * 0.6, data: emptyData, showLegend: false)
+//                            BarContentView()
+//                            Spacer()
+//                        }
+//                        Spacer()
                     }
+                    Image("ilLogo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 300)
+                    .padding()
                 }
                 .navigationBarTitle("Home Page", displayMode: .inline)
-            }
+            //}
         }.navigationViewStyle((StackNavigationViewStyle()))
     }
     
