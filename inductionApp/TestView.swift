@@ -319,14 +319,16 @@ struct TestTable: View {
     @State var showPicker = false
     var body: some View {
         List(user.tests){test in
-            if test.name == "CB1"{
+            if self.user.testRefsMap![test.testFromJson!.testRefName!] == false{
                 Button(action: {
                     self.showPicker.toggle()
                 }){
-                    Text("HELLO WORLD").frame(height: 90)
+                    Text("Download: \(test.name)").frame(minWidth: 0, maxWidth: .infinity).frame(height: 90).background(Color.gray)
                 }.sheet(isPresented: self.$showPicker){
-                    DocumentPicker()
+                    DocumentPicker(testRefString: test.testFromJson!.testRefName!, user: self.user)
                 }
+                    
+                
             }else{
                 NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
                     Text(test.name)
@@ -375,6 +377,8 @@ extension UIScrollView {
 }
 
 struct DocumentPicker: UIViewControllerRepresentable{
+    var testRefString: String
+    var user: User
     func makeCoordinator() -> Coordinator {
         return DocumentPicker.Coordinator(parent1: self)
     }
@@ -398,7 +402,9 @@ struct DocumentPicker: UIViewControllerRepresentable{
             parent = parent1
         }
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            
+            parent.user.uploadedTestPDF(testRef: parent.testRefString){b in
+                print("UPdated testRefMap: \(b)")
+            }
             print(urls)
             //This is where we upload and do all that stuff.
         }

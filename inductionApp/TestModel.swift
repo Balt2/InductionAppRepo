@@ -317,6 +317,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.pdfImages = TestPDF(data: pdfData).pages
         
         self.testFromJson = self.createTestFromJson(data: jsonData)
+        print("TESTING")
+        print(self.testFromJson)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: false)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
@@ -552,7 +554,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         }
         print("TESTING ACT BOOLEAN")
         print(self.act)
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, sections: sectionsForJson, overallScore: overallScore, math: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, math: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -694,6 +696,7 @@ struct TestFromJson: Codable {
     var numberOfSections: Int
     var act: Bool
     var name: String
+    var testRefName: String?
     var sections: [TestSectionFromJson]
     
     //Values only in template json
