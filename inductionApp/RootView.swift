@@ -141,7 +141,7 @@ class FirebaseManager: ObservableObject {
     //This creats a user in the database
     func createUser(uid: String, fn: String, ln: String, aid: String, handler: @escaping (_ success: Bool) -> Void){
         
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1572cpre", "1874fpre", "67c", "cb5", "cb6"], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false]]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1572cpre", "1874fpre", "67c", "cb5", "cb6", "cb9", "cb7"], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false]]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)

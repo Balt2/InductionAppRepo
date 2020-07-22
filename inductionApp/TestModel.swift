@@ -97,6 +97,10 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         
         if self.name == "Math"{
             self.breakTimer = CustomTimer(duration: 600)
+        }else if self.name == "Reading" && sectionFromJson.timeAllowed == 3900 { //3900 corresponeds to the sat time for reading section
+            self.breakTimer = CustomTimer(duration: 600)
+        }else if self.name == "Math No Calculator"{
+            self.breakTimer = CustomTimer(duration: 300)
         }else{
             self.breakTimer = CustomTimer(duration: 0)
         }
@@ -318,7 +322,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         self.testFromJson = self.createTestFromJson(data: jsonData)
         print("TESTING")
-        print(self.testFromJson)
+        //print(self.testFromJson)
         
         print(corrections)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
