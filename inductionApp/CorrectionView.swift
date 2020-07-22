@@ -116,7 +116,9 @@ struct CorrectionView: View {
                         Spacer()
                         Text("Official Sub Section: \(self.testData.currentSection!.questions[popUpQuestionIndex].officialSub)")
                         Spacer()
-                        Text(self.testData.currentSection!.questions[popUpQuestionIndex].reason).lineLimit(nil)
+                        if testData.act == false{
+                            Text(self.testData.currentSection!.questions[popUpQuestionIndex].reason).lineLimit(nil)
+                        }
                         
                     }.padding()
                 }

@@ -17,7 +17,7 @@ class UserRegistrationViewModel: ObservableObject {
     @Published var passwordConfirm = ""
     @Published var firstName = ""
     @Published var lastName = ""
-    @Published var associationID = ""
+    @Published var associationID = "nututors"
     
     
     // Output
@@ -25,7 +25,7 @@ class UserRegistrationViewModel: ObservableObject {
     @Published var isPasswordLengthValid = false
     @Published var isPasswordCapitalLetter = false
     @Published var isPasswordConfirmValid = false
-    @Published var isAssociationIDLengthValid = false
+    @Published var isAssociationIDLengthValid = true //Should be false
     
     private var cancellableSet: Set<AnyCancellable> = []
     
@@ -65,12 +65,12 @@ class UserRegistrationViewModel: ObservableObject {
             .assign(to: \.isPasswordCapitalLetter, on: self)
             .store(in: &cancellableSet)
         
-        $associationID
-            .receive(on: RunLoop.main)
-            .map{ asID in
-                return asID.count >= 8
-        }.assign(to: \.isAssociationIDLengthValid, on: self)
-        .store(in: &cancellableSet)
+//        $associationID
+//            .receive(on: RunLoop.main)
+//            .map{ asID in
+//                return asID.count >= 8
+//        }.assign(to: \.isAssociationIDLengthValid, on: self)
+//        .store(in: &cancellableSet)
         
         Publishers.CombineLatest($password, $passwordConfirm)
             .receive(on: RunLoop.main)

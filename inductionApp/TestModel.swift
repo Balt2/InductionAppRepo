@@ -313,27 +313,37 @@ class Test: ObservableObject, Hashable, Identifiable {
         //self.sendJsonTestPerformanceData()
     }
     //Create a test fromo Data (coming from database mostly)
-    init(jsonData: Data, pdfData: Data){
+    init(jsonData: Data, pdfData: Data, corrections: Bool){
         self.pdfImages = TestPDF(data: pdfData).pages
         
         self.testFromJson = self.createTestFromJson(data: jsonData)
         print("TESTING")
         print(self.testFromJson)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: false)
+        
+        print(corrections)
+        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
             self.act = self.testFromJson?.act
             self.name = self.testFromJson!.name
-            for convertEach in testFromJson!.answerConverter! {
-                scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore ?? 0)
+            if corrections == true{
+                self.englishScore = self.testFromJson?.english
+                self.mathScore = self.testFromJson?.math
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MM-dd-yyyy"
+                let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
+                self.dateTaken = date
+            }else{
+                for convertEach in testFromJson!.answerConverter! {
+                    scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore ?? 0)
+                }
             }
         }
         print("donne: \(self.name)")
     }
     
-    //Create Test from performacne JSONS
-    init(jsonData: Data){
-        self.pdfImages = TestPDF(name: "1-ACT Exam 1904S").pages
+    init(jsonData: Data, pdfImages: [PageModel]){
+        self.pdfImages = pdfImages
         self.testFromJson = self.createTestFromJson(data: jsonData)
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: true)
         self.numberOfSections = self.sections.count
@@ -347,13 +357,37 @@ class Test: ObservableObject, Hashable, Identifiable {
             let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
             self.dateTaken = date
         }
-        
+
         print("Loaded in Performance Data: \(self.testFromJson?.dateTaken! ?? "No Time")")
-        
-        //self.dateTaken = self.testFromJson?.dateTaken
-        
+
         
     }
+    
+    //Create Test from performacne JSONS
+//    init(jsonData: Data, user: User, testRefImages: String){
+//        let associatedTestImages = user.tests.first(where: {$0.testFromJson!.testRefName == testRefImages})?.pdfImages
+//        self.pdfImages = associatedTestImages!
+//        //self.pdfImages = TestPDF(name: "1-ACT Exam 1904S").pages
+//        self.testFromJson = self.createTestFromJson(data: jsonData)
+//        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: true)
+//        self.numberOfSections = self.sections.count
+//        if self.testFromJson != nil {
+//            self.act = self.testFromJson?.act
+//            self.name = self.testFromJson!.name
+//            self.englishScore = self.testFromJson?.english
+//            self.mathScore = self.testFromJson?.math
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "MM-dd-yyyy"
+//            let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
+//            self.dateTaken = date
+//        }
+//
+//        print("Loaded in Performance Data: \(self.testFromJson?.dateTaken! ?? "No Time")")
+//
+//        //self.dateTaken = self.testFromJson?.dateTaken
+//
+//
+//    }
     
     //Creates a test from a section (or multiple ones) from a test
     init(testSections: [TestSection], test: Test) {
@@ -571,7 +605,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func sendResultJson(user: User) {
         //Name of result: NameOfTest-UserID-Currentdate
-        let nameOfFile = "\(name)-\(user.id)-\(Date().toString(dateFormat: "MM-dd-yyyy"))"
+        let nameOfFile = "\(testFromJson!.testRefName!)-\(user.id)-\(Date().toString(dateFormat: "MM-dd-yyyy"))"
         let uploadRef = Storage.storage().reference(withPath:
             "\(user.association.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(nameOfFile).json")
         
@@ -665,11 +699,11 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func getTempTest(finalResultJson: Data, user: User) -> ACTFormatedTestData{
         if self.act == true{
-            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allACTPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
+            let tempTest = ACTFormatedTestData(pdfImages: pdfImages, jsonData: finalResultJson)
             tempTest.createData(index: (user.allACTPerformanceData?.allTestData?.count) ?? 0)
             return tempTest
         }else{
-            let tempTest = ACTFormatedTestData(data: finalResultJson, index: (user.allSATPerformanceData?.allTestData?.count) ?? 0, tutorPDFName: "BreiteJ-CB1")
+            let tempTest = ACTFormatedTestData(pdfImages: pdfImages, jsonData: finalResultJson)
             tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
             return tempTest
         }

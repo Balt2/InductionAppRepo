@@ -118,14 +118,19 @@ class ACTFormatedTestData: Test{
     var sectionsOverall = [String: BarEntry]() //(SectionName, Entry for the section)
     var subSectionGraphs = [String: BarData]() //(SectionName, BarData)
     var subSectionTime = [String: BarData]()
-    var tutorPDF: TestPDF
+    var tutorPDF: TestPDF?
     
     
-    init(data: Data, index: Int, tutorPDFName: String) {
-        self.tutorPDF = TestPDF(name: tutorPDFName)
-        super.init(jsonData: data)
+    init(pdfData: Data, jsonData: Data){ //} index: Int, user: User, testRefImages: String, tutorPDFName: String) {
+        //self.tutorPDF = TestPDF(name: tutorPDFName)
+        super.init(jsonData: jsonData, pdfData: pdfData, corrections: true)
+        //super.init(jsonData: data, user: user, testRefImages: testRefImages)
         //self.createData(index: index)
         //self.resetQuestions()
+    }
+    
+    init(pdfImages: [PageModel], jsonData: Data){
+        super.init(jsonData: jsonData, pdfImages: pdfImages)
     }
     
     //For corrections

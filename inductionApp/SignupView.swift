@@ -33,7 +33,7 @@ struct SignupView: View {
                     VStack {
                         HStack{
                             FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
-                            FormField(fieldName: "Association ID", fieldValue: $userRegistrationViewModel.associationID)
+                            //FormField(fieldName: "Association ID", fieldValue: $userRegistrationViewModel.associationID)
                         }
                         RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
                             .padding()
