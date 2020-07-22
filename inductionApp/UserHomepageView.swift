@@ -37,7 +37,7 @@ struct UserHomepageView: View {
 //                            .modifier(nameLabelStyle())
                     //}
                     //.padding()
-                    HStack() {
+                    VStack() {
                         //VStack (alignment: .leading) {
                             
                             

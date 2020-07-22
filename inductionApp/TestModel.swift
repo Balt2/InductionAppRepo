@@ -180,6 +180,8 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         }else if name == "Math Calculator" && test.act == false{
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else{
+            print(name)
+            print(test.act)
             print("ERROR PRONE MESSAGE")
             fatalError("ERRROR")
         }
