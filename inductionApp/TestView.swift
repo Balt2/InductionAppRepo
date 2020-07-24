@@ -320,13 +320,13 @@ struct TestTable: View {
     @State var showErrorPDF = false
     var body: some View {
         List(user.tests){test in
-            if self.user.testRefsMap[test.testFromJson!.testRefName!] == false{
+            if self.user.testRefsMap[test.testFromJson!.testRefName] == false{
                 Button(action: {
                     self.showPicker.toggle()
                 }){
                     Text("Download: \(test.name)").frame(minWidth: 0, maxWidth: .infinity).frame(height: 90).background(Color.gray)
                 }.sheet(isPresented: self.$showPicker){
-                    DocumentPicker(testRefString: test.testFromJson!.testRefName!, user: self.user, showErrorPDF: self.$showErrorPDF)
+                    DocumentPicker(testRefString: test.testFromJson!.testRefName, user: self.user, showErrorPDF: self.$showErrorPDF)
                 }.alert(isPresented: self.$showErrorPDF) {
                     Alert(title: Text("You uploaded the wrong test PDF"),
                           message: Text("Please upload the correct PDF for the chosen test."),

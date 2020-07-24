@@ -25,6 +25,7 @@ class PageModel: ObservableObject, Hashable, Identifiable {
     var uiImage: UIImage
     var pageID: Int
     
+    
     init(image: UIImage, pageID: Int){
         self.uiImage = image
         self.pageID = pageID
@@ -54,13 +55,22 @@ class TestPDF: Hashable {
     
     var pages = [PageModel]()
     var pdfName = ""
+    var testRef: String
     
     init(name: String){
         self.pdfName = name
+        self.testRef = "BEN"
         self.createPages(name: name)
     }
-    init(data: Data){
-        self.createPages(data: data)
+    init(data: Data, testRef: String){
+        self.testRef = testRef
+        let pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(String(describing: testRef))1.png")
+        if FileManager.default.fileExists(atPath: pdfURL.path){
+            print("TRYING TO GET IMAGES FROM DISK!")
+            self.createPages()
+        }else{
+            self.createPages(data: data)
+        }
     }
     
     func createPages(name: String){
@@ -76,13 +86,45 @@ class TestPDF: Hashable {
         }
     }
     
+    func createPages(){
+        var pageCounter = 1
+        var pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef)1.png")
+        while FileManager.default.fileExists(atPath: pdfURL.path){
+            do{
+                let imageData = try Data(contentsOf: pdfURL)
+                let imageTest = UIImage(data: imageData)
+                guard let pdfImage = imageTest else {
+                    pageCounter = pageCounter + 1
+                    pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).png")
+                    return
+                }
+                pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
+                print("GOT PAGE AT: \(pageCounter) from the file")
+            }catch{
+                print("ERROR GETTING IMAGE AT: \(pdfURL)")
+            }
+            pageCounter = pageCounter + 1
+            pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).png")
+        }
+    }
+    
     func createPages(data: Data){
         var pageCounter = 1
         let dataProvider = CGDataProvider(data: data as CFData)
         if let document = CGPDFDocument(dataProvider!){
             while let pdfImage = createUIImage(document: document, page: pageCounter){
                 print("Creating image: \(pageCounter)")
+                
                 pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
+                
+                if let imageD = pdfImage.pngData(){
+                    print("GOT INTO WRITE PDFIMAGE PNG DATA")
+                    let filename = getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).png")
+                    print(filename)
+                    try? imageD.write(to: filename)
+                    print("SUCSSES WRITING PDFIMAGE PNG DATA")
+                }
+                
                 pageCounter = pageCounter + 1
             }
         }
@@ -109,5 +151,10 @@ class TestPDF: Hashable {
     
     func hash(into hasher: inout Hasher){
         hasher.combine(pages)
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
 }

@@ -320,17 +320,14 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     //Create a test fromo Data (coming from database mostly)
     init(jsonData: Data, pdfData: Data, corrections: Bool){
-        self.pdfImages = TestPDF(data: pdfData).pages
         
+
         self.testFromJson = self.createTestFromJson(data: jsonData)
-        print("TESTING")
-        //print(self.testFromJson)
-        
-        print(corrections)
-        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
-        self.numberOfSections = self.sections.count
-        if self.testFromJson != nil {
-            self.act = self.testFromJson?.act
+        if self.testFromJson != nil{
+            self.pdfImages = TestPDF(data: pdfData, testRef: self.testFromJson!.testRefName).pages
+            self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
+            self.numberOfSections = self.sections.count
+            self.act = self.testFromJson!.act
             self.name = self.testFromJson!.name
             if corrections == true{
                 self.englishScore = self.testFromJson?.english
@@ -345,9 +342,12 @@ class Test: ObservableObject, Hashable, Identifiable {
                 }
             }
         }
+        
+              
         print("donne: \(self.name)")
     }
     
+    //Create a test result right after somebody submits a test
     init(jsonData: Data, pdfImages: [PageModel]){
         self.pdfImages = pdfImages
         self.testFromJson = self.createTestFromJson(data: jsonData)
@@ -368,31 +368,6 @@ class Test: ObservableObject, Hashable, Identifiable {
         
     }
     
-    //Create Test from performacne JSONS
-//    init(jsonData: Data, user: User, testRefImages: String){
-//        let associatedTestImages = user.tests.first(where: {$0.testFromJson!.testRefName == testRefImages})?.pdfImages
-//        self.pdfImages = associatedTestImages!
-//        //self.pdfImages = TestPDF(name: "1-ACT Exam 1904S").pages
-//        self.testFromJson = self.createTestFromJson(data: jsonData)
-//        self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: true)
-//        self.numberOfSections = self.sections.count
-//        if self.testFromJson != nil {
-//            self.act = self.testFromJson?.act
-//            self.name = self.testFromJson!.name
-//            self.englishScore = self.testFromJson?.english
-//            self.mathScore = self.testFromJson?.math
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.dateFormat = "MM-dd-yyyy"
-//            let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
-//            self.dateTaken = date
-//        }
-//
-//        print("Loaded in Performance Data: \(self.testFromJson?.dateTaken! ?? "No Time")")
-//
-//        //self.dateTaken = self.testFromJson?.dateTaken
-//
-//
-//    }
     
     //Creates a test from a section (or multiple ones) from a test
     init(testSections: [TestSection], test: Test) {
@@ -610,7 +585,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func sendResultJson(user: User) {
         //Name of result: NameOfTest-UserID-Currentdate
-        let nameOfFile = "\(testFromJson!.testRefName!)-\(user.id)-\(Date().toString(dateFormat: "MM-dd-yyyy"))"
+        let nameOfFile = "\(testFromJson!.testRefName)-\(user.id)-\(Date().toString(dateFormat: "MM-dd-yyyy"))"
         let uploadRef = Storage.storage().reference(withPath:
             "\(user.association.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(nameOfFile).json")
         
@@ -735,7 +710,7 @@ struct TestFromJson: Codable {
     var numberOfSections: Int
     var act: Bool
     var name: String
-    var testRefName: String?
+    var testRefName: String
     var sections: [TestSectionFromJson]
     
     //Values only in template json
