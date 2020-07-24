@@ -69,6 +69,7 @@ class TestPDF: Hashable {
         let url = URL(fileURLWithPath: path!)
         if let document = CGPDFDocument(url as CFURL) {
             while let pdfImage = createUIImage(document: document, page: pageCounter){
+                print("Creating image: \(pageCounter)")
                 pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
                 pageCounter = pageCounter + 1
             }
@@ -80,6 +81,7 @@ class TestPDF: Hashable {
         let dataProvider = CGDataProvider(data: data as CFData)
         if let document = CGPDFDocument(dataProvider!){
             while let pdfImage = createUIImage(document: document, page: pageCounter){
+                print("Creating image: \(pageCounter)")
                 pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
                 pageCounter = pageCounter + 1
             }

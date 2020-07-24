@@ -365,7 +365,6 @@ class Test: ObservableObject, Hashable, Identifiable {
         }
 
         print("Loaded in Performance Data: \(self.testFromJson?.dateTaken! ?? "No Time")")
-
         
     }
     

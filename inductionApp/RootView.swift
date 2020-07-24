@@ -116,9 +116,9 @@ class FirebaseManager: ObservableObject {
                                                 ln: dataDescription!["lastN"] as! String,
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
-                                                testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String]) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
-                        let testRefMapD = (dataDescription?["testRefsMap"])! as! [String: Bool]
-                        self.currentUser?.testRefsMap = testRefMapD
+                                                testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool] ) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
+//                        let testRefMapD = (dataDescription!["testRefsMap"])! as! [String: Bool]
+//                        self.currentUser?.testRefsMap = testRefMapD
                         print(self.currentUser?.testRefsMap)
                         completionHandler(true)
                     }else{

@@ -320,7 +320,7 @@ struct TestTable: View {
     @State var showErrorPDF = false
     var body: some View {
         List(user.tests){test in
-            if self.user.testRefsMap![test.testFromJson!.testRefName!] == false{
+            if self.user.testRefsMap[test.testFromJson!.testRefName!] == false{
                 Button(action: {
                     self.showPicker.toggle()
                 }){
