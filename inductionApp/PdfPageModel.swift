@@ -64,12 +64,25 @@ class TestPDF: Hashable {
     }
     init(data: Data, testRef: String){
         self.testRef = testRef
-        let pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(String(describing: testRef))1.png")
+        let pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(String(describing: testRef))1.jpg")
         if FileManager.default.fileExists(atPath: pdfURL.path){
             print("TRYING TO GET IMAGES FROM DISK!")
             self.createPages()
         }else{
             self.createPages(data: data)
+        }
+    }
+    
+    init(pngData: [Data]){
+        self.testRef = "BEN"
+        self.createPages(fromPNGData: pngData)
+    }
+    
+    func createPages(fromPNGData pngData: [Data]){
+        for (index, png) in pngData.enumerated() {
+            if let pngImage = UIImage(data: png){
+                pages.append(PageModel(image: pngImage, pageID: index + 1))
+            }
         }
     }
     
@@ -88,14 +101,14 @@ class TestPDF: Hashable {
     
     func createPages(){
         var pageCounter = 1
-        var pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef)1.png")
+        var pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef)1.jpg")
         while FileManager.default.fileExists(atPath: pdfURL.path){
             do{
                 let imageData = try Data(contentsOf: pdfURL)
                 let imageTest = UIImage(data: imageData)
                 guard let pdfImage = imageTest else {
                     pageCounter = pageCounter + 1
-                    pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).png")
+                    pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).jpg")
                     return
                 }
                 pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
@@ -103,8 +116,9 @@ class TestPDF: Hashable {
             }catch{
                 print("ERROR GETTING IMAGE AT: \(pdfURL)")
             }
+            
             pageCounter = pageCounter + 1
-            pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).png")
+            pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).jpg")
         }
     }
     
@@ -117,9 +131,9 @@ class TestPDF: Hashable {
                 
                 pages.append(PageModel(image: pdfImage, pageID: pageCounter - 1))
                 
-                if let imageD = pdfImage.pngData(){
+                if let imageD = pdfImage.jpegData(compressionQuality: 0.8){
                     print("GOT INTO WRITE PDFIMAGE PNG DATA")
-                    let filename = getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).png")
+                    let filename = getDocumentsDirectory().appendingPathComponent("\(testRef + String(pageCounter)).jpg")
                     print(filename)
                     try? imageD.write(to: filename)
                     print("SUCSSES WRITING PDFIMAGE PNG DATA")

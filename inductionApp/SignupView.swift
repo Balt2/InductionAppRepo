@@ -33,6 +33,7 @@ struct SignupView: View {
                     VStack {
                         HStack{
                             FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
+                            FormField(fieldName: "Access Code", fieldValue: $userRegistrationViewModel.accessCode)
                             //FormField(fieldName: "Association ID", fieldValue: $userRegistrationViewModel.associationID)
                         }
                         RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
@@ -62,8 +63,8 @@ struct SignupView: View {
                         else if (self.userRegistrationViewModel.isemailValid && self.userRegistrationViewModel.isPasswordLengthValid
                             && self.userRegistrationViewModel.isPasswordCapitalLetter && self.userRegistrationViewModel.isPasswordConfirmValid && self.userRegistrationViewModel.isAssociationIDLengthValid){
                             
-                            self.currentAuth.signUp(userRegModel: self.userRegistrationViewModel) { succsess in
-                                if succsess == true{
+                            self.currentAuth.signUp(userRegModel: self.userRegistrationViewModel) { (created, error) in
+                                if created == true{
                                     print("Signed UP and loged in")
                                 }else{
                                     self.showingErrorCredentials = true

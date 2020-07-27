@@ -18,6 +18,7 @@ class UserRegistrationViewModel: ObservableObject {
     @Published var firstName = ""
     @Published var lastName = ""
     @Published var associationID = "nututors"
+    @Published var accessCode = ""
     
     
     // Output
@@ -26,6 +27,7 @@ class UserRegistrationViewModel: ObservableObject {
     @Published var isPasswordCapitalLetter = false
     @Published var isPasswordConfirmValid = false
     @Published var isAssociationIDLengthValid = true //Should be false
+    
     
     private var cancellableSet: Set<AnyCancellable> = []
     

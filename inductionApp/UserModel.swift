@@ -76,15 +76,40 @@ class User: ObservableObject, Equatable {
         }
         
         //Get the test pdf and json pairs
-        self.getPdfJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
-            
-            print (!testsData.isEmpty)
+//        self.getPdfJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
+//
+//            print (!testsData.isEmpty)
+//            if !testsData.isEmpty{
+//                print("TEST DATA NOT EMPTY")
+//                DispatchQueue.global(qos: .utility).async {
+//                   var tempArray: [Test] = []
+//                    for test in testsData{
+//                           let tempTest = Test(jsonData: test.json, pdfData: test.pdf, corrections: false)
+//                           tempArray.append(tempTest)
+//                       }
+//                       //If boolean is false then no tests exist
+//                       print("Got Tests, User Init")
+//                       DispatchQueue.main.sync {
+//                           self.tests.append(contentsOf: tempArray)
+//                           self.getTestsComplete = true
+//                       }
+//               }
+//            }else{
+//                print("ERROR Getting tests")
+//                DispatchQueue.main.sync {
+//                    self.getTestsComplete = true
+//                }
+//            }
+//        }
+        
+        self.getPngsJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
             if !testsData.isEmpty{
                 print("TEST DATA NOT EMPTY")
                 DispatchQueue.global(qos: .utility).async {
                    var tempArray: [Test] = []
                     for test in testsData{
-                           let tempTest = Test(jsonData: test.json, pdfData: test.pdf, corrections: false)
+                        let tempTest = Test(jsonData: test.json, pngData: test.pngs, corrections: false)
+                           //let tempTest = Test(jsonData: test.json, pdfData: test.pdf, corrections: false)
                            tempArray.append(tempTest)
                        }
                        //If boolean is false then no tests exist
@@ -100,6 +125,7 @@ class User: ObservableObject, Equatable {
                     self.getTestsComplete = true
                 }
             }
+            
         }
 
         //Get the test result pdf and json pairs
@@ -199,18 +225,42 @@ class User: ObservableObject, Equatable {
                     guard let jsonData = jsonD else {return}
                     dataArray.append((pdf: pdfData, json: jsonData))
                     count += 1
-                    do {
-                        print("Writing document to file manager")
-                        try jsonData.write(to: jsonURL)
-                        print("Success Writing Document to file manager")
-                    }
-                    catch {
-                        print("ERROR WRITING DOCUMENT")
-                    }
+//                    do {
+//                        print("Writing document to file manager")
+//                        try jsonData.write(to: jsonURL)
+//                        print("Success Writing Document to file manager")
+//                    }
+//                    catch {
+//                        print("ERROR WRITING DOCUMENT")
+//                    }
                     if count == searchArray.count {completionHandler(dataArray)}
                 }
             }
         }
+    }
+    
+    func getPngsJsonPair(isTestResult: Bool, searchArray: [String], completionHandler: @escaping (_ completion: [(pngs: [Data], json: Data)]) -> ()){
+        var count = 0 //Used to determine if the array has been searched and we can have the completion handler
+        var dataArray = [(pngs: [Data], json: Data)]()
+        if searchArray.count == 0 {completionHandler(dataArray)} //Return if there are no tests in testRefs available
+        for testRef in searchArray {
+            let testRefOriginal = testRef.components(separatedBy: "-").first
+            let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/\(isTestResult ? "testResults" : "tests")/\(testRef).json")
+            //let refPngs: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(isTestResult ? testRefOriginal! : testRef)")
+           //let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef).json")
+            getPngs(testRef: isTestResult ? testRefOriginal! : testRef){pngData in
+                self.getFile(ref: refJson, pdf: false){jsonD in
+                    print(pngData)
+                    guard let jsonData = jsonD else {return}
+                    dataArray.append((pngs: pngData, json: jsonData))
+                    count += 1
+                    if count == searchArray.count {completionHandler(dataArray)}
+                }
+                
+            }
+           
+        }
+        
     }
 
     
@@ -244,6 +294,46 @@ class User: ObservableObject, Equatable {
                 completionHander(false)
             }else{
                 completionHander(true)
+            }
+        }
+    }
+    
+    func getPngs(testRef: String, completionHander: @escaping (_ completion: [Data]) -> ()){
+        //var pngs: [Data] = []
+        var pngsWName: [(name: String, data: Data)] = []
+        let storageRef = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef)")
+        print("GETTING PNGSSSS")
+        storageRef.listAll { (result, error) in
+            if let error = error {
+                print("ERROR GETTTING PNGs")
+                //Probably want to revert back to PDFs
+            }else{
+                print("PRINTING ITEMS")
+               
+//                let sortedResults = result.items.sorted(by: {$0.name < $1.name})
+//                print(sortedResults)
+                //let sortedResults = result.items.sorted(by: <)
+                
+                for (index, item) in result.items.enumerated(){
+                    self.getFile(ref: item, pdf: false) {data in
+                        if data == nil{
+                            print("ERROR GETTING SPECIFIC Png")
+                            //Probably want to revert back to PDFs
+                        }else{
+                            print("GOT PNG")
+                            print(item)
+                            pngsWName.append((name: item.name, data: data!))
+                            //pngs.append(data!)
+                            if index == result.items.count  - 1 {
+                                print("COMPLETE HANDLER")
+                                let sortedpngsWName = pngsWName.sorted(by: {$0.name < $1.name})
+                                let pngDataArray = sortedpngsWName.map({$0.data})
+                                print("GOT ALL PNG DATA FOR TEST")
+                                completionHander(pngDataArray)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

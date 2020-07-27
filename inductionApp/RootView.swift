@@ -36,6 +36,7 @@ class FirebaseManager: ObservableObject {
     //https://github.com/invertase/react-native-firebase/issues/1166 --Pod informatioin
     @Published var currentUser: User?
     @Published var associations = Set<Association>()
+    @Published var accessCodes = Set<String>()
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
     @Published var initialized = false
     //@Published var pencilManager = ApplePencilReachability()
@@ -50,6 +51,11 @@ class FirebaseManager: ObservableObject {
         getAssociations(){_ in
             print("GETTING ASSOCIATIONS")
             print(self.associations)
+        }
+        
+        getAccessCodes(){accessList in
+            self.accessCodes = accessList
+            print("GOT ACCESS CODES")
         }
         
         //State listener for authentication
@@ -76,6 +82,23 @@ class FirebaseManager: ObservableObject {
         
         
         
+    }
+    
+    func getAccessCodes(completionHander: @escaping (_ success: Set<String>) -> Void){
+        let ref = db.collection("accessCodes")
+        var tempAccessSet = Set<String>()
+        ref.getDocuments(){(querySnnapshot, error) in
+            if let error = error {
+                print("Error getting doc: \(error)")
+                completionHander(tempAccessSet)
+            }else{
+                for document in querySnnapshot!.documents{
+                    tempAccessSet.insert(document.documentID)
+                    print(document.documentID)
+                }
+                completionHander(tempAccessSet)
+            }
+        }
     }
     
     func getAssociations(completionHander: @escaping (_ success: Bool) -> Void) {
@@ -140,8 +163,9 @@ class FirebaseManager: ObservableObject {
     
     //This creats a user in the database
     func createUser(uid: String, fn: String, ln: String, aid: String, handler: @escaping (_ success: Bool) -> Void){
-        
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1572cpre", "1874fpre", "67c", "cb5", "cb6", "cb9", "cb7"], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false]]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
+        //
+        //
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1572cpre", "1874fpre", "67c", "cb5", "cb6", "cb9", "cb7"], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false] ]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)
@@ -153,28 +177,42 @@ class FirebaseManager: ObservableObject {
     }
     
     //This funciton creats an authenticated User. The id of the authenticaed user is tied to the document id in the database
-    func signUp(userRegModel: UserRegistrationViewModel, handler: @escaping (_ success: Bool) -> Void) {
-                
-        Auth.auth().createUser(withEmail: userRegModel.email, password: userRegModel.password) { authResult, error in
-            if let error = error {
-                print("Error creating account with user name and password: \(error.localizedDescription)")
-                handler(false)
-            } else{
-                //The authResult has user.uid and user.email
-                print("Sucess creating authenticated account: \(authResult!)")
-                //We now want to create this user in our database
-                self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, handler: {(success) -> Void in
-                    if success {
-                        //Self.getUser
-                        //Firebase automatically gets user so we dont need to call this
-                        handler(true)
-                    } else{
-                        //Failutre to create user
-                        handler(false)
-                    }
-                })
+    func signUp(userRegModel: UserRegistrationViewModel, handler: @escaping (_ handler: (created: Bool, error: String)) -> Void) {
+        let noSpacesAccessCode = userRegModel.accessCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        if accessCodes.contains(noSpacesAccessCode){
+            Auth.auth().createUser(withEmail: userRegModel.email, password: userRegModel.password) { authResult, error in
+                if let error = error {
+                    print("Error creating account with user name and password: \(error.localizedDescription)")
+                    handler((created: false, error: "Error creating account with user name and password: \(error.localizedDescription)"))
+                } else{
+                    //The authResult has user.uid and user.email
+                    print("Sucess creating authenticated account: \(authResult!)")
+                    //We now want to create this user in our database
+                    self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, handler: {(success) -> Void in
+                        if success {
+                            //Self.getUser
+                            //Firebase automatically gets user so we dont need to call this
+                            self.db.collection("accessCodes").document(noSpacesAccessCode).delete(){ err in
+                                if let err = err {
+                                    print("Error removing document: \(err)")
+                                } else {
+                                    print("Document successfully removed!")
+                                }
+                            }
+                            handler((created: true, error: ""))
+                        } else{
+                            //Failutre to create user
+                            handler((created: false, error: "Failure creating user within application"))
+                        }
+                    })
 
+                }
             }
+        }else{
+            print("ERROR WITH ACCESS CODE")
+            print(userRegModel.accessCode)
+            print(accessCodes)
+            handler((created: false, error: "Invalid access code"))
         }
         
     }

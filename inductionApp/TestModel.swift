@@ -347,6 +347,37 @@ class Test: ObservableObject, Hashable, Identifiable {
         print("donne: \(self.name)")
     }
     
+    //Create a test fromo Data (coming from database mostly) and png data
+    init(jsonData: Data, pngData: [Data], corrections: Bool){
+        
+
+        self.testFromJson = self.createTestFromJson(data: jsonData)
+        if self.testFromJson != nil{
+            self.pdfImages = TestPDF(pngData: pngData).pages
+            self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
+            self.numberOfSections = self.sections.count
+            self.act = self.testFromJson!.act
+            self.name = self.testFromJson!.name
+            if corrections == true{
+                self.englishScore = self.testFromJson?.english
+                self.mathScore = self.testFromJson?.math
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MM-dd-yyyy"
+                let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
+                self.dateTaken = date
+            }else{
+                for convertEach in testFromJson!.answerConverter! {
+                    scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore ?? 0)
+                }
+            }
+        }
+        
+              
+        print("donne: \(self.name)")
+    }
+    
+    
+    
     //Create a test result right after somebody submits a test
     init(jsonData: Data, pdfImages: [PageModel]){
         self.pdfImages = pdfImages
