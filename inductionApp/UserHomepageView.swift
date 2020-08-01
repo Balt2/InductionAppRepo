@@ -116,7 +116,7 @@ struct UserHomepageView: View {
 //                        .padding()
                         
 //                        VStack {
-//                            //BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: $allDataTestIndex, width: UIScreen.main.bounds.width * 0.6, data: emptyData, showLegend: false)
+                            //BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: $allDataTestIndex, width: UIScreen.main.bounds.width * 0.4, data: emptyData, showLegend: false)
 //                            BarContentView()
 //                            Spacer()
 //                        }

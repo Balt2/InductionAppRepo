@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct PastPerformanceView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var user: User
     
     @State var index = 0
-    @State var offset : CGFloat = 0
     @State var showDetailTest = false
     @State var allDataTestIndex = 0
     @State var shouldScrollNav: Bool = true
@@ -42,8 +42,8 @@ struct PastPerformanceView: View {
                         HStack{
                             ZStack{
                                 RoundedRectangle(cornerRadius: 5)
-                                .fill(Color("lightBlue"))
-                                    .font(.largeTitle)
+                                    .fill(Color("lightBlue"))
+                                    .font(orientationInfo.orientation.rawValue == "Ben" ? .largeTitle : .largeTitle)
                                     .frame(width: 300)
                                 Text("ACT Results").font(.system(.largeTitle)).foregroundColor(user.showACTData! ? .red : .gray)
                             }.onTapGesture{
@@ -54,7 +54,6 @@ struct PastPerformanceView: View {
                                         print("Toggling back because invalid")
                                     }else{
                                         self.index = 0
-                                        self.offset = 0.0
                                     }
                                 }
                             }
@@ -73,7 +72,6 @@ struct PastPerformanceView: View {
                                         print("Toggling back because invalid")
                                     }else{
                                         self.index = 0
-                                        self.offset = 0.0
                                     }
                                 }
                             }
@@ -85,13 +83,13 @@ struct PastPerformanceView: View {
                         BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentPerformanceData!.overallPerformance!, showLegend: false).frame(width: UIScreen.main.bounds.width)
                         .animation(.default)
                         
-                        CostumeBarView(index: self.$index, offset: self.$offset, headers: user.currentPerformanceData!.higherSectionNames!).frame(width:  UIScreen.main.bounds.width)
+                        CostumeBarView(index: self.$index, headers: user.currentPerformanceData!.higherSectionNames!).frame(width:  UIScreen.main.bounds.width)
                         
                         HStack(spacing: 0){
                             ForEach(user.currentPerformanceData!.higherSectionNames!, id: \.self){sectionKey in
                                 BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.user.currentPerformanceData!.sectionsOverall![sectionKey]!, showLegend: false).frame(width: UIScreen.main.bounds.width)
                             }
-                        }.offset(x: 0.5 * (CGFloat(self.user.currentPerformanceData!.higherSectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + self.offset).frame(alignment: .trailing) //(4-1) is headers.count - 1
+                        }.offset(x: 0.5 * (CGFloat(self.user.currentPerformanceData!.higherSectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + (UIScreen.main.bounds.width * CGFloat(self.index) * -1.0)).frame(alignment: .trailing) //(4-1) is headers.count - 1
                             .animation(.default)
                             .edgesIgnoringSafeArea(.all)
                             .padding(.all, 0)
@@ -121,7 +119,7 @@ struct PastPerformanceView: View {
                 }
             }else{
                 TabView(selection: $selection){
-                    RawDataView(index: self.index, offset: self.offset, sectionNames: self.user.currentPerformanceData!.sectionNames!, data: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
+                    RawDataView(index: self.index, sectionNames: self.user.currentPerformanceData!.sectionNames!, data: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
                         .tabItem{
                             Image(systemName: "1.square.fill")
                             Text("Analytics")
@@ -153,8 +151,8 @@ struct PastPerformanceView: View {
 
 
 struct RawDataView: View{
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @State var index: Int
-    @State var offset: CGFloat
     
     @State var showDetailTest = true
     @State var allDataTestIndex = -1 //Used to disable the bars tap
@@ -224,7 +222,7 @@ struct RawDataView: View{
                     Spacer()
                 }.frame(maxWidth: UIScreen.main.bounds.width)
             }
-            CostumeBarView(index: self.$index, offset: self.$offset, headers: self.sectionNames).frame(width: UIScreen.main.bounds.width)
+            CostumeBarView(index: self.$index, headers: self.sectionNames).frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width : UIScreen.main.bounds.width )
             HStack(spacing: 0){
                 ForEach(self.sectionNames, id: \.self){sectionKey in
                     VStack{
@@ -234,7 +232,7 @@ struct RawDataView: View{
                         
                     }.padding(.all, 0)
                 }
-            }.offset(x: 0.5 * (CGFloat(self.sectionNames.count) - 1) * UIScreen.main.bounds.width + self.offset)
+            }.offset(x: 0.5 * (CGFloat(self.sectionNames.count) - 1) * UIScreen.main.bounds.width + (UIScreen.main.bounds.width * CGFloat(self.index) * -1.0))
                 .animation(.default)
                 .edgesIgnoringSafeArea(.all)
                 .padding(.all, 0)
@@ -247,7 +245,6 @@ struct RawDataView: View{
 struct CostumeBarView : View {
     
     @Binding var index : Int
-    @Binding var offset : CGFloat
     var headers: [String]
     var width = UIScreen.main.bounds.width
     
@@ -259,7 +256,7 @@ struct CostumeBarView : View {
                     Button(action: {
                         
                         self.index = i
-                        self.offset = CGFloat(-i) * UIScreen.main.bounds.width
+                        
                     }) {
                         
                         VStack(spacing: 8){

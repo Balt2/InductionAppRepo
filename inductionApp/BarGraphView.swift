@@ -11,11 +11,12 @@ import SwiftUI
 
 
 struct ScatterPlot: View{
+    @EnvironmentObject var orientationInfo: OrientationInfo
     var ar: CGFloat = 2
     let data: BarData
     var body: some View{
         ZStack{ //Whole backgoruund of graph
-                   Color("lightBlue")
+                   Color("lightBlue").opacity(orientationInfo.orientation.rawValue == "ben" ? 1.0 : 1.0)
                    
                    VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                        Text(self.data.title)
@@ -23,11 +24,6 @@ struct ScatterPlot: View{
                            .font(.title)
                            .padding([.top, .bottom], 10)
                     HStack(spacing: 0){
-                           Text(self.data.yAxisLabel)
-                               .rotationEffect(Angle(degrees: -90), anchor: .trailing)
-                               .font(.system(.subheadline))
-                                .padding(.leading, CGFloat(-4 * self.data.yAxisLabel.count)) //Offsets the large rectange box created by rotating the text view
-                                .padding(.trailing, 10) //Give space between text and graph
                         YAXisLabelView(data: self.data, scale: true).padding(.bottom, 10).padding(.top, -10).padding(.leading, 20).padding(.trailing, 5)
                         
                            ScatterGrid(data: self.data).padding(.trailing, 10)
@@ -51,9 +47,10 @@ struct ScatterPlot: View{
 }
 
 struct BarChart: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @Binding var showDetailTest : Bool
     @Binding var allDataTestIndex: Int
-    var width: CGFloat?
+    var width: CGFloat = 500
     var ar: CGFloat = 2
     let data: BarData
     var showLegend: Bool
@@ -61,7 +58,7 @@ struct BarChart: View {
     
     var body: some View {
         ZStack{ //Whole backgoruund of graph
-            Color("lightBlue")
+            Color("lightBlue").opacity(orientationInfo.orientation.rawValue == "ben" ? 1.0 : 1.0)
             
             VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                 Text(self.data.title)
@@ -69,11 +66,7 @@ struct BarChart: View {
                     .font(.title)
                     .padding([.top, .bottom], 10)
                 HStack{
-                    Text(self.data.yAxisLabel)
-                        .rotationEffect(Angle(degrees: -90), anchor: .trailing)
-                        .font(.system(.subheadline))
-                        .padding(.leading, CGFloat(-4 * self.data.yAxisLabel.count)) //Offsets the large rectange box created by rotating the text view
-                        .padding(.trailing, 10) //Give space between text and graph
+                    Spacer(minLength: 35.0) //To create space for the y-axis labels
                     Grid(data: self.data, horizontal: true, showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex).padding(.leading, 30).padding(.trailing, 10)
                 }.padding([.trailing], 15)
                     
@@ -91,7 +84,7 @@ struct BarChart: View {
                 }
             }
             
-        }.cornerRadius(20.0).frame(width: (width ?? UIScreen.main.bounds.width) * 0.95, height: (width ?? UIScreen.main.bounds.width) * 0.475)
+        }.cornerRadius(20.0).frame(width: (UIScreen.main.bounds.width) * 0.95, height: (UIScreen.main.bounds.width) * 0.475) // ?? UIScreen.main.bounds.width
             .aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
     }
     
@@ -158,16 +151,32 @@ struct YAXisLabelView: View{
     }
     
     var body: some View{
-        VStack{
-            ForEach(self.getStride(), id: \.self){i in
-                Group{
-                    Text(self.getAxisLabel(i: i))
-                    if i != 0{
-                        Spacer()
-                    }
+        HStack{
+            VStack(spacing: 0){
+                ForEach(self.getCharArray(str: self.data.yAxisLabel), id: \.self){letter in
+                    Text(String(letter)).rotationEffect(Angle(degrees: -90), anchor: .center).padding([.top, .bottom], -4).font(.system(.subheadline))
                 }
             }
+
+            VStack(spacing: 0){
+                ForEach(self.getStride(), id: \.self){i in
+                    Group{
+                        Text(self.getAxisLabel(i: i)).font(.system(.subheadline))
+                        if i != 0{
+                            Spacer()
+                        }
+                    }
+                }
+            }//.background(Color.green)
         }
+    }
+    
+    func getCharArray(str: String) -> [Character]{
+        var charArray: [Character] = []
+        for chr in str{
+            charArray.append(chr)
+        }
+        return charArray.reversed()
     }
     
     func getAxisLabel(i: Int) -> String{
@@ -190,6 +199,7 @@ struct YAXisLabelView: View{
     
 }
 struct ScatterGrid: View{
+    @EnvironmentObject var orientationInfo: OrientationInfo
     var data: BarData
     let diameter: CGFloat = 25.0
     var body: some  View{
@@ -210,7 +220,7 @@ struct ScatterGrid: View{
                     XAxisLabelView(data: self.data, scale: false).frame(width: self.diameter * CGFloat(self.data.barEntries.count)).padding([.trailing, .leading], self.diameter / 2.0)
                     
                 }
-        }.frame(width:  UIScreen.main.bounds.width * 0.8)
+        }.frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width * 0.8 : UIScreen.main.bounds.width * 0.8)
     }
     func createGridLines(geometry: CGSize) -> Path{
         var path = Path()
@@ -255,11 +265,14 @@ struct Grid: View {
     @Binding var allDataTestIndex: Int
     
     var body: some View{
+           
         GeometryReader{widthGeometry in
             VStack(alignment: .center){
                 
-                ZStack{
+                HStack{
+                   
                     GeometryReader{geometry in
+                        
                         self.createGridLines(geometry: geometry.size).stroke(Color.gray)
                         GeometryReader{innerGeometry in
                             ForEach(0..<self.data.barEntries.count, id: \.self) { i in
@@ -287,9 +300,13 @@ struct Grid: View {
                                 
                             }
                         }
-                        HStack(alignment: .center, spacing: 10){
-                            YAXisLabelView(data: self.data, scale: true).padding([.bottom,.top], -10)
-                        }.offset(x: self.paddingForY() , y: 0)
+                        
+                        //HStack(alignment: .center, spacing: 10){
+                        
+
+                        YAXisLabelView(data: self.data, scale: true).frame(maxHeight: geometry.size.height).offset(x: self.paddingForY(), y: 0) //.padding([ .bottom], -20)//.fixedSize(horizontal: true, vertical: true)
+                        //}.offset(x: self.paddingForY() , y: 0) .padding([.bottom,.top], -10) .offset(x: self.paddingForY() , y: 0)
+                        
                         
                     }
                 }
@@ -304,13 +321,13 @@ struct Grid: View {
     
     func paddingForY() -> CGFloat{
         if data.yAxisTotal > 999 {
-            return -45
+            return -57
         }else if data.yAxisTotal > 99{
-            return -35
+            return -47
         }else if data.yAxisTotal > 9{
-            return -25
+            return -37
         }else{
-            return -15
+            return -27
         }
     }
     
