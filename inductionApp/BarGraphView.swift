@@ -24,10 +24,10 @@ struct ScatterPlot: View{
                            .font(.title)
                            .padding([.top, .bottom], 10)
                     HStack(spacing: 0){
-                        YAXisLabelView(data: self.data, scale: true).padding(.bottom, 10).padding(.top, -10).padding(.leading, 20).padding(.trailing, 5)
+                        YAXisLabelView(data: self.data, scale: true, isScatter: true).padding(.bottom, 10).padding(.top, -10).padding(.trailing, 5) //padding(.leading, 20)
                         
                            ScatterGrid(data: self.data).padding(.trailing, 10)
-                       }.padding([.trailing], 15)
+                       }
                            
                     Text(self.data.xAxisLabel)
                     HStack{
@@ -41,8 +41,8 @@ struct ScatterPlot: View{
                     
                    }
                    
-               }.cornerRadius(20.0).frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.width * 0.475)
-            .aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
+        }.cornerRadius(20.0).aspectRatio(2.0, contentMode: .fill).padding([.leading, .trailing], 30) //.frame(width: (UIScreen.main.bounds.width) * 0.95, alignment: .center) // frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.width * 0.475)
+            //.aspectRatio(self.ar, contentMode: .fit)
     }
 }
 
@@ -50,15 +50,14 @@ struct BarChart: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     @Binding var showDetailTest : Bool
     @Binding var allDataTestIndex: Int
-    var width: CGFloat = 500
-    var ar: CGFloat = 2
     let data: BarData
     var showLegend: Bool
+    var isQuickData: Bool
     
     
     var body: some View {
         ZStack{ //Whole backgoruund of graph
-            Color("lightBlue").opacity(orientationInfo.orientation.rawValue == "ben" ? 1.0 : 1.0)
+            Color("lightBlue").opacity( (orientationInfo.orientation.rawValue == "ben" || data.barEntries[0].xLabel == " ") ? 1.0 : 1.0)
             
             VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                 Text(self.data.title)
@@ -83,9 +82,13 @@ struct BarChart: View {
                     }.padding(.bottom, 25)
                 }
             }
+            Text(data.barEntries[0].xLabel == " " ? "NO DATA" : "").font(.system(size: 50.0))
             
-        }.cornerRadius(20.0).frame(width: (UIScreen.main.bounds.width) * 0.95, height: (UIScreen.main.bounds.width) * 0.475) // ?? UIScreen.main.bounds.width
-            .aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
+        }.cornerRadius(20.0).aspectRatio(2.0, contentMode: self.isQuickData ? .fit : .fill).padding([.leading, .trailing], 30) //.frame(width: (UIScreen.main.bounds.width) * 0.95, alignment: .center)
+            .opacity(data.barEntries[0].xLabel == " " ? 0.25 : 1.0)
+            
+//            .frame(width: (UIScreen.main.bounds.width) * 0.95, height: (UIScreen.main.bounds.width) * 0.475, alignment: .center) // ?? UIScreen.main.bounds.width
+//            .aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)
     }
     
 }
@@ -145,6 +148,7 @@ struct XAxisLabelView: View{
 struct YAXisLabelView: View{
     var data: BarData
     var scale: Bool
+    var isScatter: Bool
     var labelJump: Int{
         return 1
         //return ((data.barEntries.count) / 25 + 1)
@@ -161,13 +165,13 @@ struct YAXisLabelView: View{
             VStack(spacing: 0){
                 ForEach(self.getStride(), id: \.self){i in
                     Group{
-                        Text(self.getAxisLabel(i: i)).font(.system(.subheadline))
+                        Text(self.getAxisLabel(i: i)).font(.system(.subheadline)).padding(.top, self.isScatter ? 0 : -10)
                         if i != 0{
                             Spacer()
                         }
                     }
                 }
-            }//.background(Color.green)
+            }
         }
     }
     
@@ -278,7 +282,7 @@ struct Grid: View {
                             ForEach(0..<self.data.barEntries.count, id: \.self) { i in
                                 BarShape(barEntry: self.data.barEntries[i], yAxisTotal: self.data.yAxisTotal)
                                     .frame(width: innerGeometry.size.width / CGFloat(self.data.barEntries.count), height: innerGeometry.size.height, alignment: .center)
-                                    .scaleEffect( (self.beingTapped.isTapped == true && self.beingTapped.index == i)  ? 0.9 : 1, anchor: .center)
+                                    .scaleEffect((self.beingTapped.isTapped == true && self.beingTapped.index == i)  ? 0.9 : 1, anchor: .center)
                                     .offset(x: self.offsetHelper(width: innerGeometry.size.width, index: i), y: 0)
                                     .onTapGesture()
                                         {
@@ -304,7 +308,7 @@ struct Grid: View {
                         //HStack(alignment: .center, spacing: 10){
                         
 
-                        YAXisLabelView(data: self.data, scale: true).frame(maxHeight: geometry.size.height).offset(x: self.paddingForY(), y: 0) //.padding([ .bottom], -20)//.fixedSize(horizontal: true, vertical: true)
+                        YAXisLabelView(data: self.data, scale: true, isScatter: false).offset(x: self.paddingForY(), y: 0) //.frame(maxHeight: geometry.size.height) //.padding([ .bottom], -20)//.fixedSize(horizontal: true, vertical: true)
                         //}.offset(x: self.paddingForY() , y: 0) .padding([.bottom,.top], -10) .offset(x: self.paddingForY() , y: 0)
                         
                         
@@ -321,13 +325,13 @@ struct Grid: View {
     
     func paddingForY() -> CGFloat{
         if data.yAxisTotal > 999 {
-            return -57
+            return -60
         }else if data.yAxisTotal > 99{
-            return -47
+            return -50
         }else if data.yAxisTotal > 9{
-            return -37
+            return -40
         }else{
-            return -27
+            return -30
         }
     }
     

@@ -80,14 +80,14 @@ struct PastPerformanceView: View {
                         
                         
                         
-                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentPerformanceData!.overallPerformance!, showLegend: false).frame(width: UIScreen.main.bounds.width)
+                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentPerformanceData!.overallPerformance!, showLegend: false, isQuickData: false).frame(width: UIScreen.main.bounds.width)
                         .animation(.default)
                         
                         CostumeBarView(index: self.$index, headers: user.currentPerformanceData!.higherSectionNames!).frame(width:  UIScreen.main.bounds.width)
                         
                         HStack(spacing: 0){
                             ForEach(user.currentPerformanceData!.higherSectionNames!, id: \.self){sectionKey in
-                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.user.currentPerformanceData!.sectionsOverall![sectionKey]!, showLegend: false).frame(width: UIScreen.main.bounds.width)
+                                BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.user.currentPerformanceData!.sectionsOverall![sectionKey]!, showLegend: false, isQuickData: false).frame(width: UIScreen.main.bounds.width)
                             }
                         }.offset(x: 0.5 * (CGFloat(self.user.currentPerformanceData!.higherSectionNames?.count ?? 4 ) - 1.0) * UIScreen.main.bounds.width + (UIScreen.main.bounds.width * CGFloat(self.index) * -1.0)).frame(alignment: .trailing) //(4-1) is headers.count - 1
                             .animation(.default)
@@ -226,7 +226,7 @@ struct RawDataView: View{
             HStack(spacing: 0){
                 ForEach(self.sectionNames, id: \.self){sectionKey in
                     VStack{
-                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionGraphs[sectionKey]!, showLegend: true).frame(width: UIScreen.main.bounds.width)
+                        BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.data.subSectionGraphs[sectionKey]!, showLegend: true, isQuickData: false).frame(width: UIScreen.main.bounds.width)
                         ScatterPlot(data:self.data.subSectionTime[sectionKey]!).frame(width: UIScreen.main.bounds.width)
                         
                         

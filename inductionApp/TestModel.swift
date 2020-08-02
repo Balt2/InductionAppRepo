@@ -137,7 +137,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         }
     }
     
-    func makeTestSectionForJson() -> TestSectionFromJson{
+    func makeTestSectionForJson(test: Test) -> TestSectionFromJson{
         print("MAKING TEST SECTION FOR JSON")
         var questionsForJson = [QuestionFromJson]()
         for question in self.questions{
@@ -150,6 +150,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
             
             questionsForJson.append(temp)
         }
+        self.setScaledScore(test: test)
         //This is a var because we will be giving it a scaled score
         let sectionForJson = TestSectionFromJson(name: self.name,
                                                  timeAllowed:  Int(self.allotedTime), startIndex: self.index.start,
@@ -163,21 +164,29 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     func setScaledScore(test: Test){
         //ACT
         if name == "English" && test.act == true{
-            scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
+            print("RAW SCORE ENGLISH ACT: \(rawScore)")
+            scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
         }else if name == "Science" && test.act == true{
+            print("RAW SCORE SCIENCE ACT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.scienceTestScore
         }else if name == "Math" && test.act == true{
+            print("RAW SCORE MATH ACT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else if name == "Reading" && test.act == true{
-            scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
+            print("RAW SCORE READING ACT: \(rawScore)")
+            scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
         //SAT
         }else if name == "Reading" && test.act == false{
+            print("RAW SCORE READING SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
         }else if name == "Writing" && test.act == false{
+            print("RAW SCORE WRITING SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
         }else if name == "Math No Calculator" && test.act == false{
+            print("RAW SCORE MATH NO CALCULATOR SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else if name == "Math Calculator" && test.act == false{
+            print("RAW MATH CALCULATOR SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else{
             print(name)
@@ -580,14 +589,15 @@ class Test: ObservableObject, Hashable, Identifiable {
         var sectionsForJson = [TestSectionFromJson]()
         
         for section in sections {
-            section.setScaledScore(test: self)
-            if section.name == "Reading" || section.name == "Writing"{
-                englishScore = englishScore ?? 0 + section.scaledScore!
-            }else if section.name == "Math No Calculator" || section.name == "Math Calculator" {
-                mathScore = mathScore ?? 0 + section.rawScore
+            let tempSection = section.makeTestSectionForJson(test: self)
+            
+            if tempSection.name == "Reading" || tempSection.name == "Writing" && act == false{
+                englishScore = englishScore ?? 0 + tempSection.scaledScore!
+            }else if tempSection.name == "Math No Calculator" || tempSection.name == "Math Calculator" && act == false {
+                mathScore = mathScore ?? 0 + tempSection.rawScore!
             }
-            let temp = section.makeTestSectionForJson()
-            sectionsForJson.append(temp)
+            
+            sectionsForJson.append(tempSection)
         }
         
         if englishScore != nil{
@@ -597,6 +607,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         if mathScore != nil{
             mathScore = self.scoreConvertDict[mathScore!]?.mathSectionTestScore
         }
+        
         print("TESTING ACT BOOLEAN")
         print(self.act)
         let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, math: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
@@ -616,7 +627,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func sendResultJson(user: User) {
         //Name of result: NameOfTest-UserID-Currentdate
-        let nameOfFile = "\(testFromJson!.testRefName)-\(user.id)-\(Date().toString(dateFormat: "MM-dd-yyyy"))"
+        let nameOfFile = "\(testFromJson!.testRefName)-\(user.id)-\(Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"))"
         let uploadRef = Storage.storage().reference(withPath:
             "\(user.association.associationID)/\(self.isFullTest == true ? "test" : "section")Results/\(nameOfFile).json")
         
@@ -633,6 +644,10 @@ class Test: ObservableObject, Hashable, Identifiable {
                     print("Document successfully updated")
                 }
             }
+            
+            
+            
+        
         }else{
             user.studyResultRefs.append(uploadRef.fullPath)
             self.db.collection("users").document(user.id).updateData([
@@ -670,10 +685,33 @@ class Test: ObservableObject, Hashable, Identifiable {
             print("ERROR Sending result json to local Storage")
         }
         
+        //Updating quick data
+        if self.act == true{
+            user.quickDataMapACT[nameOfFile] = [Date().toString(dateFormat: "MM-dd-yyyy") : self.overallScore]
+            self.db.collection("users").document(user.id).updateData(["quickDataMapACT" : user.quickDataMapACT]){error in
+                if let error = error{
+                    print("ERROR UPDATING QUICK DATA")
+                    //probably should delete new entry in quick mapACT
+                }else{
+                    print("SUCCESS UPDATING QUICK DATA")
+                }
+            }
+        }else{
+            user.quickDataMapSAT[nameOfFile] = [Date().toString(dateFormat: "MM-dd-yyyy") : self.overallScore]
+            self.db.collection("users").document(user.id).updateData(["quickDataMapSAT" : user.quickDataMapSAT]){error in
+                if let error = error{
+                    print("ERROR UPDATING QUICK DATA")
+                    //probably should delete new entry in quick mapACT
+                }else{
+                    print("SUCCESS UPDATING QUICK DATA")
+                }
+            }
+        }
+        
         user.getPerformanceDataComplete = false
         
         DispatchQueue.global(qos: .utility).async { //TODO: Make  functions to get rid of duplicate code
-            print("START ASYNC ADDING TEST")
+            print("START ASYNC ADDING TEST to performance")
             
             let tempTest = self.getTempTest(finalResultJson: finalResultJson, user: user)
             

@@ -142,7 +142,13 @@ class FirebaseManager: ObservableObject {
                                                 testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool] ) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
 //                        let testRefMapD = (dataDescription!["testRefsMap"])! as! [String: Bool]
 //                        self.currentUser?.testRefsMap = testRefMapD
-                        print(self.currentUser?.testRefsMap)
+                        if let dataMapSAT = dataDescription!["quickDataMapSAT"] {
+                            self.currentUser?.quickDataMapSAT = dataMapSAT as! [String : [String: Int]]
+                        }
+                        if let dataMapACT = dataDescription!["quickDataMapACT"] {
+                            self.currentUser?.quickDataMapACT = dataMapACT as! [String : [String : Int]]
+                        }
+                        
                         completionHandler(true)
                     }else{
                         //ERROR: No association found
@@ -165,7 +171,7 @@ class FirebaseManager: ObservableObject {
     func createUser(uid: String, fn: String, ln: String, aid: String, handler: @escaping (_ success: Bool) -> Void){
         //
         //
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1572cpre", "1874fpre", "67c", "cb5", "cb6", "cb9", "cb7"], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false] ]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1572cpre", "1874fpre", "67c", "cb5", "cb6", "cb9", "cb7"], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false], "quickDataMapSAT": [:], "quickDataMapACT": [:]]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)

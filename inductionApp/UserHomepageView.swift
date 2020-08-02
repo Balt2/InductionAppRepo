@@ -16,122 +16,97 @@ struct UserHomepageView: View {
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
     
+    //Used for quick data
+    @State var index = 0
     //NOT USED
     @State var showDetailTest = false
     @State var allDataTestIndex = -1
     //var emptyBarEntry = BarEntry(xLabel: "No Date", yEntries: [(height: 0, color: Color.gray)])
-    var emptyData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [BarEntry(xLabel: "No Date", yEntries: [(height: 0, color: Color.gray)])])
+    var emptyData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
     
     var body: some View {
-        NavigationView {
-           //HStack {
-                VStack(alignment: .center) {
-                    //HStack {
-                        
-                        Text("Hello: \(currentAuth.currentUser!.firstName)") //
+        NavigationView{
+            HStack(alignment: .top){
+                //Student name and buttons for next tests
+                VStack{
+                    //Circle with initilias and name
+                    HStack{
+                        ZStack{
+                            Circle().foregroundColor(.blue)//.background(Color.black)
+                            Text(String(user.firstName.first ?? "N") + String(user.lastName.first ?? "A"))
+                                .fontWeight(.bold)
+                                .foregroundColor(Color.white)
+                                .font(.system(size: 30))
+                        }.frame(width: 80)
+                        Text("\(currentAuth.currentUser!.firstName + " " + currentAuth.currentUser!.lastName)")
+                            .foregroundColor(Color.blue)
                             .fontWeight(.bold)
-                            .modifier(nameLabelStyle())
-//                        Spacer()
-//                        Text("Tutor: Induction Learning") //\(currentAuth.currentUser!.association.name)
-//                            .fontWeight(.bold)
-//                            .modifier(nameLabelStyle())
-                    //}
-                    //.padding()
-                    VStack() {
-                        //VStack (alignment: .leading) {
-                            
-                            
-                            NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
-                                HStack{
-                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
-                                    Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
-                                }
-                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
-                                .disabled(user.getTestsComplete == false)
-                            
-                            
-                            
-//                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
-//                                HStack{
-//                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
-//                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
-//                                }
-//                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
-//                                .disabled(user.getTestsComplete == false)
-                            
-                            NavigationLink(destination: PastPerformanceView(user: user)){ //allSATPerformanceData
-                                HStack{
-                                    getLoadingIcon(imageName: "archivebox", checkBool: user.getPerformanceDataComplete)
-                                    Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")
-                                }
-                            }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false || user.showACTData == nil))
-                                .disabled(user.getPerformanceDataComplete == false || user.showACTData == nil)
-//                            Button(action: {       //NavigationLink(destination: PastPerformanceTable()){
-//
-//                            }){
-//                                HStack{
-//                                    Image(systemName: "archivebox")
-//                                    Text("Past Performance")
-//                                }
-//                            }.buttonStyle(buttonBackgroundStyle())
-                            
-//                            Button(action: {
-//                                //what the button does
-//                            }) {
-//                                HStack {
-//                                    Image(systemName: "lightbulb")
-//                                    Text("Reccomended Study")
-//                                }
-//                            }
-//                            .buttonStyle(buttonBackgroundStyle())
-                            
-                            Button(action: {
-                                if self.currentAuth.signOut() == true {
-                                    print("Sucsess Logging out!")
-                                } else {
-                                    print("Failed to log out")
-                                }
-                            }) {
-                                HStack {
-                                    Image(systemName: "arrow.right.circle")
-                                    Text("Sign out")
-                                }
-                            }
-                            .buttonStyle(buttonBackgroundStyle())
-                            
-                            //Spacer()
-//                            if user.association.image != nil{
-//                                Image(uiImage: user.association.image!)
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fit)
-//                                    .frame(width: 100)
-//                                    .padding()
-//                            }else{
-                                
-                            //}
-                            
-                            
-                            
-//                        }
-//                        .padding()
-                        
-//                        VStack {
-                            //BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: $allDataTestIndex, width: UIScreen.main.bounds.width * 0.4, data: emptyData, showLegend: false)
-//                            BarContentView()
-//                            Spacer()
-//                        }
-//                        Spacer()
-                    }
-                    Image("ilLogo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 300)
-                    .padding()
-                }
-                .navigationBarTitle("Home Page", displayMode: .inline)
-            //}
-        }.navigationViewStyle((StackNavigationViewStyle()))
+                    }.frame(height: 80)
+                    //Buttons
+                    
+                    //Link for taking a test
+                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
+                       HStack{
+                           getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
+                           Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
+                       }
+                   }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
+                       .disabled(user.getTestsComplete == false)
+                    
+                    
+                    //Past Performance
+                    NavigationLink(destination: PastPerformanceView(user: user)){ //allSATPerformanceData
+                       HStack{
+                           getLoadingIcon(imageName: "archivebox", checkBool: user.getPerformanceDataComplete)
+                           Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")
+                       }
+                   }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false || user.showACTData == nil))
+                       .disabled(user.getPerformanceDataComplete == false || user.showACTData == nil)
+                    
+                    
+                    //Sign out
+                    Button(action: {
+                        if self.currentAuth.signOut() == true {
+                            print("Sucsess Logging out!")
+                        } else {
+                            print("Failed to log out")
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.right.circle")
+                            Text("Sign out")
+                        }
+                    }.buttonStyle(buttonBackgroundStyle())
+                    
+                }.padding(.top, 20).padding(.leading, 5)
+                
+                VStack{
+                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.quickDataACTBarData, showLegend: false, isQuickData: true)
+                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.quickDataSATBarData, showLegend: false, isQuickData: true)
+                }.padding([.top, .bottom], 20)
+
+            }.navigationBarTitle("Home Page", displayMode: .inline)
+            }.navigationViewStyle((StackNavigationViewStyle()))
     }
+//
+//
+//                    //                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
+//                    //                                HStack{
+//                    //                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
+//                    //                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
+//                    //                                }
+//                    //                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+//                    //                                .disabled(user.getTestsComplete == false)
+//
+//
+//                Image("ilLogo")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .frame(width: 300)
+//                    .padding()
+//            }
+//        }
+//    }
     
     func getLoadingIcon(imageName: String, checkBool: Bool) -> AnyView{
         if checkBool == true {
@@ -141,13 +116,6 @@ struct UserHomepageView: View {
         }
     }
     
-    func saveContext() {
-      do {
-        try managedObjectContext.save()
-      } catch {
-        print("Error saving managed object context: \(error)")
-      }
-    }
     
 }
 

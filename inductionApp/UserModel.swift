@@ -42,6 +42,36 @@ class User: ObservableObject, Equatable {
         }
     }
     
+    var quickDataACTBarData: BarData{
+        if quickDataMapACT.isEmpty{
+            return BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
+        }else{
+            var barData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [])
+            for (_, dateAndScore) in quickDataMapACT{
+                for (date, score) in dateAndScore{
+                    let newBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(score), color: Color("salmon"))])
+                    barData.barEntries.append(newBarEntry)
+                }
+            }
+            return barData
+        }
+    }
+    
+    var quickDataSATBarData: BarData{
+        if quickDataMapSAT.isEmpty{
+            return BarData(title: "SAT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 1600, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
+        }else{
+            var barData = BarData(title: "SAT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 1600, barEntries: [])
+            for (_, dateAndScore) in quickDataMapSAT{
+                for (date, score) in dateAndScore{
+                    let newBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(score), color: Color("salmon"))])
+                    barData.barEntries.append(newBarEntry)
+                }
+            }
+            return barData
+        }
+    }
+    
     @Published var getTestsComplete = false
     @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
@@ -51,6 +81,9 @@ class User: ObservableObject, Equatable {
     var testResultRefs: [String]
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
+    
+    var quickDataMapSAT = [String: [String: Int]]()
+    var quickDataMapACT = [String: [String: Int]]()
     
     
     init(fn: String, ln: String, id: String, association: Association, testRefs: [String], testResultRefs: [String], testRefsMap: [String: Bool]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
