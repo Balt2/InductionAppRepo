@@ -237,7 +237,7 @@ class ACTFormatedTestData: Test{
             subSectionTime[section.name] = timingData
             
             var barData = BarData(
-                title: "\(section.name) by sub section",
+                title: "\(section.name) by Sub Category",
                 xAxisLabel: "Categories",
                 yAxisLabel: "Questions",
                 yAxisSegments: 5,
