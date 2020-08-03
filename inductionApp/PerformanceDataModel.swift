@@ -78,7 +78,7 @@ class AllACTData{
                     xAxisLabel: "Dates",
                     yAxisLabel: "Score",
                     yAxisSegments: 4,
-                    yAxisTotal: self.isACT! ? 36 : 1600,
+                    yAxisTotal: self.isACT! ? 36 : 800,
                     barEntries: entries)
                 sectionGraphs[section] = tempGraph
             }

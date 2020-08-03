@@ -53,6 +53,13 @@ class User: ObservableObject, Equatable {
                     barData.barEntries.append(newBarEntry)
                 }
             }
+            
+            //Sort bar entries in quick data by date
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM-dd-yyyy"
+            barData.barEntries.sort(by: {dateFormatter.date(from: ($0.xLabel))! < dateFormatter.date(from: ($1.xLabel))!})
+            
+            //Return Bar data
             return barData
         }
     }
@@ -68,6 +75,13 @@ class User: ObservableObject, Equatable {
                     barData.barEntries.append(newBarEntry)
                 }
             }
+            
+            //Sort bar entries in quick data by date
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM-dd-yyyy"
+            barData.barEntries.sort(by: {dateFormatter.date(from: ($0.xLabel))! < dateFormatter.date(from: ($1.xLabel))!})
+            
+            //return Bar data
             return barData
         }
     }
@@ -353,8 +367,8 @@ class User: ObservableObject, Equatable {
                             print("ERROR GETTING SPECIFIC Png")
                             //Probably want to revert back to PDFs
                         }else{
-                            print("GOT PNG")
-                            print(item)
+//                            print("GOT PNG")
+//                            print(item)
                             pngsWName.append((name: item.name, data: data!))
                             //pngs.append(data!)
                             if index == result.items.count  - 1 {

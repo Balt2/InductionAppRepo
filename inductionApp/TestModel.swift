@@ -339,8 +339,14 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.act = self.testFromJson!.act
             self.name = self.testFromJson!.name
             if corrections == true{
+                print("CREATING CORRECTIONS: ACT: \(self.act)")
+                print(self.englishScore)
                 self.englishScore = self.testFromJson?.english
-                self.mathScore = self.testFromJson?.math
+                print(self.englishScore)
+                print(self.mathScore)
+                self.mathScore = self.testFromJson?.mathScore
+                print(self.mathScore)
+                print(self.testFromJson?.overallScore)
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM-dd-yyyy"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -369,7 +375,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.name = self.testFromJson!.name
             if corrections == true{
                 self.englishScore = self.testFromJson?.english
-                self.mathScore = self.testFromJson?.math
+                self.mathScore = self.testFromJson?.mathScore
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM-dd-yyyy"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -397,7 +403,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.act = self.testFromJson?.act
             self.name = self.testFromJson!.name
             self.englishScore = self.testFromJson?.english
-            self.mathScore = self.testFromJson?.math
+            self.mathScore = self.testFromJson?.mathScore
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "MM-dd-yyyy"
             let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -610,7 +616,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         print("TESTING ACT BOOLEAN")
         print(self.act)
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, math: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, mathScore: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -787,7 +793,7 @@ struct TestFromJson: Codable {
     
     //Values only in the test result JSON
     var overallScore: Int? //SAT and ACT
-    var math: Int? //SAT
+    var mathScore: Int? //SAT
     var english: Int? //SAT
     var dateTaken: String?
     
