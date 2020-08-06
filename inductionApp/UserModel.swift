@@ -31,60 +31,38 @@ class User: ObservableObject, Equatable {
     
     @Published var allACTPerformanceData: AllACTData?
     @Published var allSATPerformanceData: AllACTData?
-    @Published var showACTData: Bool?
+    @Published var allPSATPerformanceData: AllACTData?
+    
+    //@Published var showACTData: Bool?
+    @Published var showTestType: TestType?
     var currentPerformanceData: AllACTData?{
-        if showACTData == true{
+        if showTestType == .act {
             return allACTPerformanceData
-        }else if showACTData == false{
+        }else if showTestType == .sat {
             return allSATPerformanceData
+        }else if showTestType == .psat {
+            return allPSATPerformanceData
         }else{
             return nil
         }
     }
     
-    var quickDataACTBarData: BarData{
-        if quickDataMapACT.isEmpty{
-            return BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
-        }else{
-            var barData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [])
-            for (_, dateAndScore) in quickDataMapACT{
-                for (date, score) in dateAndScore{
-                    let newBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(score), color: Color("salmon"))])
-                    barData.barEntries.append(newBarEntry)
-                }
-            }
-            
-            //Sort bar entries in quick data by date
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MM-dd-yyyy"
-            barData.barEntries.sort(by: {dateFormatter.date(from: ($0.xLabel))! < dateFormatter.date(from: ($1.xLabel))!})
-            
-            //Return Bar data
-            return barData
+    var currentQuickData: QuickData {
+        if showTestType == .act {
+            return quickDataACT
+        }else if showTestType == .sat {
+            return quickDataSAT
+        }else{ //SAT or PSAT or Nil
+            return quickDataSAT //quickDataSATBarData
         }
     }
     
-    var quickDataSATBarData: BarData{
-        if quickDataMapSAT.isEmpty{
-            return BarData(title: "SAT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 1600, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
-        }else{
-            var barData = BarData(title: "SAT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 1600, barEntries: [])
-            for (_, dateAndScore) in quickDataMapSAT{
-                for (date, score) in dateAndScore{
-                    let newBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(score), color: Color("salmon"))])
-                    barData.barEntries.append(newBarEntry)
-                }
-            }
-            
-            //Sort bar entries in quick data by date
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MM-dd-yyyy"
-            barData.barEntries.sort(by: {dateFormatter.date(from: ($0.xLabel))! < dateFormatter.date(from: ($1.xLabel))!})
-            
-            //return Bar data
-            return barData
-        }
-    }
+
+    
+    
+    
+    
+    
     
     @Published var getTestsComplete = false
     @Published var getPerformanceDataComplete = false
@@ -96,7 +74,8 @@ class User: ObservableObject, Equatable {
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
     
-    var quickDataMapSAT = [String: [String: Int]]()
+    @ObservedObject var quickDataSAT = QuickData(testType: .sat)
+    @ObservedObject var quickDataACT = QuickData(testType: .act)
     var quickDataMapACT = [String: [String: Int]]()
     
     
@@ -203,10 +182,12 @@ class User: ObservableObject, Equatable {
                         
                         
                         if self.allACTPerformanceData != nil {
-                            self.showACTData = true
+                            self.showTestType = .act
+                            //self.showACTData = true
                             print("SHOW ACT TRUE")
                         }else if self.allSATPerformanceData != nil {
-                            self.showACTData = false
+                            //self.showACTData = false
+                            self.showTestType = .sat
                             print("SHOW SAT TRUE")
                         }
                         print(actPerformanceTests.count)
@@ -384,56 +365,34 @@ class User: ObservableObject, Equatable {
             }
         }
     }
+}
+
+enum TestType: String {
+    case sat = "SAT"
+    case act = "ACT"
+    case psat = "PSAT"
     
+    func getTotalScore() -> Int{
+        switch self{
+        case .sat:
+            return 1600
+        case .act:
+            return 36
+        case .psat:
+            return 1520
+        }
+    }
     
-    
-    //DONT USE ANYMORE. USINGN AS EXAMPLE OF LIST ALL
-    //    func getTestPDFs(completionHandler: @escaping (_ jsons: [(Data, String)]) -> ()) {
-    //        print("Getting PDFs...")
-    //        var pdfDataList: [(Data, String)] = []
-    //        let storageRef = Storage.storage().reference().child("\(association.associationID)Files/testPDFS")
-    //        storageRef.listAll { (result, error) in
-    //
-    //            if let error = error {
-    //                print("ERROR RETRIVEVING PDF's FROM DATABASE with error: \(error)")
-    //                completionHandler(pdfDataList)
-    //            }
-    //            print("PDF Prefixes")
-    //            print(result.prefixes)
-    //            for prefix in result.prefixes {
-    //                // The prefixes under storageReference.
-    //                // You may call listAll(completion:) recursively on them.
-    //            }
-    //            print("PDFS ARRAY: \(result.items)")
-    //            for item in result.items {
-    //                print(item.name)
-    //                item.getData(maxSize: 40 * 1024 * 1024){data, error in
-    //                    if let error = error {
-    //                        print("Error retriving PDF")
-    //                    }else{
-    //                        print("PDF DATA: \(data)")
-    //                        pdfDataList.append( (data!, item.name))
-    //
-    //                        if pdfDataList.count == result.items.count {
-    //                            print("Done Loading PDFS")
-    //                            completionHandler(pdfDataList)
-    //                        }
-    //
-    //                    }
-    //
-    //                }
-    //
-    //
-    //            }
-    //            if result.items.count == 0 {
-    //                completionHandler(pdfDataList)
-    //            }
-    //        }
-    //
-    //        //let storageRef = Storage.storage().reference(withPath: "\(associationID)Files")
-    //    }
-    
-    
+    func getSubSectionTotalScore() -> Int{
+        switch self {
+        case .sat:
+            return 800
+        case .act:
+            return 36
+        case .psat:
+            return 760
+        }
+    }
 }
 
 

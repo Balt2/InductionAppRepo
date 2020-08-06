@@ -139,14 +139,16 @@ class FirebaseManager: ObservableObject {
                                                 ln: dataDescription!["lastN"] as! String,
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
-                                                testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool] ) //"1904sFilled",  //dataDescription!["testRefs"] as! [String]
-//                        let testRefMapD = (dataDescription!["testRefsMap"])! as! [String: Bool]
-//                        self.currentUser?.testRefsMap = testRefMapD
+                                                testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool] ) //"1904sFilled",  
+
                         if let dataMapSAT = dataDescription!["quickDataMapSAT"] {
-                            self.currentUser?.quickDataMapSAT = dataMapSAT as! [String : [String: Int]]
+                            let structuredDataMapSAT = dataMapSAT as! [String: [String : [String: Int]]]
+                            self.currentUser?.quickDataSAT.createData(nsDictionary: structuredDataMapSAT)
                         }
+                        
                         if let dataMapACT = dataDescription!["quickDataMapACT"] {
-                            self.currentUser?.quickDataMapACT = dataMapACT as! [String : [String : Int]]
+                            let structuredDataMapACT = dataMapACT as! [String: [String : [String: Int]]]
+                            self.currentUser?.quickDataACT.createData(nsDictionary: structuredDataMapACT)
                         }
                         
                         completionHandler(true)

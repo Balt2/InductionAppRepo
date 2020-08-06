@@ -45,35 +45,7 @@ struct PastPerformanceView: View {
                                     .fill(Color("lightBlue"))
                                     .font(orientationInfo.orientation.rawValue == "Ben" ? .largeTitle : .largeTitle)
                                     .frame(width: 300)
-                                Text("ACT Results").font(.system(.largeTitle)).foregroundColor(user.showACTData! ? .red : .gray)
-                            }.onTapGesture{
-                                if self.user.showACTData == false{
-                                    self.user.showACTData = true
-                                    if self.user.currentPerformanceData == nil {
-                                        self.user.showACTData!.toggle()
-                                        print("Toggling back because invalid")
-                                    }else{
-                                        self.index = 0
-                                    }
-                                }
-                            }
-                            
-                            ZStack{
-                                RoundedRectangle(cornerRadius: 5)
-                                .fill(Color("lightBlue"))
-                                    .font(.largeTitle)
-                                    .frame(width: 300)
-                                Text("SAT Results").font(.system(.largeTitle)).foregroundColor(user.showACTData! ? .gray : .red)
-                            }.onTapGesture {
-                                if self.user.showACTData == true{
-                                    self.user.showACTData = false
-                                    if self.user.currentPerformanceData == nil {
-                                        self.user.showACTData!.toggle()
-                                        print("Toggling back because invalid")
-                                    }else{
-                                        self.index = 0
-                                    }
-                                }
+                                Text("\(user.showTestType!.rawValue) Results").font(.system(.largeTitle)).foregroundColor(.red)
                             }
                             
                         }

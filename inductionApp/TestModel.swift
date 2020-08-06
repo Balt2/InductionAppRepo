@@ -441,7 +441,6 @@ class Test: ObservableObject, Hashable, Identifiable {
         begunTest = true
         nextSection(fromStart: true)
         
-        
     }
     
     //Called at the end of a section
@@ -693,20 +692,20 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         //Updating quick data
         if self.act == true{
-            user.quickDataMapACT[nameOfFile] = [Date().toString(dateFormat: "MM-dd-yyyy") : self.overallScore]
-            self.db.collection("users").document(user.id).updateData(["quickDataMapACT" : user.quickDataMapACT]){error in
+            user.quickDataACT.addNewTest(test: self, testResultName: nameOfFile)
+            self.db.collection("users").document(user.id).updateData(["quickDataMapACT" : user.quickDataACT.databaseDictionary]){error in
                 if let error = error{
-                    print("ERROR UPDATING QUICK DATA")
+                    print("ERROR UPDATING QUICK DATA: \(error)")
                     //probably should delete new entry in quick mapACT
                 }else{
                     print("SUCCESS UPDATING QUICK DATA")
                 }
             }
         }else{
-            user.quickDataMapSAT[nameOfFile] = [Date().toString(dateFormat: "MM-dd-yyyy") : self.overallScore]
-            self.db.collection("users").document(user.id).updateData(["quickDataMapSAT" : user.quickDataMapSAT]){error in
+            user.quickDataSAT.addNewTest(test: self, testResultName: nameOfFile)
+            self.db.collection("users").document(user.id).updateData(["quickDataMapSAT" : user.quickDataSAT.databaseDictionary]){error in
                 if let error = error{
-                    print("ERROR UPDATING QUICK DATA")
+                    print("ERROR UPDATING QUICK DATA: \(error)")
                     //probably should delete new entry in quick mapACT
                 }else{
                     print("SUCCESS UPDATING QUICK DATA")
@@ -728,8 +727,8 @@ class Test: ObservableObject, Hashable, Identifiable {
                     if user.allACTPerformanceData == nil{
                         print("ACT IS NIL")
                         user.allACTPerformanceData = AllACTData(tests: [tempTest], user: user)
-                        if user.showACTData == nil{
-                            user.showACTData = true
+                        if user.showTestType == nil{
+                            user.showTestType = .act
                         }
                         user.getPerformanceDataComplete = true
                     }else{
@@ -740,8 +739,8 @@ class Test: ObservableObject, Hashable, Identifiable {
                 }else{
                     if user.allSATPerformanceData == nil{
                         user.allSATPerformanceData = AllACTData(tests: [tempTest], user: user)
-                        if user.showACTData == nil{
-                            user.showACTData = false
+                        if user.showTestType == nil{
+                            user.showTestType = .sat
                         }
                         user.getPerformanceDataComplete = true
                     }else{

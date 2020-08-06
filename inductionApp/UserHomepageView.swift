@@ -15,9 +15,10 @@ struct UserHomepageView: View {
     @ObservedObject var user: User
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
+    @State private var showSettingSheet: Bool = false
     
     //Used for quick data
-    @State var index = 0
+    @State var updateView = true
     //NOT USED
     @State var showDetailTest = false
     @State var allDataTestIndex = -1
@@ -46,23 +47,52 @@ struct UserHomepageView: View {
                     
                     //Link for taking a test
                     NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
-                       HStack{
-                           getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
-                           Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
-                       }
-                   }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
-                       .disabled(user.getTestsComplete == false)
+                        HStack{
+                            getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
+                            Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
+                        }
+                    }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false)) //.isDetailLink(false)
+                        .disabled(user.getTestsComplete == false)
                     
                     
                     //Past Performance
                     NavigationLink(destination: PastPerformanceView(user: user)){ //allSATPerformanceData
-                       HStack{
-                           getLoadingIcon(imageName: "archivebox", checkBool: user.getPerformanceDataComplete)
-                           Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")
-                       }
-                   }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false || user.showACTData == nil))
-                       .disabled(user.getPerformanceDataComplete == false || user.showACTData == nil)
+                        HStack{
+                            getLoadingIcon(imageName: "archivebox", checkBool: user.getPerformanceDataComplete)
+                            Text(user.getPerformanceDataComplete == true ? "Past Performance" : "Loading Performance...")
+                        }
+                    }.buttonStyle(buttonBackgroundStyle(disabled: user.getPerformanceDataComplete == false || user.showTestType == nil))
+                        .disabled(user.getPerformanceDataComplete == false || user.showTestType == nil)
                     
+                    Button(action: {
+                        self.showSettingSheet = true
+                        print("BENJAMIN")
+                    }){
+                        Text("Settings")
+                    }.buttonStyle(buttonBackgroundStyle())
+                    .actionSheet(isPresented: $showSettingSheet){
+                            ActionSheet(title: Text("Test Type"),
+                                        message: Text("Select which test you want to take. This will change the contents of your testing library."),
+                                        buttons: [
+                                            
+                                            .default(Text("ACT"), action: {
+                                                if self.user.allACTPerformanceData != nil {
+                                                    self.user.showTestType = .act
+                                                }
+                                            }),
+                                            .default(Text("SAT"), action: {
+                                                if self.user.allSATPerformanceData != nil {
+                                                    self.user.showTestType = .sat
+                                                }
+                                            }),
+                                            .default(Text("PSAT"), action: {
+                                                if self.user.allPSATPerformanceData != nil {
+                                                    self.user.showTestType = .psat
+                                                }
+                                            })
+                            ])
+                    }
+
                     
                     //Sign out
                     Button(action: {
@@ -80,33 +110,54 @@ struct UserHomepageView: View {
                     
                 }.padding(.top, 20).padding(.leading, 5)
                 
+                
                 VStack{
-                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.quickDataACTBarData, showLegend: false, isQuickData: true)
-                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.quickDataSATBarData, showLegend: false, isQuickData: true)
+                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.overallBarData, showLegend: false, isQuickData: true)
+                    HStack{
+                        ForEach(user.currentQuickData.sectionNames, id: \.self){sectionName in
+                            Group{
+                                Spacer()
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 15).frame(width: 120, height: 50).foregroundColor(self.updateView ? .black : .black)
+                                    Text(sectionName).foregroundColor(sectionName == self.user.currentQuickData.currentSectionString ? .blue : .white)
+                                }.onTapGesture {
+                                    print("DANIEL")
+                                    self.updateView.toggle()
+                                    self.user.currentQuickData.currentSectionString = sectionName
+                                    
+                                }
+                            }
+                        }
+                        Spacer()
+                    }
+                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.currentSectionBarData, showLegend: false, isQuickData: true)
                 }.padding([.top, .bottom], 20)
-
+                
             }.navigationBarTitle("Home Page", displayMode: .inline)
-            }.navigationViewStyle((StackNavigationViewStyle()))
+                        
+                
+        }.navigationViewStyle((StackNavigationViewStyle()))
+        
     }
-//
-//
-//                    //                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
-//                    //                                HStack{
-//                    //                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
-//                    //                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
-//                    //                                }
-//                    //                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
-//                    //                                .disabled(user.getTestsComplete == false)
-//
-//
-//                Image("ilLogo")
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fit)
-//                    .frame(width: 300)
-//                    .padding()
-//            }
-//        }
-//    }
+    //
+    //
+    //                    //                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
+    //                    //                                HStack{
+    //                    //                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
+    //                    //                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
+    //                    //                                }
+    //                    //                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
+    //                    //                                .disabled(user.getTestsComplete == false)
+    //
+    //
+    //                Image("ilLogo")
+    //                    .resizable()
+    //                    .aspectRatio(contentMode: .fit)
+    //                    .frame(width: 300)
+    //                    .padding()
+    //            }
+    //        }
+    //    }
     
     func getLoadingIcon(imageName: String, checkBool: Bool) -> AnyView{
         if checkBool == true {

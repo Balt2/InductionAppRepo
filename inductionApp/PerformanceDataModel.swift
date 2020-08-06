@@ -300,3 +300,107 @@ struct BarEntry: Hashable, Identifiable, Equatable{
     var yEntries: [(height: CGFloat, color: Color)]
     var index: Int?
 }
+
+
+
+class QuickData: ObservableObject {
+    
+    @Published var overallBarData: BarData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
+
+    @Published var sectionBarData: [String: BarData] = [:] //English: BarData, Math: BarData
+    @Published var currentSectionString: String = ""
+    var currentSectionBarData: BarData {
+        return sectionBarData[currentSectionString]!
+    }
+    var sectionNames = [String]()
+    let testType: TestType
+    var databaseDictionary = [String: [String : [String: Int]]]()
+    
+    init(testType: TestType){
+        self.testType = testType
+    }
+    
+    func addNewTest(test: Test, testResultName: String){
+        let newEntry = getNewDictEntry(test: test)
+        databaseDictionary[testResultName] = newEntry
+        
+        let newOverallBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.overallScore), color: Color("salmon"))])
+        overallBarData.barEntries.append(newOverallBarEntry)
+        
+        
+        if testType == .sat || testType == .psat{
+            let mathSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.mathScore!), color: Color("salmon"))])
+            let englishSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.englishScore!), color: Color("salmon"))])
+            sectionBarData["Math"]?.barEntries.append(mathSectionBarEntry)
+            sectionBarData["English"]?.barEntries.append(englishSectionBarEntry)
+        }else if testType == .act {
+            for section in test.sections{
+                let sectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(section.scaledScore!), color: Color("salmon"))])
+                sectionBarData[section.name]?.barEntries.append(sectionBarEntry)
+            }
+        }
+        
+    }
+    
+    private func getNewDictEntry(test: Test) -> [String : [String: Int]] {
+        switch testType{
+        case .sat, .psat:
+            return [Date().toString(dateFormat: "MM-dd-yyyy") :
+            ["overall":test.overallScore,
+            "Math":test.mathScore!,
+                "English":test.englishScore!
+            ]]
+        case .act:
+            var tempSectionDict = [String: Int]()
+            tempSectionDict["overall"] = test.overallScore
+            for section in test.sections{
+                tempSectionDict[section.name] = section.scaledScore!
+            }
+            return [Date().toString(dateFormat: "MM-dd-yyyy") :
+            tempSectionDict]
+        }
+    }
+    
+    func createData(nsDictionary: [String: [String : [String: Int]]]){
+        databaseDictionary = nsDictionary
+        overallBarData = BarData(title: "\(testType.rawValue) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: testType.getTotalScore(), barEntries: [])
+        for (testName, dateMap) in nsDictionary{
+            for (date, sectionMap) in dateMap {
+                
+                
+                let newOverallBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(sectionMap["overall"]!), color: Color("salmon"))])
+                overallBarData.barEntries.append(newOverallBarEntry)
+                
+                
+                var sectionMapWOOverall = sectionMap
+                sectionMapWOOverall["overall"] = nil
+                
+                for (sectionName, score) in sectionMapWOOverall{
+                    let newBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(score), color: Color("salmon"))])
+                    if self.sectionBarData[sectionName] == nil{
+                        sectionBarData[sectionName] = BarData(title: "\(sectionName) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: testType.getSubSectionTotalScore(), barEntries: [newBarEntry])
+                    }else{
+                        self.sectionBarData[sectionName]?.barEntries.append(newBarEntry)
+                    }
+                }
+                
+            }
+        }
+        //Sort bar entries in quick data by date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM-dd-yyyy"
+        overallBarData.barEntries.sort(by: {dateFormatter.date(from: ($0.xLabel))! < dateFormatter.date(from: ($1.xLabel))!})
+        
+        sectionNames = Array(sectionBarData.keys)
+        
+        for sectionName in sectionNames{
+            sectionBarData[sectionName]?.barEntries
+                .sort(by: {dateFormatter.date(from: ($0.xLabel))! < dateFormatter.date(from: ($1.xLabel))!})
+        }
+        
+        sectionNames.sort()
+        currentSectionString = sectionNames[0]
+    }
+    
+    
+}
