@@ -33,7 +33,7 @@ struct TestView: View {
                         List{
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
-                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true, shouldScroll: self.$shouldScroll, showPopUp: self.$shouldScroll, popUpQuestionIndex: self.$neverUseIndex)
+                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.testType! == .act, shouldScroll: self.$shouldScroll, showPopUp: self.$shouldScroll, popUpQuestionIndex: self.$neverUseIndex)
                                 }
                             }.disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
                             
@@ -135,7 +135,7 @@ struct PageView: View{
             Image(uiImage: self.model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
             GeometryReader { geo in
-                CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), act: true, isActMath: false), page: self.model, section: self.section, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
+                CanvasRepresentable(question: Question(q: QuestionFromJson(id: "", officialSub: "", tutorSub: "", answer: "", reason: ""), ip: IndexPath(row: 600, section: 600), testType: TestType(rawValue: "ACT")!, isActMath: false), page: self.model, section: self.section, isAnswerSheet: false, protoRect: CGRect(), canvasGeo: geo.size)
             }
         }
     }

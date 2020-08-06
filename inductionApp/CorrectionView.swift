@@ -36,7 +36,7 @@ struct CorrectionView: View {
                         List{
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
-                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.act == true, disabled: true, shouldScroll: self.$shouldScroll, showPopUp: self.$showPopUp, popUpQuestionIndex: self.$popUpQuestionIndex)
+                                    AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.testType! == .act, disabled: true, shouldScroll: self.$shouldScroll, showPopUp: self.$showPopUp, popUpQuestionIndex: self.$popUpQuestionIndex)
 //                                    .onTapGesture {
 //                                            print("CORRECTION CELL TAPPED")
 //                                            self.popUpQuestionIndex = question.location.row
@@ -116,7 +116,7 @@ struct CorrectionView: View {
                         Spacer()
                         Text("Official Sub Section: \(self.testData.currentSection!.questions[popUpQuestionIndex].officialSub)")
                         Spacer()
-                        if testData.act == false{
+                        if testData.testType == .sat || testData.testType == .psat{
                             Text(self.testData.currentSection!.questions[popUpQuestionIndex].reason).lineLimit(nil)
                         }
                         

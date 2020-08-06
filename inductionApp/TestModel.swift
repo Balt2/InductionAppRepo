@@ -163,34 +163,33 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     
     func setScaledScore(test: Test){
         //ACT
-        if name == "English" && test.act == true{
+        if name == "English" && test.testType == .act{
             print("RAW SCORE ENGLISH ACT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
-        }else if name == "Science" && test.act == true{
+        }else if name == "Science" && test.testType == .act{
             print("RAW SCORE SCIENCE ACT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.scienceTestScore
-        }else if name == "Math" && test.act == true{
+        }else if name == "Math" && test.testType == .act{
             print("RAW SCORE MATH ACT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
-        }else if name == "Reading" && test.act == true{
+        }else if name == "Reading" && test.testType == .act{
             print("RAW SCORE READING ACT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
         //SAT
-        }else if name == "Reading" && test.act == false{
+        }else if name == "Reading" && test.testType == .sat || test.testType == .psat{
             print("RAW SCORE READING SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.readingSectionTestScore
-        }else if name == "Writing" && test.act == false{
+        }else if name == "Writing" && test.testType == .sat || test.testType == .psat{
             print("RAW SCORE WRITING SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
-        }else if name == "Math No Calculator" && test.act == false{
+        }else if name == "Math No Calculator" && test.testType == .sat || test.testType == .psat{
             print("RAW SCORE MATH NO CALCULATOR SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
-        }else if name == "Math Calculator" && test.act == false{
+        }else if name == "Math Calculator" && test.testType == .sat || test.testType == .psat{
             print("RAW MATH CALCULATOR SAT: \(rawScore)")
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else{
             print(name)
-            print(test.act)
             print("ERROR PRONE MESSAGE")
             fatalError("ERRROR")
         }
@@ -264,7 +263,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var pdfImages: [PageModel] = []
     var sections: [TestSection] = []
     var numberOfSections: Int?
-    var act: Bool?
+    var testType: TestType?
     var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
     var dateTaken: Date?
     var timed: Bool = true
@@ -281,19 +280,21 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     var overallScore: Int{
-        if act == true{
+        if testType == .act{
             var sum = 0
             for section in sections{
                 sum += section.scaledScore!
             }
             return sum / numberOfSections!
-        }else{
+        }else if testType == .sat || testType == .psat{
             if let mScore = mathScore, let
                 eScore = englishScore {
                 return mScore + eScore
             }else{
                 return 0
             }
+        }else{
+            return 0
         }
     }
     var mathScore: Int? = nil
@@ -316,7 +317,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: false)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
-            self.act = self.testFromJson?.act
+            self.testType = TestType(rawValue: self.testFromJson!.testType)
             self.name = self.testFromJson!.name
             for convertEach in testFromJson!.answerConverter! {
                 scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore ?? 0)
@@ -336,10 +337,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.pdfImages = TestPDF(data: pdfData, testRef: self.testFromJson!.testRefName).pages
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
-            self.act = self.testFromJson!.act
+            self.testType = TestType(rawValue: self.testFromJson!.testType)!
             self.name = self.testFromJson!.name
             if corrections == true{
-                print("CREATING CORRECTIONS: ACT: \(self.act)")
+                print("CREATING CORRECTIONS: ACT: \(self.testType?.rawValue)")
                 print(self.englishScore)
                 self.englishScore = self.testFromJson?.english
                 print(self.englishScore)
@@ -371,7 +372,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.pdfImages = TestPDF(pngData: pngData).pages
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
-            self.act = self.testFromJson!.act
+            self.testType = TestType(rawValue: self.testFromJson!.testType)
             self.name = self.testFromJson!.name
             if corrections == true{
                 self.englishScore = self.testFromJson?.english
@@ -400,7 +401,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: true)
         self.numberOfSections = self.sections.count
         if self.testFromJson != nil {
-            self.act = self.testFromJson?.act
+            self.testType = TestType(rawValue: self.testFromJson!.testType)
             self.name = self.testFromJson!.name
             self.englishScore = self.testFromJson?.english
             self.mathScore = self.testFromJson?.mathScore
@@ -427,7 +428,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             
         }
         
-        self.act = test.act
+        self.testType = test.testType
         self.testFromJson = test.testFromJson
         self.numberOfSections = self.sections.count
         self.isFullTest = false
@@ -573,7 +574,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             for question in section.questions{
                 let splitArray = question.id.split(separator: "_")
                 let questionNum = Int(splitArray[2])!
-                let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), act: testFromJson.act, isActMath: section.name == "Math" && testFromJson.act == true)
+                let tempQuestion = Question(q: question, ip: IndexPath(row: questionNum - 1, section: section.orderInTest), testType: TestType(rawValue: testFromJson.testType)!, isActMath: section.name == "Math" && testFromJson.testType == "ACT")
                 tempQuestion.userAnswer = question.studentAnswer ?? ""
                 questionList.append(tempQuestion)
             }
@@ -596,9 +597,9 @@ class Test: ObservableObject, Hashable, Identifiable {
         for section in sections {
             let tempSection = section.makeTestSectionForJson(test: self)
             
-            if tempSection.name == "Reading" || tempSection.name == "Writing" && act == false{
+            if tempSection.name == "Reading" || tempSection.name == "Writing" && (testType == .sat || testType == .psat){
                 englishScore = englishScore ?? 0 + tempSection.scaledScore!
-            }else if tempSection.name == "Math No Calculator" || tempSection.name == "Math Calculator" && act == false {
+            }else if tempSection.name == "Math No Calculator" || tempSection.name == "Math Calculator" && (testType == .sat || testType == .psat) {
                 mathScore = mathScore ?? 0 + tempSection.rawScore!
             }
             
@@ -613,9 +614,9 @@ class Test: ObservableObject, Hashable, Identifiable {
             mathScore = self.scoreConvertDict[mathScore!]?.mathSectionTestScore
         }
         
-        print("TESTING ACT BOOLEAN")
-        print(self.act)
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, act: self.act!, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, mathScore: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
+        print("TESTING TestType BOOLEAN")
+        print(self.testType?.rawValue)
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, testType: self.testType!.rawValue, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, mathScore: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -691,7 +692,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         }
         
         //Updating quick data
-        if self.act == true{
+        if testType == .act{
             user.quickDataACT.addNewTest(test: self, testResultName: nameOfFile)
             self.db.collection("users").document(user.id).updateData(["quickDataMapACT" : user.quickDataACT.databaseDictionary]){error in
                 if let error = error{
@@ -701,7 +702,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                     print("SUCCESS UPDATING QUICK DATA")
                 }
             }
-        }else{
+        }else if testType == .sat || testType == .psat{
             user.quickDataSAT.addNewTest(test: self, testResultName: nameOfFile)
             self.db.collection("users").document(user.id).updateData(["quickDataMapSAT" : user.quickDataSAT.databaseDictionary]){error in
                 if let error = error{
@@ -723,7 +724,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             
             DispatchQueue.main.async {
                 print("START MAIN ADDING TEST")
-                if self.act == true{
+                if self.testType == .act{
                     if user.allACTPerformanceData == nil{
                         print("ACT IS NIL")
                         user.allACTPerformanceData = AllACTData(tests: [tempTest], user: user)
@@ -736,7 +737,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                         print(user.allACTPerformanceData?.allTestData)
                         user.allACTPerformanceData!.addTest(test: tempTest)
                     }
-                }else{
+                }else if self.testType == .psat || self.testType == .sat{
                     if user.allSATPerformanceData == nil{
                         user.allSATPerformanceData = AllACTData(tests: [tempTest], user: user)
                         if user.showTestType == nil{
@@ -752,11 +753,11 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     func getTempTest(finalResultJson: Data, user: User) -> ACTFormatedTestData{
-        if self.act == true{
+        if self.testType == .act{
             let tempTest = ACTFormatedTestData(pdfImages: pdfImages, jsonData: finalResultJson)
             tempTest.createData(index: (user.allACTPerformanceData?.allTestData?.count) ?? 0)
             return tempTest
-        }else{
+        }else { // if self.testType == .sat || self.testType == .psat { //TODO Make for psat
             let tempTest = ACTFormatedTestData(pdfImages: pdfImages, jsonData: finalResultJson)
             tempTest.createData(index: (user.allSATPerformanceData?.allTestData?.count) ?? 0)
             return tempTest
@@ -782,7 +783,7 @@ enum TestState{
 //Reading a Test JSON IN
 struct TestFromJson: Codable {
     var numberOfSections: Int
-    var act: Bool
+    var testType: String
     var name: String
     var testRefName: String
     var sections: [TestSectionFromJson]

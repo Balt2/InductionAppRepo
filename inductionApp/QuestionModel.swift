@@ -28,7 +28,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     let answer: String
     let reason: String
     let location: IndexPath
-    let isACT: Bool
+    let testType: TestType
     let isACTMath: Bool
     let freeResponse: Bool //This variable determines whether a the question needs a free response answer sheet cell
     var answerLetters = ["A", "B", "C", "D"]
@@ -50,7 +50,7 @@ class Question: ObservableObject, Hashable, Identifiable {
     @Published var secondsToAnswer = 0.0
     @Published var canvas: PKCanvasView?
     
-    init(q: QuestionFromJson, ip: IndexPath, act: Bool, isActMath: Bool) {
+    init(q: QuestionFromJson, ip: IndexPath, testType: TestType, isActMath: Bool) {
         self.officialID = q.id
         self.officialSub = q.officialSub
         self.tutorSub = q.tutorSub
@@ -61,7 +61,7 @@ class Question: ObservableObject, Hashable, Identifiable {
             self.freeResponse = false
         }
         self.reason = q.reason
-        self.isACT = act
+        self.testType = testType
         self.location = ip
         self.isACTMath = isActMath
         self.secondsToAnswer = Double(q.secondsToAnswer ?? 0)
@@ -71,9 +71,9 @@ class Question: ObservableObject, Hashable, Identifiable {
             self.answerLetters = ["A", "B", "C", "D", "E"]
         }else if self.isACTMath {
             self.answerLetters = ["F", "G", "H", "I", "J"]
-        }else if isACT && (ip.row + 1) % 2 == 1 {
+        }else if testType == .act && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D"]
-        }else if isACT {
+        }else if testType == .act {
             self.answerLetters = ["F", "G", "H", "J"]
         }
     
@@ -86,7 +86,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.answer = question.answer
         self.freeResponse = question.freeResponse
         self.reason = question.reason
-        self.isACT = question.isACT
+        self.testType = question.testType
         self.location = question.location
         self.isACTMath = question.isACTMath
 
@@ -95,9 +95,9 @@ class Question: ObservableObject, Hashable, Identifiable {
             self.answerLetters = ["A", "B", "C", "D", "E"]
         }else if self.isACTMath {
             self.answerLetters = ["F", "G", "H", "I", "J"]
-        }else if isACT && (question.location.row + 1) % 2 == 1 {
+        }else if testType == .act && (question.location.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D"]
-        }else if isACT {
+        }else if testType == .act {
             self.answerLetters = ["F", "G", "H", "J"]
         }
     }

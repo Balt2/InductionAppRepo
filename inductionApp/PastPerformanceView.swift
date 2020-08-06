@@ -151,7 +151,7 @@ struct RawDataView: View{
                     .font(.largeTitle)
                     .foregroundColor(Color.white)
             }
-            if data.act == false{
+            if data.testType! == .sat || data.testType! == .psat{
                 HStack{
                     Spacer()
                     //Group{

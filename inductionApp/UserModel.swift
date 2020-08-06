@@ -169,8 +169,8 @@ class User: ObservableObject, Equatable {
                     DispatchQueue.main.async{
                         //Loading in the performance PDFs
                         print(actPerformanceTests)
-                        let actTests = actPerformanceTests.filter {$0.act == true}
-                        let satTests = actPerformanceTests.filter {$0.act == false}
+                        let actTests = actPerformanceTests.filter {$0.testType! == .act}
+                        let satTests = actPerformanceTests.filter {$0.testType! == .sat}
                         
                         if actTests.count != 0 {
                             self.allACTPerformanceData = AllACTData(tests: actTests, user: self)

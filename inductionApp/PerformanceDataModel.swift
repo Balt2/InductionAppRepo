@@ -17,11 +17,11 @@ class AllACTData{
     var higherSectionNames: [String]? //SAT only has math and english while act should have all for sub sections for this
     var overallPerformance: BarData?
     var sectionsOverall: [String: BarData]?
-    var isACT: Bool?
+    var testType: TestType?
     var user: User?
     init(tests: [ACTFormatedTestData], user: User){
         if tests.count > 0{
-            self.isACT = tests[0].act!
+            self.testType = tests[0].testType!
             let tempTests = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
             for (index, test) in tempTests.enumerated(){
                 test.createData(index: index)
@@ -29,7 +29,7 @@ class AllACTData{
             self.allTestData = tempTests //TODO: Two many loops
             self.user = user
             print("CHECKING SECTION NAMES")
-            print(self.allTestData![0].act)
+            print(self.allTestData![0].testType!.rawValue)
             print(self.allTestData![0].sectionsOverall)
             print(self.allTestData![0].sectionsOverall.map{$0.key})
             self.sectionNames = Array(self.allTestData![0].subSectionGraphs.keys)
@@ -53,11 +53,11 @@ class AllACTData{
         print("CREATE SELF!")
         DispatchQueue.global(qos: .utility).async {
             var overallBarData = BarData(
-                title: self.isACT! ? "ACT Performance" : "SAT Performance",
+                title: "\(self.testType!.rawValue) Performance",
                 xAxisLabel: "Dates",
                 yAxisLabel: "Score",
                 yAxisSegments: 4,
-                yAxisTotal: self.isACT! ? 36 : 1600,
+                yAxisTotal: self.testType!.getTotalScore(),
                 barEntries: [])
             var sectionEntries = [String: [BarEntry]]()
             for test in self.allTestData!{
@@ -74,11 +74,11 @@ class AllACTData{
             
             for (section, entries) in sectionEntries{
                 let tempGraph = BarData(
-                    title: "\(self.isACT! ? "ACT" : "SAT") \(section) Performance",
+                    title: "\(self.testType!.rawValue) \(section) Performance",
                     xAxisLabel: "Dates",
                     yAxisLabel: "Score",
                     yAxisSegments: 4,
-                    yAxisTotal: self.isACT! ? 36 : 800,
+                    yAxisTotal: self.testType!.getSubSectionTotalScore(),
                     barEntries: entries)
                 sectionGraphs[section] = tempGraph
             }
@@ -156,7 +156,7 @@ class ACTFormatedTestData: Test{
 
         
         //Only for SAT:
-        if self.act == false{
+        if self.testType == .sat || self.testType == .psat{
             let englishSectionEntry = BarEntry(
             xLabel: "\(testFromJson!.dateTaken!)",
                 yEntries: [(height: CGFloat(self.englishScore!),
@@ -183,7 +183,7 @@ class ACTFormatedTestData: Test{
                 yAxisTotal: 0,
                 barEntries: [])
             //Only for ACT because all 4 sections have their own scaled score
-            if self.act == true{
+            if self.testType == .act{
                 let subSectionEntry = BarEntry(
                     xLabel: "\(testFromJson!.dateTaken!)",
                     yEntries: [(height: CGFloat(section.scaledScore!),
