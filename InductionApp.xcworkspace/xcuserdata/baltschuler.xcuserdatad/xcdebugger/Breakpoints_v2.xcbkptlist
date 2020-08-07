@@ -140,8 +140,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "376"
             endingLineNumber = "376"
-            landmarkName = "getTotalScore()"
-            landmarkType = "7">
+            landmarkName = "TestType"
+            landmarkType = "13">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

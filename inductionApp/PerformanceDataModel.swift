@@ -330,28 +330,30 @@ class QuickData: ObservableObject {
         let newEntry = getNewDictEntry(test: test)
         databaseDictionary[testResultName] = newEntry
         
-        if overallBarData.barEntries[0].xLabel == " "{
-            let tempNSDictionary = [testResultName: newEntry]
-            self.createData(nsDictionary: tempNSDictionary)
-        }else{
-           let newOverallBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.overallScore), color: Color("salmon"))])
-            
-            overallBarData.barEntries.append(newOverallBarEntry)
-            
-            
-            if testType == .sat || testType == .psat{
-                let mathSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.mathScore!), color: Color("salmon"))])
-                let englishSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.englishScore!), color: Color("salmon"))])
-                
-                sectionBarData["Math"]?.barEntries.append(mathSectionBarEntry)
-                sectionBarData["English"]?.barEntries.append(englishSectionBarEntry)
-            }else if testType == .act {
-                for section in test.sections{
-                    let sectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(section.scaledScore!), color: Color("salmon"))])
-                    sectionBarData[section.name]?.barEntries.append(sectionBarEntry)
-                }
-            }
-        }
+        self.createData(nsDictionary: databaseDictionary)
+        
+//        if overallBarData.barEntries[0].xLabel == " "{
+//            let tempNSDictionary = [testResultName: newEntry]
+//            self.createData(nsDictionary: tempNSDictionary)
+//        }else{
+//           let newOverallBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.overallScore), color: Color("salmon"))])
+//
+//            overallBarData.barEntries.append(newOverallBarEntry)
+//
+//
+//            if testType == .sat || testType == .psat{
+//                let mathSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.mathScore!), color: Color("salmon"))])
+//                let englishSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.englishScore!), color: Color("salmon"))])
+//
+//                sectionBarData["Math"]?.barEntries.append(mathSectionBarEntry)
+//                sectionBarData["English"]?.barEntries.append(englishSectionBarEntry)
+//            }else if testType == .act {
+//                for section in test.sections{
+//                    let sectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(section.scaledScore!), color: Color("salmon"))])
+//                    sectionBarData[section.name]?.barEntries.append(sectionBarEntry)
+//                }
+//            }
+//        }
         
     }
     
@@ -377,6 +379,7 @@ class QuickData: ObservableObject {
     func createData(nsDictionary: [String: [String : [String: Int]]]){
         if !nsDictionary.isEmpty{
             databaseDictionary = nsDictionary
+            sectionBarData = [:]
             overallBarData = BarData(title: "\(testType.rawValue) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: testType.getTotalScore(), barEntries: [])
             for (testName, dateMap) in nsDictionary{
                 for (date, sectionMap) in dateMap {

@@ -37,12 +37,6 @@ struct CorrectionView: View {
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
                                     AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.testType! == .act, disabled: true, shouldScroll: self.$shouldScroll, showPopUp: self.$showPopUp, popUpQuestionIndex: self.$popUpQuestionIndex)
-//                                    .onTapGesture {
-//                                            print("CORRECTION CELL TAPPED")
-//                                            self.popUpQuestionIndex = question.location.row
-//                                            self.togglePopUp(showPopUp: true)
-//                                        print(self.showPopUp)
-//                                    }
                                 }
                             }
 
@@ -106,12 +100,12 @@ struct CorrectionView: View {
                         Spacer()
                         HStack{
                             Text("Your Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].userAnswer)")
-                            Text("Time to Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].secondsToAnswer)")
+                            Text("Time to Answer: \(Int(self.testData.currentSection!.questions[popUpQuestionIndex].secondsToAnswer))")
                         }
                         Spacer()
                         HStack{
                             Text("Correct Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].answer)")
-                            Text("Order of Answer: \(self.testData.currentSection!.questions[popUpQuestionIndex].secondsToAnswer)")
+                            Text("Order of Answer: \(Int(self.testData.currentSection!.questions[popUpQuestionIndex].answerOrdredIn))")
                         }
                         Spacer()
                         Text("Official Sub Section: \(self.testData.currentSection!.questions[popUpQuestionIndex].officialSub)")
@@ -122,7 +116,7 @@ struct CorrectionView: View {
                         
                     }.padding()
                 }
-                .frame(width: 700, height: 400)
+                .frame(width: testData.testType == .act ? 500 : 570, height: testData.testType == .act ? 200 : 400)
                 .cornerRadius(20).shadow(radius: 25)
             .offset(x: 120, y: 0)
             }
