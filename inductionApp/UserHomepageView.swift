@@ -18,7 +18,7 @@ struct UserHomepageView: View {
     @State private var showSettingSheet: Bool = false
     
     //Used for quick data
-    @State var updateView = true
+    @State var updateHomePageView = true
     //NOT USED
     @State var showDetailTest = false
     @State var allDataTestIndex = -1
@@ -46,7 +46,7 @@ struct UserHomepageView: View {
                     //Buttons
                     
                     //Link for taking a test
-                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
+                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive, updateView: self.$updateHomePageView), isActive: self.$isTestActive){
                         HStack{
                             getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
                             Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
@@ -66,7 +66,6 @@ struct UserHomepageView: View {
                     
                     Button(action: {
                         self.showSettingSheet = true
-                        print("BENJAMIN")
                     }){
                         Text("Settings")
                     }.buttonStyle(buttonBackgroundStyle())
@@ -112,18 +111,18 @@ struct UserHomepageView: View {
                 
                 
                 VStack{
-                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.overallBarData, showLegend: false, isQuickData: true)
+                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.overallBarData, showLegend: false, isQuickData: true).opacity(self.updateHomePageView ? 1.0 : 1.0)
                     HStack{
                         ForEach(user.currentQuickData.sectionNames, id: \.self){sectionName in
                             Group{
                                 Spacer()
                                 ZStack{
-                                    RoundedRectangle(cornerRadius: 15).frame(width: 120, height: 50).foregroundColor(self.updateView ? .black : .black)
+                                    RoundedRectangle(cornerRadius: 15).frame(width: 120, height: 50).foregroundColor(self.updateHomePageView ? .black : .black)
                                     Text(sectionName).foregroundColor(sectionName == self.user.currentQuickData.currentSectionString ? .blue : .white)
                                 }.onTapGesture {
                                     print("DANIEL")
-                                    self.updateView.toggle()
                                     self.user.currentQuickData.currentSectionString = sectionName
+                                    self.updateHomePageView.toggle()
                                     
                                 }
                             }

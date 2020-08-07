@@ -56,6 +56,7 @@ class User: ObservableObject, Equatable {
             return quickDataSAT //quickDataSATBarData
         }
     }
+    @Published var updateView: Bool = false
     
 
     
@@ -68,26 +69,27 @@ class User: ObservableObject, Equatable {
     @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
     
-    var testRefs: [String]
     var testRefsMap: [String: Bool]
     var testResultRefs: [String]
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
     
-    @ObservedObject var quickDataSAT = QuickData(testType: .sat)
-    @ObservedObject var quickDataACT = QuickData(testType: .act)
+    @ObservedObject var quickDataSAT: QuickData
+    @ObservedObject var quickDataACT: QuickData
     var quickDataMapACT = [String: [String: Int]]()
     
     
-    init(fn: String, ln: String, id: String, association: Association, testRefs: [String], testResultRefs: [String], testRefsMap: [String: Bool]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
+    init(fn: String, ln: String, id: String, association: Association, testResultRefs: [String], testRefsMap: [String: Bool]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
         print("INIT USER begin")
         self.id = id
         self.firstName = fn
         self.lastName = ln
         self.association = association
-        self.testRefs = testRefs
         self.testResultRefs = testResultRefs
         self.testRefsMap = testRefsMap
+        
+        quickDataSAT = QuickData(testType: .sat)
+        quickDataACT = QuickData(testType: .act)
         
         //Getting Associations image
         let imageRef: StorageReference = Storage.storage().reference().child(association.imagePath)

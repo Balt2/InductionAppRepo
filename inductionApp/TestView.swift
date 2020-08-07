@@ -17,6 +17,7 @@ struct TestView: View {
     @State var shouldScrollToTop: Bool = false
     @State var neverUseIndex: Int = -1
     @Binding var shouldPopToRootView : Bool
+    @Binding var updateView: Bool
     @ObservedObject var testData: Test
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var offset = CGSize.zero
@@ -88,7 +89,7 @@ struct TestView: View {
                                 PageView(model: page, section: self.testData.currentSection!).blur(radius: self.testData.begunTest ? 0 : 20)
                                     .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
                                 
-                            }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView))
+                            }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, updateView: self.$updateView))
                                 .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
                                 //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
                             
@@ -148,6 +149,7 @@ struct EndTestNavigationView: View {
     @ObservedObject var test: Test
     @State private var showAlert = false
     @Binding var shouldPopToRootFromNav: Bool
+    @Binding var updateView: Bool
     var submitComplete: Bool
     var body: some View {
         Button(action: {
@@ -162,6 +164,7 @@ struct EndTestNavigationView: View {
                   secondaryButton: .default(Text("OK")){
                     self.test.endTest(user: self.currentAuth.currentUser!) //TODO: Dont force
                     self.shouldPopToRootFromNav = false
+                    self.updateView.toggle()
                 })
         }
         
@@ -176,6 +179,7 @@ struct TimerNavigationView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
     @Binding var shouldPopToRootView : Bool
+    @Binding var updateView: Bool
     @State private var now = ""
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
@@ -299,7 +303,7 @@ struct TimerNavigationView: View {
         case .inBreak: return AnyView(Text("End Break, Next Section"))
         case .lastSection:
             return AnyView(EndTestNavigationView(test: self.test,
-                                                 shouldPopToRootFromNav: $shouldPopToRootView,
+                                                 shouldPopToRootFromNav: $shouldPopToRootView, updateView: $updateView,
                                                  submitComplete: true))
             
         case .testOver:
@@ -316,6 +320,7 @@ struct TimerNavigationView: View {
 struct TestTable: View {
     @ObservedObject var user: User
     @Binding var rootIsActive: Bool
+    @Binding var updateView: Bool
     @State var showPicker = false
     @State var showErrorPDF = false
     var body: some View {
@@ -335,7 +340,7 @@ struct TestTable: View {
                     
                 
             }else{
-                NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
+                NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, updateView: self.$updateView, testData: test)){
                     Text(test.name)
                 }.isDetailLink(false).frame(height: 90)
             }
@@ -346,11 +351,12 @@ struct TestTable: View {
 struct StudyTable: View {
     @ObservedObject var user: User
     @Binding var rootIsActive: Bool
+    @State var updateView: Bool = true
     var body: some View {
         List{
             ForEach(user.tests, id: \.self){test in
                 ForEach(test.sections, id: \.self){section in
-                    NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: Test(testSections: [section], test: test))){
+                    NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive ,updateView: self.$updateView, testData: Test(testSections: [section], test: test))){
                         Text(" \(section.name) from \(test.name)")
                     }.isDetailLink(false).frame(height: 90)
                     

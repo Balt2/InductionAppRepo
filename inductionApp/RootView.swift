@@ -139,7 +139,7 @@ class FirebaseManager: ObservableObject {
                                                 ln: dataDescription!["lastN"] as! String,
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
-                                                testRefs: dataDescription!["testRefs"]! as! [String], testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool] ) //"1904sFilled",  
+                                                testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool]) //"1904sFilled",
 
                         if let dataMapSAT = dataDescription!["quickDataMapSAT"] {
                             let structuredDataMapSAT = dataMapSAT as! [String: [String : [String: Int]]]
@@ -170,10 +170,10 @@ class FirebaseManager: ObservableObject {
     }
     
     //This creats a user in the database
-    func createUser(uid: String, fn: String, ln: String, aid: String, handler: @escaping (_ success: Bool) -> Void){
+    func createUser(uid: String, fn: String, ln: String, aid: String, accessCode: String, handler: @escaping (_ success: Bool) -> Void){
         //
         //
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "testRefs": ["1572cpre", "1874fpre", "67c", "cb5", "cb6", "cb9", "cb7"], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false], "quickDataMapSAT": [:], "quickDataMapACT": [:]]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false], "quickDataMapSAT": [:], "quickDataMapACT": [:], "accessCode": accessCode]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)
@@ -196,17 +196,17 @@ class FirebaseManager: ObservableObject {
                     //The authResult has user.uid and user.email
                     print("Sucess creating authenticated account: \(authResult!)")
                     //We now want to create this user in our database
-                    self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, handler: {(success) -> Void in
+                    self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, accessCode: noSpacesAccessCode, handler: {(success) -> Void in
                         if success {
                             //Self.getUser
                             //Firebase automatically gets user so we dont need to call this
-                            self.db.collection("accessCodes").document(noSpacesAccessCode).delete(){ err in
-                                if let err = err {
-                                    print("Error removing document: \(err)")
-                                } else {
-                                    print("Document successfully removed!")
-                                }
-                            }
+//                            self.db.collection("accessCodes").document(noSpacesAccessCode).delete(){ err in
+//                                if let err = err {
+//                                    print("Error removing document: \(err)")
+//                                } else {
+//                                    print("Document successfully removed!")
+//                                }
+//                            }
                             handler((created: true, error: ""))
                         } else{
                             //Failutre to create user

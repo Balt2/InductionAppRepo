@@ -337,7 +337,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.pdfImages = TestPDF(data: pdfData, testRef: self.testFromJson!.testRefName).pages
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
+            print("TESTING TEST TYPE")
+            print(self.testFromJson!.testType)
             self.testType = TestType(rawValue: self.testFromJson!.testType)!
+            print(self.testType)
             self.name = self.testFromJson!.name
             if corrections == true{
                 print("CREATING CORRECTIONS: ACT: \(self.testType?.rawValue)")
@@ -372,7 +375,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.pdfImages = TestPDF(pngData: pngData).pages
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
+            print("TESTING TEST TYPE")
+            print(self.testFromJson!.testType)
             self.testType = TestType(rawValue: self.testFromJson!.testType)
+             print(self.testType)
             self.name = self.testFromJson!.name
             if corrections == true{
                 self.englishScore = self.testFromJson?.english
