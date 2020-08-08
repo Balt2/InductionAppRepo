@@ -26,6 +26,8 @@
 		2F40C48E248E981F00DCCA58 /* PerformanceDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */; };
 		2F40C4902490786F00DCCA58 /* BreiteJ-CB1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */; };
 		2F56678D247A14780014F1ED /* ApplePencilReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56678C247A14780014F1ED /* ApplePencilReachability.swift */; };
+		2F5D7BD724DE47DE006DFFAE /* MindsetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5D7BD624DE47DE006DFFAE /* MindsetView.swift */; };
+		2F5D7BD924DE4820006DFFAE /* MindsetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5D7BD824DE4820006DFFAE /* MindsetModel.swift */; };
 		2F5DB6D724718007009766A7 /* QuestionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D624718007009766A7 /* QuestionModel.swift */; };
 		2F5DB6D92471828B009766A7 /* CustomTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5DB6D82471828B009766A7 /* CustomTimer.swift */; };
 		2F6A7D132474A93200BFD3FA /* 1-ACT Exam 1904S.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F6A7D122474A93200BFD3FA /* 1-ACT Exam 1904S.pdf */; };
@@ -68,6 +70,8 @@
 		2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceDataModel.swift; sourceTree = "<group>"; };
 		2F40C48F2490786F00DCCA58 /* BreiteJ-CB1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BreiteJ-CB1.pdf"; sourceTree = "<group>"; };
 		2F56678C247A14780014F1ED /* ApplePencilReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplePencilReachability.swift; sourceTree = "<group>"; };
+		2F5D7BD624DE47DE006DFFAE /* MindsetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindsetView.swift; sourceTree = "<group>"; };
+		2F5D7BD824DE4820006DFFAE /* MindsetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindsetModel.swift; sourceTree = "<group>"; };
 		2F5DB6D624718007009766A7 /* QuestionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionModel.swift; sourceTree = "<group>"; };
 		2F5DB6D82471828B009766A7 /* CustomTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTimer.swift; sourceTree = "<group>"; };
 		2F6A7D122474A93200BFD3FA /* 1-ACT Exam 1904S.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "1-ACT Exam 1904S.pdf"; sourceTree = "<group>"; };
@@ -152,6 +156,8 @@
 				038753F9244E9AC800F85970 /* UserHomepageView.swift */,
 				2F7ACE2C2481970600D0D80A /* BarGraphView.swift */,
 				2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */,
+				2F5D7BD624DE47DE006DFFAE /* MindsetView.swift */,
+				2F5D7BD824DE4820006DFFAE /* MindsetModel.swift */,
 				2F7ACE2E248197C300D0D80A /* PastPerformanceView.swift */,
 				038753F5244E923B00F85970 /* UserRegistrationViewModel.swift */,
 				2F9451842450009D009521F7 /* josh.jpeg */,
@@ -321,6 +327,7 @@
 			files = (
 				038753F6244E923B00F85970 /* UserRegistrationViewModel.swift in Sources */,
 				2F6A7D1D2474CCF200BFD3FA /* BarGraphViews.swift in Sources */,
+				2F5D7BD924DE4820006DFFAE /* MindsetModel.swift in Sources */,
 				2F8458D82477FA7300E8E62D /* AssociationModel.swift in Sources */,
 				2F0DD2C8244F5F3D00AFFADE /* UserModel.swift in Sources */,
 				038753FA244E9AC800F85970 /* UserHomepageView.swift in Sources */,
@@ -331,6 +338,7 @@
 				2F19DAD02497B5DD0004E943 /* CorrectionView.swift in Sources */,
 				2F40C48E248E981F00DCCA58 /* PerformanceDataModel.swift in Sources */,
 				03EA7F6624516BCF00184BA1 /* CanvasRepresentable.swift in Sources */,
+				2F5D7BD724DE47DE006DFFAE /* MindsetView.swift in Sources */,
 				2F87B4E72478CAC300C5CF05 /* ScrollViewRepresentable.swift in Sources */,
 				2F56678D247A14780014F1ED /* ApplePencilReachability.swift in Sources */,
 				2F5DB6D92471828B009766A7 /* CustomTimer.swift in Sources */,

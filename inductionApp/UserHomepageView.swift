@@ -77,25 +77,26 @@ struct UserHomepageView: View {
                         Text("Settings")
                     }.buttonStyle(buttonBackgroundStyle())
                         .sheet(isPresented: $showSettingSheet, onDismiss: {self.user.showTestType = self.showQuickDataType} ){
-                            NavigationView{
-                                Form{
-                                    Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
-                                        VStack{
-                                            Picker(selection: self.$showQuickDataType, label: Text("Test Type")){
-                                                Text("SAT").tag(TestType.sat)
-                                                Text("ACT").tag(TestType.act)
-                                                Text("PSAT").tag(TestType.psat)
-                                            }
-                                        }
-                                    }
-                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
-                                        Toggle(isOn: self.$leftHandMode){
-                                            Text("Left Hand Mode")
-                                        }
-                                    }
-                                }.navigationBarTitle("Settings")
-                                
-                            }.navigationViewStyle((StackNavigationViewStyle()))
+                            MindsetView()
+//                            NavigationView{
+//                                Form{
+//                                    Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
+//                                        VStack{
+//                                            Picker(selection: self.$showQuickDataType, label: Text("Test Type")){
+//                                                Text("SAT").tag(TestType.sat)
+//                                                Text("ACT").tag(TestType.act)
+//                                                Text("PSAT").tag(TestType.psat)
+//                                            }
+//                                        }
+//                                    }
+//                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
+//                                        Toggle(isOn: self.$leftHandMode){
+//                                            Text("Left Hand Mode")
+//                                        }
+//                                    }
+//                                }.navigationBarTitle("Settings")
+//
+//                            }.navigationViewStyle((StackNavigationViewStyle()))
                         }
                     
 
@@ -118,13 +119,8 @@ struct UserHomepageView: View {
                 
                 
                 VStack{
-                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.updateHomePageView ? user.currentQuickData.overallBarData : user.currentQuickData.overallBarData, showLegend: false, isQuickData: true).onAppear(){
-                       
-                            print("OVERALL GRAPH APPERAS")
-                        print("CURRENT TYPE OF DATA: \(self.user.currentQuickData.overallBarData.title)")
-                         print("PRINTING OVERALL Count: \(self.user.currentQuickData.overallBarData.barEntries.count)")
-                        print(self.user.currentQuickData.overallBarData)
-                    }
+                    BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.overallBarData, showLegend: false, isQuickData: true)
+                    
                     HStack{
                         ForEach(user.currentQuickData.sectionNames, id: \.self){sectionName in
                             Group{
@@ -143,9 +139,6 @@ struct UserHomepageView: View {
                         //Spacer()
                     }
                     BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.currentSectionBarData, showLegend: false, isQuickData: true)
-                        .onAppear(){
-                            print("SECTION GRAPH APPERAS")
-                    }
                 }.padding([.top, .bottom], 20).frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width * 0.75 : UIScreen.main.bounds.width * 0.75)
                 
             }.navigationBarTitle("Home Page", displayMode: .inline)
