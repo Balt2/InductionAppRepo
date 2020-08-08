@@ -15,9 +15,9 @@ import MobileCoreServices
 struct TestView: View {
     @State var shouldScroll: Bool = true
     @State var shouldScrollToTop: Bool = false
+    @State var showSheet: Bool = true
     @State var neverUseIndex: Int = -1
     @Binding var shouldPopToRootView : Bool
-    @Binding var updateView: Bool
     @ObservedObject var testData: Test
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var offset = CGSize.zero
@@ -89,7 +89,7 @@ struct TestView: View {
                                 PageView(model: page, section: self.testData.currentSection!).blur(radius: self.testData.begunTest ? 0 : 20)
                                     .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
                                 
-                            }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, updateView: self.$updateView))
+                            }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showSheet: self.$showSheet))
                                 .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
                                 //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
                             
@@ -117,6 +117,19 @@ struct TestView: View {
                 
             }
         }
+        .sheet(isPresented: self.$showSheet, onDismiss: {
+            if self.testData.currentSectionIndex > 0 {
+                self.testData.sendResultJson(user: self.currentAuth.currentUser!) //TODO: Dont force
+                self.shouldPopToRootView = false
+            }
+        }){
+            if self.testData.currentSectionIndex < 1{ //Should be test.bugan. TODO testData.begunTest
+                MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.testType!.getPreTestSurvey(), preTest: true, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView)
+            }else{
+                MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.testType!.getPostTestSurvey(), preTest: false, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView)
+            }
+        }
+            
     }
 }
 
@@ -148,8 +161,7 @@ struct EndTestNavigationView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
     @State private var showAlert = false
-    @Binding var shouldPopToRootFromNav: Bool
-    @Binding var updateView: Bool
+    @Binding var showSheet: Bool
     var submitComplete: Bool
     var body: some View {
         Button(action: {
@@ -162,9 +174,8 @@ struct EndTestNavigationView: View {
                   message: Text("You will not be able to edit this \(test.isFullTest == true ? "test" : "assignment") again"),
                   primaryButton: .default(Text("Cancel")),
                   secondaryButton: .default(Text("OK")){
-                    self.test.endTest(user: self.currentAuth.currentUser!) //TODO: Dont force
-                    self.shouldPopToRootFromNav = false
-                    self.updateView.toggle()
+                    self.showSheet = true
+                    self.test.endTest()
                 })
         }
         
@@ -179,7 +190,7 @@ struct TimerNavigationView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
     @Binding var shouldPopToRootView : Bool
-    @Binding var updateView: Bool
+    @Binding var showSheet: Bool
     @State private var now = ""
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
@@ -262,7 +273,7 @@ struct TimerNavigationView: View {
                     }
                 }){
                     HStack{
-                        getControlButton(test: self.test, shouldPopToRootFromNav: self.$shouldPopToRootView)
+                        getControlButton(test: self.test, showSheet: self.$showSheet)
                     }
                 }
                 
@@ -290,7 +301,7 @@ struct TimerNavigationView: View {
             }
         }
     }
-    func getControlButton(test: Test, shouldPopToRootFromNav: Binding<Bool>) -> AnyView {
+    func getControlButton(test: Test, showSheet: Binding<Bool>) -> AnyView {
         
         switch self.test.testState{
         case .notStarted:
@@ -302,9 +313,8 @@ struct TimerNavigationView: View {
         case .inSection: return AnyView(Text("End Section"))
         case .inBreak: return AnyView(Text("End Break, Next Section"))
         case .lastSection:
-            return AnyView(EndTestNavigationView(test: self.test,
-                                                 shouldPopToRootFromNav: $shouldPopToRootView, updateView: $updateView,
-                                                 submitComplete: true))
+            return AnyView(EndTestNavigationView(test: self.test, showSheet: $showSheet, submitComplete: true))
+            
             
         case .testOver:
             if test.isFullTest == true {
@@ -320,9 +330,9 @@ struct TimerNavigationView: View {
 struct TestTable: View {
     @ObservedObject var user: User
     @Binding var rootIsActive: Bool
-    @Binding var updateView: Bool
     @State var showPicker = false
     @State var showErrorPDF = false
+    
     var body: some View {
         List(user.tests){test in
             if self.user.testRefsMap[test.testFromJson!.testRefName] == false{
@@ -340,9 +350,18 @@ struct TestTable: View {
                     
                 
             }else{
-                NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, updateView: self.$updateView, testData: test)){
+//                Button(action: {
+//                    self.showMindsetSheet = true
+//                }){
+//                    Text(test.name)
+//                }.frame(height: 90)
+//                    .sheet(isPresented: self.$showMindsetSheet){
+//                    MindsetView()
+//                }
+                
+                NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
                     Text(test.name)
-                }.isDetailLink(false).frame(height: 90)
+                    }.isDetailLink(false).frame(height: 90)
             }
         }.navigationBarTitle(Text("Choose Test to Take"))
     }
@@ -351,12 +370,11 @@ struct TestTable: View {
 struct StudyTable: View {
     @ObservedObject var user: User
     @Binding var rootIsActive: Bool
-    @State var updateView: Bool = true
     var body: some View {
         List{
             ForEach(user.tests, id: \.self){test in
                 ForEach(test.sections, id: \.self){section in
-                    NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive ,updateView: self.$updateView, testData: Test(testSections: [section], test: test))){
+                    NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: Test(testSections: [section], test: test))){
                         Text(" \(section.name) from \(test.name)")
                     }.isDetailLink(false).frame(height: 90)
                     

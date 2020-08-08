@@ -81,6 +81,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     var numAnsweredQuestions = 0
     var timed: Bool?
     
+    
     init(sectionFromJson: TestSectionFromJson, pages: [PageModel] = [PageModel](), name: String, questions: [Question], inkingTool: PKInkingTool) {
         self.allotedTime = Double(sectionFromJson.timeAllowed)
         self.leftOverTime = Double(sectionFromJson.timeAllowed)
@@ -267,7 +268,8 @@ class Test: ObservableObject, Hashable, Identifiable {
     var testFromJson: TestFromJson?  //Array Used to initially load the questions into the Test class
     var dateTaken: Date?
     var timed: Bool = true
-
+    var preTestMindset: MindsetSurveyModel?
+    var postTestMindset: MindsetSurveyModel?
     
     
     
@@ -445,6 +447,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     //Called when the test has not begun yet
     func startTest(){
+        print("BEGUN TEST")
         begunTest = true
         nextSection(fromStart: true)
         
@@ -471,15 +474,15 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     //This will only be called if the
     //user wants to leave the test early and not come back.
-    func endTest(user: User){
+    func endTest(){
         isEraserEnabled = false
         currentSection?.sectionOver = true
         testState = .testOver
-        sendResultJson(user: user)
+        
         taken = true
         print("ENDED")
         //self.saveWriting()
-        self.reset()
+
     }
     
 //    func saveWriting(){
@@ -536,6 +539,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         sections.forEach {$0.reset() }
         englishScore = nil
         mathScore = nil
+        print("RESET PRESSED")
     }
     
     
@@ -584,7 +588,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 tempQuestion.userAnswer = question.studentAnswer ?? ""
                 questionList.append(tempQuestion)
             }
-                let arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
+                let arraySlice = pdfImages[section.startIndex..<section.endIndex-1] //TODO FIND BUG HERE. IT crashes every certian number of runs
                 
             let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList, inkingTool: corrections ? PKInkingTool(.pen, color: .red, width: 1) : PKInkingTool(.pen, color: .black, width: 1))
                 sections.append(tempSection)
@@ -622,7 +626,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         print("TESTING TestType BOOLEAN")
         print(self.testType?.rawValue)
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, testType: self.testType!.rawValue, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, mathScore: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"))
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, testType: self.testType!.rawValue, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, mathScore: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"), preTestMindset: self.preTestMindset, postTestMindset: self.postTestMindset)
         //Encoding information
         let encoder = JSONEncoder()
         do{
@@ -756,6 +760,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 }
             }
         }
+        self.reset()
     }
     
     func getTempTest(finalResultJson: Data, user: User) -> ACTFormatedTestData{
@@ -802,6 +807,8 @@ struct TestFromJson: Codable {
     var mathScore: Int? //SAT
     var english: Int? //SAT
     var dateTaken: String?
+    var preTestMindset: MindsetSurveyModel?
+    var postTestMindset: MindsetSurveyModel?
     
 }
 

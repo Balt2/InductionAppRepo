@@ -53,7 +53,7 @@ struct UserHomepageView: View {
                     //Buttons
                     
                     //Link for taking a test
-                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive, updateView: self.$updateHomePageView), isActive: self.$isTestActive){
+                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
                         HStack{
                             getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
                             Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
@@ -77,26 +77,25 @@ struct UserHomepageView: View {
                         Text("Settings")
                     }.buttonStyle(buttonBackgroundStyle())
                         .sheet(isPresented: $showSettingSheet, onDismiss: {self.user.showTestType = self.showQuickDataType} ){
-                            MindsetView()
-//                            NavigationView{
-//                                Form{
-//                                    Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
-//                                        VStack{
-//                                            Picker(selection: self.$showQuickDataType, label: Text("Test Type")){
-//                                                Text("SAT").tag(TestType.sat)
-//                                                Text("ACT").tag(TestType.act)
-//                                                Text("PSAT").tag(TestType.psat)
-//                                            }
-//                                        }
-//                                    }
-//                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
-//                                        Toggle(isOn: self.$leftHandMode){
-//                                            Text("Left Hand Mode")
-//                                        }
-//                                    }
-//                                }.navigationBarTitle("Settings")
-//
-//                            }.navigationViewStyle((StackNavigationViewStyle()))
+                            NavigationView{
+                                Form{
+                                    Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
+                                        VStack{
+                                            Picker(selection: self.$showQuickDataType, label: Text("Test Type")){
+                                                Text("SAT").tag(TestType.sat)
+                                                Text("ACT").tag(TestType.act)
+                                                Text("PSAT").tag(TestType.psat)
+                                            }
+                                        }
+                                    }
+                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
+                                        Toggle(isOn: self.$leftHandMode){
+                                            Text("Left Hand Mode")
+                                        }
+                                    }
+                                }.navigationBarTitle("Settings")
+
+                            }.navigationViewStyle((StackNavigationViewStyle()))
                         }
                     
 
@@ -129,10 +128,8 @@ struct UserHomepageView: View {
                                     RoundedRectangle(cornerRadius: 15).frame(width: 120, height: 40).foregroundColor(self.updateHomePageView ? Color("salmon") : Color("salmon"))
                                     Text(sectionName).foregroundColor(sectionName == self.user.currentQuickData.currentSectionString ? .white : .black)
                                 }.onTapGesture {
-                                    print("DANIEL")
                                     self.user.currentQuickData.currentSectionString = sectionName
                                     self.updateHomePageView.toggle()
-                                    
                                 }
                             }
                         }

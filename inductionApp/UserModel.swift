@@ -56,7 +56,6 @@ class User: ObservableObject, Equatable {
             return quickDataSAT //quickDataSATBarData
         }
     }
-    @Published var updateView: Bool = false
     
 
     
@@ -393,6 +392,93 @@ enum TestType: String {
             return 36
         case .psat:
             return 760
+        }
+    }
+    
+    func getPreTestSurvey() -> MindsetSurveyModel{
+        var preTestModel = MindsetSurveyModel(name: "What's your mindset?", sections: [MindsetSectionModel(headers: ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"],
+                                           questions: [MindsetQuestionModel(questionIndex: 1, question: "I feel tense during tests"),
+        MindsetQuestionModel(questionIndex: 2, question: "I wish exams did not bother me so much"),
+        MindsetQuestionModel(questionIndex: 3, question: "I defeat myself on tests"),
+        MindsetQuestionModel(questionIndex: 4, question: "I feel panicky during tests"),
+        MindsetQuestionModel(questionIndex: 5, question: "During the exam I am nervous and forget facts")
+        ]), MindsetSectionModel(headers: ["Not Much (less than 2hrs)",
+         "A Little (between 2 and 4hrs)",
+         "Decent Amount (between 4 and 8hrs)",
+         "A Lot (more than 8hrs)"], questions: [
+        MindsetQuestionModel(questionIndex: 6,
+                             question: "How much time have you spent on other work today?")]),
+            MindsetSectionModel(headers: ["Not Much (less than 4hrs)",
+             "A Little (between 4 and 6hrs)",
+             "Decent Amount (between 6 and 8hrs)",
+             "A Lot (more than 8hrs)"], questions: [
+            MindsetQuestionModel(questionIndex: 7,
+                                 question: "How much did you sleep last night?")]),
+            MindsetSectionModel(headers: ["", "Yes","No",""], questions: [
+            MindsetQuestionModel(questionIndex: 8,
+                                 question: "Have you worked out today?")])
+            
+        ])
+        return preTestModel
+    }
+    
+    func getPostTestSurvey() -> MindsetSurveyModel{
+        switch self {
+        case .act:
+            var postTestACT = MindsetSurveyModel(name: "How Was the Test?", sections: [MindsetSectionModel(headers: ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"],
+                                               questions: [MindsetQuestionModel(questionIndex: 1, question: "I feel tense during tests"),
+            MindsetQuestionModel(questionIndex: 2, question: "I wish exams did not bother me so much"),
+            MindsetQuestionModel(questionIndex: 3, question: "I defeat myself on tests"),
+            MindsetQuestionModel(questionIndex: 4, question: "I feel panicky during tests"),
+            MindsetQuestionModel(questionIndex: 5, question: "During the exam I am nervous and forget facts")
+            ]), MindsetSectionModel(headers: ["Really Bad",
+             "Bad",
+             "Good",
+             "Really Good"], questions: [
+            MindsetQuestionModel(questionIndex: 6,
+                                 question: "How did you feel while taking the test?")]),
+                MindsetSectionModel(headers: ["Reading",
+                 "English",
+                 "Math",
+                 "Science"], questions: [
+                MindsetQuestionModel(questionIndex: 7,
+                                     question: "Which Section felt the best?"),
+                MindsetQuestionModel(questionIndex: 8,
+                question: "Which Section felt the worst?")
+                ]),
+                MindsetSectionModel(headers: [], questions: [
+                MindsetQuestionModel(questionIndex: 9,
+                                     question: "Is there anything you think could have affected your performacne?")])
+                
+            ])
+            return postTestACT
+        default:
+            var postTestSAT = MindsetSurveyModel(name: "How was the Test?", sections: [MindsetSectionModel(headers: ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"],
+                                               questions: [MindsetQuestionModel(questionIndex: 1, question: "I feel tense during tests"),
+            MindsetQuestionModel(questionIndex: 2, question: "I wish exams did not bother me so much"),
+            MindsetQuestionModel(questionIndex: 3, question: "I defeat myself on tests"),
+            MindsetQuestionModel(questionIndex: 4, question: "I feel panicky during tests"),
+            MindsetQuestionModel(questionIndex: 5, question: "During the exam I am nervous and forget facts")
+            ]), MindsetSectionModel(headers: ["Really Bad",
+             "Bad",
+             "Good",
+             "Really Good"], questions: [
+            MindsetQuestionModel(questionIndex: 6,
+                                 question: "How did you feel while taking the test?")]),
+                MindsetSectionModel(headers: ["", "English",
+                 "Math",
+                 ""], questions: [
+                MindsetQuestionModel(questionIndex: 7,
+                                     question: "Which Section felt the best?"),
+                MindsetQuestionModel(questionIndex: 8,
+                question: "Which Section felt the worst?")
+                ]),
+                MindsetSectionModel(headers: [], questions: [
+                MindsetQuestionModel(questionIndex: 9,
+                                     question: "Is there anything you think could have affected your performacne?")])
+                
+            ])
+            return postTestSAT
         }
     }
 }
