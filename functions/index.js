@@ -108,7 +108,7 @@ async function sendWelcomeEmail(email, userId, db) {
     // The user subscribed to the newsletter.
     mailOptions.subject = `Welcome to ${APP_NAME}!`;
     mailOptions.text = `Hey ${userFirstName}! Welcome to ${APP_NAME}. In order to use the application please follow the steps below to get the test PDFs. 
-    \n1. Click this link (https://www.dropbox.com/sh/5mm8b7jyt07ba3q/AAC2q1Yu6LCETagmrBrDSpWka?dl=1) to download the test files. 
+    \n1. Click this link (https://www.dropbox.com/sh/uif30uoxawktjoh/AACvRVJG3eCAmSGOiG_ufCila?dl=1) to download the test files. 
     \n2. Go to files and click on the zip file.
     \n3. Go to your Induction Learning app and click choose test.
     \n4. Click on a test and upload the file with the corresponding name and it is on your device forever. For example if you wanted to take College Board Test 9, you would upload the pdf file CB9.

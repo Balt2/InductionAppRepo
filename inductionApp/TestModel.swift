@@ -364,7 +364,6 @@ class Test: ObservableObject, Hashable, Identifiable {
     //Initiliaze a Test without the pdf yet
     init(jsonData: Data, corrections: Bool, user: User){
         self.testFromJson = self.createTestFromJson(data: jsonData)
-        print(self.testFromJson)
         if self.testFromJson != nil{
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count

@@ -113,13 +113,8 @@ class Question: ObservableObject, Hashable, Identifiable {
             let answerArray = answer.split(separator: ",")
             let answerArrayStr = answerArray.map {String($0)}
             if answerArrayStr.contains(userAnswer) {
-                print("CORRECT")
                 currentState = .right
             }else{
-                print(answerArray)
-                print(answer)
-                print(answerArrayStr)
-                print("WRONG")
                 currentState = .wrong
             }
         }

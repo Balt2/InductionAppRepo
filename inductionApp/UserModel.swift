@@ -196,7 +196,6 @@ class User: ObservableObject, Equatable {
                     //                        ACTFormatedTestData(data: data, index: index, pdfPages: associatedTestPages!, tutorPDFName: "BreiteJ-CB1")
                     DispatchQueue.main.async{
                         //Loading in the performance PDFs
-                        print(actPerformanceTests)
                         let actTests = actPerformanceTests.filter {$0.testType! == .act}
                         let satTests = actPerformanceTests.filter {$0.testType! == .sat}
                         let psatTests = actPerformanceTests.filter {$0.testType! == .psat}
@@ -335,7 +334,6 @@ class User: ObservableObject, Equatable {
            //let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef).json")
             getPngs(testRef: isTestResult ? testRefOriginal! : testRef){pngData in
                 self.getFile(ref: refJson, pdf: false){jsonD in
-                    print(pngData)
                     guard let jsonData = jsonD else {return}
                     dataArray.append((pngs: pngData, json: jsonData))
                     count += 1
@@ -422,6 +420,22 @@ class User: ObservableObject, Equatable {
             }
         }
     }
+    
+    func createSectionsForStudyTable() -> [TestType: [Test]] {
+        var sectionDict = [TestType: [Test]]()
+        for test in self.tests{
+            if sectionDict[test.testType!] == nil{
+                sectionDict[test.testType!] = [test]
+            }else if self.testRefsMap[test.testFromJson!.testRefName] == false{
+                sectionDict[test.testType!]!.append(test)
+            }else{
+                sectionDict[test.testType!]!.insert(test, at: 0)
+            }
+        }
+    return sectionDict
+        
+    }
+    
 }
 
 enum TestType: String {

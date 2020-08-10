@@ -28,10 +28,7 @@ class AllACTData{
             }
             self.allTestData = tempTests //TODO: Two many loops
             self.user = user
-            print("CHECKING SECTION NAMES")
-            print(self.allTestData![0].testType!.rawValue)
-            print(self.allTestData![0].sectionsOverall)
-            print(self.allTestData![0].sectionsOverall.map{$0.key})
+
             self.sectionNames = Array(self.allTestData![0].subSectionGraphs.keys)
             self.higherSectionNames = self.allTestData![0].sectionsOverall.map{$0.key}
             self.createSelf()
@@ -88,8 +85,6 @@ class AllACTData{
             DispatchQueue.main.async {
                 self.overallPerformance = overallBarData
                 self.sectionsOverall = sectionGraphs
-                print("OVERALL PERFORMANCE")
-                print(self.overallPerformance)
                 if self.user != nil {
                     print("SETTING PERFORAMNCE BACK")
                     self.user!.getPerformanceDataComplete = true

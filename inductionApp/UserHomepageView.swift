@@ -53,7 +53,7 @@ struct UserHomepageView: View {
                     //Buttons
                     
                     //Link for taking a test
-                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive), isActive: self.$isTestActive){
+                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive, sectionDict: currentAuth.currentUser!.createSectionsForStudyTable()), isActive: self.$isTestActive){
                         HStack{
                             getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
                             Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )

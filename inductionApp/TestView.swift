@@ -93,7 +93,7 @@ struct TestView: View {
                                 
                             }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showSheet: self.$showSheet))
                                 .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
-                                //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
+                            //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
                             
                             
                             
@@ -139,7 +139,7 @@ struct TestView: View {
                 MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.postTestMindset!, preTest: false, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView, surveySubmitted: self.$preSurveySubmitted)
             }
         }
-            
+        
     }
 }
 
@@ -281,7 +281,7 @@ struct TimerNavigationView: View {
                         //Naviagate back to the user hompage
                     //UserHomepageView(user: self.user)
                     case .testOver:
-                        print("Should never get here")
+                        print("Test over")
                     }
                 }){
                     HStack{
@@ -345,40 +345,48 @@ struct TestTable: View {
     @State var showPicker = false
     @State var showErrorPDF = false
     @State var isActiveF = false
+    @State var sectionDict: [TestType: [Test]]
     
     var body: some View {
-        List(user.tests){test in
-            if self.user.testRefsMap[test.testFromJson!.testRefName] == false{
-                Button(action: {
-                    self.showPicker.toggle()
-                }){
-                    Text("Download: \(test.name)").frame(minWidth: 0, maxWidth: .infinity).frame(height: 90).background(Color.gray)
-                }.sheet(isPresented: self.$showPicker){
-                    DocumentPicker(testRefString: test.testFromJson!.testRefName, user: self.user, showErrorPDF: self.$showErrorPDF)
-                }.alert(isPresented: self.$showErrorPDF) {
-                    Alert(title: Text("You uploaded the wrong test PDF"),
-                          message: Text("Please upload the correct PDF for the chosen test."),
-                          dismissButton: .default(Text("OK")))
+        
+        List{
+            ForEach(self.getOrderedKeys(), id: \.self){key in
+                Section(header: Text(key.rawValue)){
+                    ForEach(self.sectionDict[key]!){test in
+                        if self.user.testRefsMap[test.testFromJson!.testRefName] == false{
+                            Button(action: {
+                                self.showPicker.toggle()
+                            }){
+                                Text("Download: \(test.name)").frame(minWidth: 0, maxWidth: .infinity).frame(height: 90).background(Color.gray)
+                            }.sheet(isPresented: self.$showPicker){
+                                DocumentPicker(testRefString: test.testFromJson!.testRefName, user: self.user, showErrorPDF: self.$showErrorPDF)
+                            }.alert(isPresented: self.$showErrorPDF) {
+                                Alert(title: Text("You uploaded the wrong test PDF"),
+                                      message: Text("Please upload the correct PDF for the chosen test."),
+                                      dismissButton: .default(Text("OK")))
+                            }
+                            
+                            
+                        }else{
+                            NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
+                                Text(test.name)
+                            }.isDetailLink(false).frame(height: 90)
+                        }
+                    }
                 }
-                    
-                
-            }else{
-//                Button(action: {
-//                    self.showMindsetSheet = true
-//                }){
-//                    Text(test.name)
-//                }.frame(height: 90)
-//                    .sheet(isPresented: self.$showMindsetSheet){
-//                    MindsetView()
-//                }
-                
-                NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
-                    Text(test.name)
-                    }.isDetailLink(false).frame(height: 90)
             }
         }.navigationBarTitle(Text("Choose Test to Take"))
+        
     }
+    
+    func getOrderedKeys() -> [TestType]{
+        var newList = Array(sectionDict.keys)
+        newList = newList.sorted(by: {$0.rawValue < $1.rawValue})
+        return newList
+    }
+    
 }
+
 
 struct StudyTable: View {
     @ObservedObject var user: User
