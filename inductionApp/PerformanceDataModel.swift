@@ -154,13 +154,13 @@ class ACTFormatedTestData: Test{
         if self.testType == .sat || self.testType == .psat{
             let englishSectionEntry = BarEntry(
             xLabel: "\(testFromJson!.dateTaken!)",
-                yEntries: [(height: CGFloat(self.englishScore!),
+                yEntries: [(height: CGFloat(self.englishScore),
                         color: Color("salmon"))],
             index: index)
             sectionsOverall["English"] = englishSectionEntry
             let mathSectionEntry = BarEntry(
             xLabel: "\(testFromJson!.dateTaken!)",
-                yEntries: [(height: CGFloat(self.mathScore!), //TODO Sometime mathScore will crash bc its nil
+                yEntries: [(height: CGFloat(self.mathScore), //TODO Sometime mathScore will crash bc its nil
                         color: Color("salmon"))],
             index: index)
             sectionsOverall["Math"] = mathSectionEntry
@@ -357,8 +357,8 @@ class QuickData: ObservableObject {
         case .sat, .psat:
             return [Date().toString(dateFormat: "MM-dd-yyyy") :
             ["overall":test.overallScore,
-            "Math":test.mathScore!,
-                "English":test.englishScore!
+             "Math":test.mathScore,
+                "English":test.englishScore
             ]]
         case .act:
             var tempSectionDict = [String: Int]()

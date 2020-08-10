@@ -159,7 +159,7 @@ struct RawDataView: View{
                            RoundedRectangle(cornerRadius: 5)
                                .fill(Color("lightBlue"))
                                .font(.largeTitle)
-                        Text("English: \(self.data.englishScore!)")
+                        Text("English: \(self.data.englishScore)")
                                .font(.largeTitle)
                                .foregroundColor(Color.white)
                        }
@@ -168,7 +168,7 @@ struct RawDataView: View{
                             RoundedRectangle(cornerRadius: 5)
                                 .fill(Color("lightBlue"))
                                 .font(.largeTitle)
-                            Text("Math: \(self.data.mathScore!)")
+                            Text("Math: \(self.data.mathScore)")
                                 .font(.largeTitle)
                                 .foregroundColor(Color.white)
                         }

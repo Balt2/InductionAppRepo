@@ -157,7 +157,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
                                                  timeAllowed:  Int(self.allotedTime), startIndex: self.index.start,
                                                  endIndex: self.index.end, orderInTest: self.sectionIndex,
                                                  questions: questionsForJson, rawScore: self.rawScore,
-                                                 timeLeft: Int(self.leftOverTime), scaledScore: self.scaledScore!)
+                                                 timeLeft: Int(self.leftOverTime), scaledScore: self.scaledScore)
         
         return sectionForJson
     }
@@ -185,6 +185,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
             scaledScore = test.scoreConvertDict[rawScore]?.writingAndLanguageTestScore
         }else if name == "Math No Calculator" && test.testType == .sat || test.testType == .psat{
             print("RAW SCORE MATH NO CALCULATOR SAT: \(rawScore)")
+            
             scaledScore = test.scoreConvertDict[rawScore]?.mathSectionTestScore
         }else if name == "Math Calculator" && test.testType == .sat || test.testType == .psat{
             print("RAW MATH CALCULATOR SAT: \(rawScore)")
@@ -290,19 +291,14 @@ class Test: ObservableObject, Hashable, Identifiable {
             }
             return sum / numberOfSections!
         }else if testType == .sat || testType == .psat{
-            if let mScore = mathScore, let
-                eScore = englishScore {
-                return mScore + eScore
-            }else{
-                return 0
-            }
+            return englishScore + mathScore
         }else{
             return 0
         }
     }
-    var mathScore: Int? = nil
+    var mathScore = 0
     
-    var englishScore: Int? = nil
+    var englishScore = 0
     
     var scoreConvertDict = [Int: (readingSectionTestScore: Int, mathSectionTestScore: Int, writingAndLanguageTestScore: Int, scienceTestScore: Int)]()
     
@@ -344,8 +340,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.name = self.testFromJson!.name
             if corrections == true{
                 print("CREATING CORRECTIONS: ACT: \(self.testType?.rawValue)")
-                self.englishScore = self.testFromJson?.english
-                self.mathScore = self.testFromJson?.mathScore
+                if self.testType == .sat{
+                    self.englishScore = self.testFromJson?.english as! Int
+                    self.mathScore = self.testFromJson?.mathScore as! Int
+                }
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM-dd-yyyy"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -372,8 +370,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.postTestMindset = self.testType?.getPostTestSurvey()
             self.name = self.testFromJson!.name
             if corrections == true{
-                self.englishScore = self.testFromJson?.english
-                self.mathScore = self.testFromJson?.mathScore
+                if self.testType == .sat{
+                    self.englishScore = self.testFromJson?.english as! Int
+                    self.mathScore = self.testFromJson?.mathScore as! Int
+                }
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM-dd-yyyy"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -423,8 +423,10 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.testType = TestType(rawValue: self.testFromJson!.testType)
             self.name = self.testFromJson!.name
             if corrections == true{
-                self.englishScore = self.testFromJson?.english
-                self.mathScore = self.testFromJson?.mathScore
+                if self.testType == .sat{
+                    self.englishScore = self.testFromJson?.english as! Int
+                    self.mathScore = self.testFromJson?.mathScore as! Int
+                }
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM-dd-yyyy"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -453,8 +455,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         if self.testFromJson != nil {
             self.testType = TestType(rawValue: self.testFromJson!.testType)
             self.name = self.testFromJson!.name
-            self.englishScore = self.testFromJson?.english
-            self.mathScore = self.testFromJson?.mathScore
+            self.englishScore = self.testFromJson!.english!
+            self.mathScore = self.testFromJson!.mathScore!
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "MM-dd-yyyy"
             let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -580,8 +582,8 @@ class Test: ObservableObject, Hashable, Identifiable {
         taken = false
         showAnswerSheet = true
         sections.forEach {$0.reset() }
-        englishScore = nil
-        mathScore = nil
+        englishScore = 0
+        mathScore = 0
         print("RESET PRESSED")
     }
     
@@ -657,20 +659,22 @@ class Test: ObservableObject, Hashable, Identifiable {
             let tempSection = section.makeTestSectionForJson(test: self)
             
             if tempSection.name == "Reading" || tempSection.name == "Writing" && (testType == .sat || testType == .psat){
-                englishScore = englishScore ?? 0 + tempSection.scaledScore!
+                englishScore += tempSection.scaledScore!
+                //englishScore = englishScore ?? 0 + tempSection.scaledScore!
             }else if tempSection.name == "Math No Calculator" || tempSection.name == "Math Calculator" && (testType == .sat || testType == .psat) {
+                mathScore += tempSection.rawScore!
                 mathScore = mathScore ?? 0 + tempSection.rawScore!
             }
             
             sectionsForJson.append(tempSection)
         }
         
-        if englishScore != nil{
-            englishScore = englishScore! * 10
+        if englishScore != 0{
+            englishScore = englishScore * 10
         }
         
-        if mathScore != nil{
-            mathScore = self.scoreConvertDict[mathScore!]?.mathSectionTestScore
+        if mathScore != 0{
+            mathScore = self.scoreConvertDict[mathScore]?.mathSectionTestScore as! Int
         }
         
         print("TESTING TestType BOOLEAN")
