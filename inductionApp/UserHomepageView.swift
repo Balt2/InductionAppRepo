@@ -23,7 +23,7 @@ struct UserHomepageView: View {
     @State var updateHomePageView = true
     
     //Settings
-    @State var showQuickDataType: TestType = .psat
+    @State var showQuickDataType: TestType = .act
     @State var leftHandMode: Bool = false
     //NOT USED
     
@@ -180,7 +180,7 @@ struct ActivityIndicator: UIViewRepresentable {
     
     typealias UIView = UIActivityIndicatorView
     var isAnimating: Bool
-    fileprivate var configuration = { (indicator: UIView) in }
+    var configuration = { (indicator: UIView) in } //fileprivate 
     
     func makeUIView(context: UIViewRepresentableContext<Self>) -> UIView { UIView() }
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<Self>) {

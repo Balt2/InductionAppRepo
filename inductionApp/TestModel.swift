@@ -236,6 +236,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var currentSection: TestSection?{
         return sections[currentSectionIndex]
     }
+    var loadedPDFIn = false
     @Published var begunTest = false
     @Published var taken = false
     @Published var showAnswerSheet = true
@@ -339,20 +340,12 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.pdfImages = TestPDF(data: pdfData, testRef: self.testFromJson!.testRefName).pages
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
-            print("TESTING TEST TYPE")
-            print(self.testFromJson!.testType)
             self.testType = TestType(rawValue: self.testFromJson!.testType)!
-            print(self.testType)
             self.name = self.testFromJson!.name
             if corrections == true{
                 print("CREATING CORRECTIONS: ACT: \(self.testType?.rawValue)")
-                print(self.englishScore)
                 self.englishScore = self.testFromJson?.english
-                print(self.englishScore)
-                print(self.mathScore)
                 self.mathScore = self.testFromJson?.mathScore
-                print(self.mathScore)
-                print(self.testFromJson?.overallScore)
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "MM-dd-yyyy"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
@@ -368,19 +361,62 @@ class Test: ObservableObject, Hashable, Identifiable {
         print("donne: \(self.name)")
     }
     
+    //Initiliaze a Test without the pdf yet
+    init(jsonData: Data, corrections: Bool, user: User){
+        self.testFromJson = self.createTestFromJson(data: jsonData)
+        
+        if self.testFromJson != nil{
+            self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
+            self.numberOfSections = self.sections.count
+            self.testType = TestType(rawValue: self.testFromJson!.testType)
+            self.name = self.testFromJson!.name
+            if corrections == true{
+                self.englishScore = self.testFromJson?.english
+                self.mathScore = self.testFromJson?.mathScore
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MM-dd-yyyy"
+                let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
+                self.dateTaken = date
+            }else{
+                for convertEach in testFromJson!.answerConverter! {
+                    scoreConvertDict[convertEach.rawScore] = (readingSectionTestScore: convertEach.readingSectionTestScore, mathSectionTestScore: convertEach.mathSectionTestScore, writingAndLanguageTestScore: convertEach.writingAndLanguageTestScore, scienceTestScore: convertEach.scienceTestScore ?? 0)
+                }
+            }
+            
+            user.getPngs(testRef: self.testFromJson!.testRefName){pngs in
+                DispatchQueue.global(qos: .utility).async {
+                let pdfModelImages = TestPDF(pngData: pngs).pages
+                    DispatchQueue.main.sync {
+                        self.setPDFForSection(images: pdfModelImages)
+                        self.loadedPDFIn = true
+                    }
+                }
+               
+            }
+            
+        }
+        
+              
+        print("donne: \(self.name)")
+    }
+    
+    func setPDFForSection(images: [PageModel]){
+        for section in self.sections{
+            let arraySlice = images[section.index.start..<section.index.end]
+            section.pages = Array(arraySlice)
+        }
+    }
+    
     //Create a test fromo Data (coming from database mostly) and png data
     init(jsonData: Data, pngData: [Data], corrections: Bool){
         
 
         self.testFromJson = self.createTestFromJson(data: jsonData)
         if self.testFromJson != nil{
-            self.pdfImages = TestPDF(pngData: pngData).pages
+            //self.pdfImages = TestPDF(pngData: pngData).pages
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
-            print("TESTING TEST TYPE")
-            print(self.testFromJson!.testType)
             self.testType = TestType(rawValue: self.testFromJson!.testType)
-             print(self.testType)
             self.name = self.testFromJson!.name
             if corrections == true{
                 self.englishScore = self.testFromJson?.english
@@ -399,6 +435,8 @@ class Test: ObservableObject, Hashable, Identifiable {
               
         print("donne: \(self.name)")
     }
+    
+    
     
     
     
@@ -521,6 +559,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         currentSection?.begunSection = true
     }
     
+    //Changes the section for the correction view
     func setCorrectionTestView(index: Int){
         currentSection?.questions.forEach{$0.canvas = nil}
         currentSection?.pages.forEach{$0.canvas = nil}
@@ -588,9 +627,15 @@ class Test: ObservableObject, Hashable, Identifiable {
                 tempQuestion.userAnswer = question.studentAnswer ?? ""
                 questionList.append(tempQuestion)
             }
-                let arraySlice = pdfImages[section.startIndex..<section.endIndex-1] //TODO FIND BUG HERE. IT crashes every certian number of runs
-                
+            print(testFromJson.name)
+            
+            var arraySlice = ArraySlice<PageModel>()
+            if !pdfImages.isEmpty{
+                arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
+            }
+
             let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList, inkingTool: corrections ? PKInkingTool(.pen, color: .red, width: 1) : PKInkingTool(.pen, color: .black, width: 1))
+            
                 sections.append(tempSection)
             
             

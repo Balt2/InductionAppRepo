@@ -17,12 +17,14 @@ struct TestView: View {
     @State var shouldScrollToTop: Bool = false
     @State var showSheet: Bool = true
     @State var neverUseIndex: Int = -1
+    @State var showLoadingView: Bool = false
     @Binding var shouldPopToRootView : Bool
     @ObservedObject var testData: Test
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var offset = CGSize.zero
     
     var body: some View {
+        
         ZStack {
             Rectangle()
                 .edgesIgnoringSafeArea(.all)
@@ -115,12 +117,18 @@ struct TestView: View {
                     
                 }
                 
-            }
+            }.blur(radius: (self.testData.loadedPDFIn && !self.showSheet) ? 0 : 50.0)
         }
         .sheet(isPresented: self.$showSheet, onDismiss: {
             if self.testData.currentSectionIndex > 0 {
                 self.testData.sendResultJson(user: self.currentAuth.currentUser!) //TODO: Dont force
                 self.shouldPopToRootView = false
+                
+            }else{
+                if !self.testData.loadedPDFIn {
+                    self.showLoadingView = true
+                    //self.showSheet = true
+                }
             }
         }){
             if self.testData.currentSectionIndex < 1{ //Should be test.bugan. TODO testData.begunTest
@@ -130,6 +138,15 @@ struct TestView: View {
             }
         }
             
+    }
+}
+
+struct LoadingView: View{
+    var body: some View{
+        VStack{
+            ActivityIndicator(isAnimating: true)
+            Text("Loading Test...")
+        }.frame(width: 100, height: 100)
     }
 }
 
@@ -332,6 +349,7 @@ struct TestTable: View {
     @Binding var rootIsActive: Bool
     @State var showPicker = false
     @State var showErrorPDF = false
+    @State var isActiveF = false
     
     var body: some View {
         List(user.tests){test in

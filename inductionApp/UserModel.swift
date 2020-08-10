@@ -33,7 +33,7 @@ class User: ObservableObject, Equatable {
     @Published var allSATPerformanceData: AllACTData?
     @Published var allPSATPerformanceData: AllACTData?
     
-    //@Published var showACTData: Bool?
+
     @Published var showTestType: TestType?
     var currentPerformanceData: AllACTData?{
         if showTestType == .act {
@@ -53,7 +53,7 @@ class User: ObservableObject, Equatable {
         }else if showTestType == .sat {
             return quickDataSAT
         }else{ //SAT or PSAT or Nil
-            return quickDataSAT //quickDataSATBarData
+            return quickDataACT //quickDataSATBarData
         }
     }
     
@@ -91,16 +91,16 @@ class User: ObservableObject, Equatable {
         quickDataACT = QuickData(testType: .act)
         
         //Getting Associations image
-        let imageRef: StorageReference = Storage.storage().reference().child(association.imagePath)
-        
-        
-        self.getFile(ref: imageRef, pdf: false){image in
-            //Image is data, the UI will turn it into a UIImage
-            if let imageData = image{
-                print("Got Association Image")
-                self.association.image = UIImage(data: imageData)
-            }
-        }
+//        let imageRef: StorageReference = Storage.storage().reference().child(association.imagePath)
+//
+//
+//        self.getFile(ref: imageRef, pdf: false){image in
+//            //Image is data, the UI will turn it into a UIImage
+//            if let imageData = image{
+//                print("Got Association Image")
+//                self.association.image = UIImage(data: imageData)
+//            }
+//        }
         
         //Get the test pdf and json pairs
 //        self.getPdfJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
@@ -129,31 +129,56 @@ class User: ObservableObject, Equatable {
 //            }
 //        }
         
-        self.getPngsJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
-            if !testsData.isEmpty{
-                print("TEST DATA NOT EMPTY")
+        //Getting the real tests without the pdf/png. Will wait to do this.
+        self.getTestJsons(searchArray: Array(testRefsMap.keys)){jsons in
+            if !jsons.isEmpty{
                 DispatchQueue.global(qos: .utility).async {
-                   var tempArray: [Test] = []
-                    for test in testsData{
-                        let tempTest = Test(jsonData: test.json, pngData: test.pngs, corrections: false)
-                           //let tempTest = Test(jsonData: test.json, pdfData: test.pdf, corrections: false)
-                           tempArray.append(tempTest)
-                       }
-                       //If boolean is false then no tests exist
-                       print("Got Tests, User Init")
-                       DispatchQueue.main.sync {
-                           self.tests.append(contentsOf: tempArray)
-                           self.getTestsComplete = true
-                       }
-               }
+                    var tempJsonArray: [Test] = []
+                    for json in jsons{
+                        let tempTest = Test(jsonData: json, corrections: false, user: self)
+                        tempJsonArray.append(tempTest)
+                    }
+                    DispatchQueue.main.sync {
+                        self.tests.append(contentsOf: tempJsonArray)
+                        self.getTestsComplete = true
+                    }
+                }
             }else{
                 print("ERROR Getting tests")
                 DispatchQueue.main.sync {
                     self.getTestsComplete = true
                 }
             }
-            
         }
+        
+        
+        
+        //Getting the real tests
+//        self.getPngsJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
+//            if !testsData.isEmpty{
+//                print("TEST DATA NOT EMPTY")
+//                DispatchQueue.global(qos: .utility).async {
+//                   var tempArray: [Test] = []
+//                    for test in testsData{
+//                        let tempTest = Test(jsonData: test.json, pngData: test.pngs, corrections: false)
+//                           //let tempTest = Test(jsonData: test.json, pdfData: test.pdf, corrections: false)
+//                           tempArray.append(tempTest)
+//                       }
+//                   //If boolean is false then no tests exist
+//                   print("Got Tests, User Init")
+//                   DispatchQueue.main.sync {
+//                    self.tests.append(contentsOf: tempArray)
+//                       self.getTestsComplete = true
+//                   }
+//               }
+//            }else{
+//                print("ERROR Getting tests")
+//                DispatchQueue.main.sync {
+//                    self.getTestsComplete = true
+//                }
+//            }
+//
+//        }
 
         //Get the test result pdf and json pairs
         self.getPdfJsonPair(isTestResult: true, searchArray: testResultRefs){dataArr in
@@ -183,12 +208,14 @@ class User: ObservableObject, Equatable {
                         
                         
                         if self.allACTPerformanceData != nil {
-                            self.showTestType = .act
-                            //self.showACTData = true
+                            if self.showTestType == nil{
+                                self.showTestType = .act
+                            }
                             print("SHOW ACT TRUE")
                         }else if self.allSATPerformanceData != nil {
-                            //self.showACTData = false
-                            self.showTestType = .sat
+                            if self.showTestType == nil{
+                                self.showTestType = .sat
+                            }
                             print("SHOW SAT TRUE")
                         }
                         print(actPerformanceTests.count)
@@ -234,6 +261,7 @@ class User: ObservableObject, Equatable {
     }
     
     
+    
     func getPdfJsonPair(isTestResult: Bool, searchArray: [String], completionHandler: @escaping (_ completion: [(pdf: Data, json: Data)]) -> ()){
         print("GETTTING PDF JSON PAIR")
         var count = 0 //Used to determine if the array has been searched and we can have the completion handler
@@ -268,6 +296,23 @@ class User: ObservableObject, Equatable {
         }
     }
     
+    func getTestJsons(searchArray: [String], completionHandler: @escaping (_ completion: [Data]) -> ()){
+        var dataArray = [Data]()
+        var count = 0 //Used to determine if the array has been searched and we can have the completion handler
+        if searchArray.count == 0 {completionHandler(dataArray)}
+        for testRef in searchArray{
+            let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(testRef).json")
+            self.getFile(ref: refJson, pdf: false){jsonD in
+                guard let jsonData = jsonD else {return}
+                dataArray.append(jsonData)
+                count += 1
+                if count == searchArray.count {completionHandler(dataArray)}
+            }
+            
+        }
+    }
+    
+    
     func getPngsJsonPair(isTestResult: Bool, searchArray: [String], completionHandler: @escaping (_ completion: [(pngs: [Data], json: Data)]) -> ()){
         var count = 0 //Used to determine if the array has been searched and we can have the completion handler
         var dataArray = [(pngs: [Data], json: Data)]()
@@ -298,12 +343,10 @@ class User: ObservableObject, Equatable {
         return paths[0]
     }
     
-    
+    //Get file from FIrebase storage
     func getFile(ref: StorageReference, pdf: Bool, completionHandler: @escaping (_ completion: Data?) -> ()) {
         ref.getData(maxSize: pdf == true ? (40 * 1024 * 1024) : (1 * 1024 * 1024)){data, error in
             if let error = error {
-                print(pdf)
-                print(ref)
                 print("error retriving file at: \(ref.fullPath) with error: \(error)")
                 completionHandler(nil)
             }else{
@@ -327,6 +370,8 @@ class User: ObservableObject, Equatable {
         }
     }
     
+    
+    //Returns all pngs for a given testRef (similar to returning a whole pdf of a test, but photos for each page iinstead)
     func getPngs(testRef: String, completionHander: @escaping (_ completion: [Data]) -> ()){
         //var pngs: [Data] = []
         var pngsWName: [(name: String, data: Data)] = []
