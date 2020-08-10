@@ -77,17 +77,18 @@ async function sendWelcomeEmail(email, userId, db) {
   const actTestsDir = path.join(__dirname, '/ACTTests.zip');
     const mailOptions = {
       from: `${APP_NAME} <noreply@firebase.com>`,
-      to: email,
-      attachments: [
-        {   // file on disk as an attachment
-          filename: 'SATTests.zip',
-          path: satTestsDir
-        },
-        {   // file on disk as an attachment
-          filename: 'ACTTests.zip',
-          path: actTestsDir
-        }
-      ]
+      to: email
+      //,
+      // attachments: [
+      //   {   // file on disk as an attachment
+      //     filename: 'SATTests.zip',
+      //     path: satTestsDir
+      //   },
+      //   {   // file on disk as an attachment
+      //     filename: 'ACTTests.zip',
+      //     path: actTestsDir
+      //   }
+      // ]
     };
     console.log(`This is the user id: ${userId}`)
 
@@ -107,12 +108,10 @@ async function sendWelcomeEmail(email, userId, db) {
     // The user subscribed to the newsletter.
     mailOptions.subject = `Welcome to ${APP_NAME}!`;
     mailOptions.text = `Hey ${userFirstName}! Welcome to ${APP_NAME}. In order to use the application please follow the steps below to get the test PDFs. 
-    \n1. Click on the zip file. 
-    \n2. Hit the top right download button.
-    \n3. Click save to files and save it to your iPad.
-    \n4. Go to files and click on the zip file.
-    \n5. Go to your Induction Learning app and click choose test.
-    \n6. Click on a test and upload the file with the corresponding name and it is on your device forever. For example if I wanted to take College Board Test 9, I would upload the pdf file CB9.
+    \n1. Click this link (https://www.dropbox.com/sh/5mm8b7jyt07ba3q/AAC2q1Yu6LCETagmrBrDSpWka?dl=1) to download the test files. 
+    \n2. Go to files and click on the zip file.
+    \n3. Go to your Induction Learning app and click choose test.
+    \n4. Click on a test and upload the file with the corresponding name and it is on your device forever. For example if you wanted to take College Board Test 9, you would upload the pdf file CB9.
     \n
     \nBest,
     \nInduction Leaning `;
