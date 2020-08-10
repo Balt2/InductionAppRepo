@@ -76,15 +76,30 @@ struct UserHomepageView: View {
                     }){
                         Text("Settings")
                     }.buttonStyle(buttonBackgroundStyle())
-                        .sheet(isPresented: $showSettingSheet, onDismiss: {self.user.showTestType = self.showQuickDataType} ){
+                        .sheet(isPresented: $showSettingSheet, onDismiss: {
+                            switch self.showQuickDataType{
+                            case .act:
+                                if self.user.allACTPerformanceData != nil {
+                                    self.user.showTestType = self.showQuickDataType
+                                }
+                            case .sat:
+                                if self.user.allSATPerformanceData != nil {
+                                    self.user.showTestType = self.showQuickDataType
+                                }
+                            case .psat:
+                                if self.user.allPSATPerformanceData != nil {
+                                    self.user.showTestType = self.showQuickDataType
+                                }
+                            }
+                        } ){
                             NavigationView{
                                 Form{
                                     Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
                                         VStack{
                                             Picker(selection: self.$showQuickDataType, label: Text("Test Type")){
-                                                Text("SAT").tag(TestType.sat)
-                                                Text("ACT").tag(TestType.act)
-                                                Text("PSAT").tag(TestType.psat)
+                                                Text("SAT").tag(TestType.sat).disabled(self.user.allSATPerformanceData == nil)
+                                                Text("ACT").tag(TestType.act).disabled(self.user.allACTPerformanceData == nil)
+                                                Text("PSAT").tag(TestType.psat).disabled(self.user.allPSATPerformanceData == nil)
                                             }
                                         }
                                     }

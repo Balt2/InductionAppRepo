@@ -117,7 +117,7 @@ struct TestView: View {
                     
                 }
                 
-            }.blur(radius: (self.testData.loadedPDFIn && !self.showSheet) ? 0 : 50.0)
+            }.blur(radius: (self.testData.loadedPDFIn && !self.showSheet) ? 0 : 50.0) //TODO: Add a loading if they finish
         }
         .sheet(isPresented: self.$showSheet, onDismiss: {
             if self.testData.currentSectionIndex > 0 {

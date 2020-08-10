@@ -401,7 +401,9 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     func setPDFForSection(images: [PageModel]){
+        print(self.testFromJson?.testRefName)
         for section in self.sections{
+            print(section.index)
             let arraySlice = images[section.index.start..<section.index.end]
             section.pages = Array(arraySlice)
         }
