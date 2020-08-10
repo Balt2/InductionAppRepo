@@ -407,7 +407,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         for section in self.sections{
             print(section.index)
             print(images.count)
-            let arraySlice = images[section.index.start..<section.index.end]
+            let arraySlice = images[section.index.start..<section.index.end - 1]
             section.pages = Array(arraySlice)
         }
     }
@@ -885,7 +885,7 @@ struct QuestionFromJson: Codable{
     var officialSub: String
     var tutorSub: String
     var answer: String
-    var reason: String
+    var reason: String?
     
     //Values only in the test result JSON
     var studentAnswer: String?

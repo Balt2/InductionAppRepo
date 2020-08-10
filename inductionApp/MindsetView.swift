@@ -68,6 +68,7 @@ struct MindsetView: View {
                             
                             //Pulling the model down
                             if self.test.loadedPDFIn{
+                                self.surveySubmitted = false
                                 self.presentView = false
                             }
                         }) {

@@ -60,7 +60,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         }else{
             self.freeResponse = false
         }
-        self.reason = q.reason
+        self.reason = q.reason ?? ""
         self.testType = testType
         self.location = ip
         self.isACTMath = isActMath

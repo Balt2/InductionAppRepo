@@ -103,11 +103,11 @@ struct UserHomepageView: View {
                                             }
                                         }
                                     }
-                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
-                                        Toggle(isOn: self.$leftHandMode){
-                                            Text("Left Hand Mode")
-                                        }
-                                    }
+//                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
+//                                        Toggle(isOn: self.$leftHandMode){
+//                                            Text("Left Hand Mode")
+//                                        }
+//                                    }
                                 }.navigationBarTitle("Settings")
 
                             }.navigationViewStyle((StackNavigationViewStyle()))

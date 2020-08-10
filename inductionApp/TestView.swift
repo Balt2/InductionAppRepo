@@ -128,6 +128,8 @@ struct TestView: View {
                 if !self.testData.loadedPDFIn {
                     self.preSurveySubmitted = true
                     self.showSheet = true
+                }else{
+                    self.preSurveySubmitted = false
                 }
             }
         }){

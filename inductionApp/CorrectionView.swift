@@ -110,7 +110,7 @@ struct CorrectionView: View {
                         Spacer()
                         Text("Official Sub Section: \(self.testData.currentSection!.questions[popUpQuestionIndex].officialSub)")
                         Spacer()
-                        if testData.testType == .sat || testData.testType == .psat{
+                        if testData.testType == .sat { //|| testData.testType == .psat
                             Text(self.testData.currentSection!.questions[popUpQuestionIndex].reason).lineLimit(nil)
                         }
                         
