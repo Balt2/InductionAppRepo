@@ -11,55 +11,72 @@ import SwiftUI
 struct MindsetView: View {
     @Binding var presentView: Bool
     @State var responseString: String = ""
-    var test: Test
+    @ObservedObject var test: Test
     var model: MindsetSurveyModel
     var preTest: Bool
     @ObservedObject var user: User
     @Binding var shouldPopToRoot: Bool
+    @Binding var surveySubmitted: Bool
     
     var body: some View {
-        NavigationView{
-            VStack(alignment: .leading){
-                Text(model.name).font(.largeTitle).padding([.top, .bottom], 10).frame(maxWidth: .infinity)
-                ScrollView(.vertical){
-                    
-                    ForEach(self.model.sections, id: \.id){section in
-                        Group{
-                            HStack (spacing: 20){
-                                ForEach(0..<section.headers.count){i in
-                                    ComplexHeaderView(header: section.headers[i], subHeader: (section.subHeaders != nil) ? section.subHeaders![i] : "" )
-                                    .lineLimit(nil).frame(width: 80).multilineTextAlignment(.center)
-//                                        , subHeader: section.subHeaders == nil ? nil : section.subHeaders[i])
-//
-                                    //Text(header).fontWeight(.bold).
+        Group{
+            if test.loadedPDFIn == false && surveySubmitted == true{
+                VStack{
+                    ActivityIndicator(isAnimating: (test.loadedPDFIn == false && surveySubmitted == true))
+                    Text("Loading Test...")
+                }.onReceive(test.$loadedPDFIn){newValue in
+                    if newValue == true{
+                        self.presentView = false
+                    }
+                }.opacity(0.5)
+            }else if surveySubmitted == false{
+                NavigationView{
+                    VStack(alignment: .leading){
+                        Text(model.name).font(.largeTitle).padding([.top, .bottom], 10).frame(maxWidth: .infinity)
+                        ScrollView(.vertical){
+                            
+                            ForEach(self.model.sections, id: \.id){section in
+                                Group{
+                                    HStack (spacing: 20){
+                                        ForEach(0..<section.headers.count){i in
+                                            ComplexHeaderView(header: section.headers[i], subHeader: (section.subHeaders != nil) ? section.subHeaders![i] : "" )
+                                            .lineLimit(nil).frame(width: 80).multilineTextAlignment(.center)
+                                        }
+                                    }.offset(x: 160, y: 0) //TODO: Understand the 160
+                                    VStack{
+                                        ForEach(section.questions, id: \.self){question in
+                                            MindsetQuestionView(question: question, headers: section.headers, responseString: self.$responseString)
+                                                .background(Color.white).frame(maxWidth: .infinity)
+                                        }
+                                    }//.frame(maxWidth: .infinity).background(Color.white).padding([.top, .bottom], 10)
                                 }
-                            }.offset(x: 160, y: 0) //TODO: Understand the 160
-                            VStack{
-                                ForEach(section.questions, id: \.self){question in
-                                    MindsetQuestionView(question: question, headers: section.headers, responseString: self.$responseString)
-                                        .background(Color.white).frame(maxWidth: .infinity)
-                                }
-                            }//.frame(maxWidth: .infinity).background(Color.white).padding([.top, .bottom], 10)
-                        }
-                    }
-                }.navigationBarTitle(Text("Mindset Module: \(preTest ? "pre-test" : "post-test")"), displayMode: .inline).navigationBarItems(trailing: Button(action: {
-                    print("SUBMIT PRESSED")
-                    if (self.model.sections.last?.headers.isEmpty)! {
-                        self.model.sections.last?.questions.last?.answer = self.responseString
-                    }
-                    if self.preTest {
-                        self.test.preTestMindset = self.model
-                    }else{
-                        self.test.postTestMindset = self.model
-                        self.test.sendResultJson(user: self.user)
-                        self.shouldPopToRoot = false
-                    }
-                    self.presentView = false
-                }) {
-                    Text("Submit")
-                })
-            }.background(Color(red: 0.82, green: 0.82, blue: 0.82))
-        }.navigationViewStyle((StackNavigationViewStyle()))
+                            }
+                        }.navigationBarTitle(Text("Mindset Module: \(preTest ? "pre-test" : "post-test")"), displayMode: .inline).navigationBarItems(trailing: Button(action: {
+                            print("SUBMIT PRESSED for Survey")
+                            self.surveySubmitted = true
+                            
+                            //For Free response
+                            if (self.model.sections.last?.headers.isEmpty)! {
+                                self.model.sections.last?.questions.last?.answer = self.responseString
+                            }
+                            
+                            //Sending test data and poping out to the homescreen
+                            if !self.preTest {
+                                self.test.sendResultJson(user: self.user)
+                                self.shouldPopToRoot = false
+                            }
+                            
+                            //Pulling the model down
+                            if self.test.loadedPDFIn{
+                                self.presentView = false
+                            }
+                        }) {
+                            Text("Submit")
+                        })
+                    }.background(Color(red: 0.82, green: 0.82, blue: 0.82))
+                }.navigationViewStyle((StackNavigationViewStyle()))
+            }
+        }
     }
 }
 

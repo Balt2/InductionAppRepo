@@ -17,7 +17,7 @@ struct TestView: View {
     @State var shouldScrollToTop: Bool = false
     @State var showSheet: Bool = true
     @State var neverUseIndex: Int = -1
-    @State var showLoadingView: Bool = false
+    @State var preSurveySubmitted: Bool = false
     @Binding var shouldPopToRootView : Bool
     @ObservedObject var testData: Test
     @EnvironmentObject var currentAuth: FirebaseManager
@@ -117,7 +117,7 @@ struct TestView: View {
                     
                 }
                 
-            }.blur(radius: (self.testData.loadedPDFIn && !self.showSheet) ? 0 : 50.0) //TODO: Add a loading if they finish
+            }.blur(radius: (!self.showSheet) ? 0 : 50.0) //TODO: Add a loading if they finish //self.testData.loadedPDFIn && 
         }
         .sheet(isPresented: self.$showSheet, onDismiss: {
             if self.testData.currentSectionIndex > 0 {
@@ -126,29 +126,22 @@ struct TestView: View {
                 
             }else{
                 if !self.testData.loadedPDFIn {
-                    self.showLoadingView = true
-                    //self.showSheet = true
+                    self.preSurveySubmitted = true
+                    self.showSheet = true
                 }
             }
         }){
             if self.testData.currentSectionIndex < 1{ //Should be test.bugan. TODO testData.begunTest
-                MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.testType!.getPreTestSurvey(), preTest: true, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView)
+                MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.preTestMindset!, preTest: true, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView, surveySubmitted: self.$preSurveySubmitted)
             }else{
-                MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.testType!.getPostTestSurvey(), preTest: false, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView)
+                MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.postTestMindset!, preTest: false, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView, surveySubmitted: self.$preSurveySubmitted)
             }
         }
             
     }
 }
 
-struct LoadingView: View{
-    var body: some View{
-        VStack{
-            ActivityIndicator(isAnimating: true)
-            Text("Loading Test...")
-        }.frame(width: 100, height: 100)
-    }
-}
+
 
 
 

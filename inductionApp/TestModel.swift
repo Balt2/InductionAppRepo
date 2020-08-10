@@ -236,7 +236,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     var currentSection: TestSection?{
         return sections[currentSectionIndex]
     }
-    var loadedPDFIn = false
+    @Published var loadedPDFIn = false
     @Published var begunTest = false
     @Published var taken = false
     @Published var showAnswerSheet = true
@@ -369,6 +369,8 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
             self.testType = TestType(rawValue: self.testFromJson!.testType)
+            self.preTestMindset = self.testType?.getPreTestSurvey()
+            self.postTestMindset = self.testType?.getPostTestSurvey()
             self.name = self.testFromJson!.name
             if corrections == true{
                 self.englishScore = self.testFromJson?.english
@@ -404,6 +406,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         print(self.testFromJson?.testRefName)
         for section in self.sections{
             print(section.index)
+            print(images.count)
             let arraySlice = images[section.index.start..<section.index.end]
             section.pages = Array(arraySlice)
         }
