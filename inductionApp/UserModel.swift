@@ -52,9 +52,10 @@ class User: ObservableObject, Equatable {
             return quickDataACT
         }else if showTestType == .sat {
             return quickDataSAT
-        }else{ //SAT or PSAT or Nil
-            return quickDataACT //quickDataSATBarData
+        }else { //SAT or PSAT or Nil
+            return quickDataPSAT
         }
+        
     }
     
 
@@ -75,7 +76,7 @@ class User: ObservableObject, Equatable {
     
     @ObservedObject var quickDataSAT: QuickData
     @ObservedObject var quickDataACT: QuickData
-    var quickDataMapACT = [String: [String: Int]]()
+    @ObservedObject var quickDataPSAT: QuickData
     
     
     init(fn: String, ln: String, id: String, association: Association, testResultRefs: [String], testRefsMap: [String: Bool]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
@@ -89,6 +90,7 @@ class User: ObservableObject, Equatable {
         
         quickDataSAT = QuickData(testType: .sat)
         quickDataACT = QuickData(testType: .act)
+        quickDataPSAT = QuickData(testType: .psat)
         
         //Getting Associations image
 //        let imageRef: StorageReference = Storage.storage().reference().child(association.imagePath)
@@ -197,6 +199,7 @@ class User: ObservableObject, Equatable {
                         print(actPerformanceTests)
                         let actTests = actPerformanceTests.filter {$0.testType! == .act}
                         let satTests = actPerformanceTests.filter {$0.testType! == .sat}
+                        let psatTests = actPerformanceTests.filter {$0.testType! == .psat}
                         
                         if actTests.count != 0 {
                             self.allACTPerformanceData = AllACTData(tests: actTests, user: self)
@@ -204,6 +207,10 @@ class User: ObservableObject, Equatable {
                         
                         if satTests.count != 0 {
                             self.allSATPerformanceData = AllACTData(tests: satTests, user: self)
+                        }
+                        
+                        if psatTests.count != 0{
+                            self.allPSATPerformanceData = AllACTData(tests: psatTests, user: self)
                         }
                         
                         
@@ -217,6 +224,10 @@ class User: ObservableObject, Equatable {
                                 self.showTestType = .sat
                             }
                             print("SHOW SAT TRUE")
+                        }else if self.allPSATPerformanceData != nil{
+                            if self.showTestType == nil{
+                                self.showTestType = .psat
+                            }
                         }
                         print(actPerformanceTests.count)
                         self.getPerformanceDataComplete = true
@@ -510,9 +521,8 @@ enum TestType: String {
              "Really Good"], questions: [
             MindsetQuestionModel(questionIndex: 6,
                                  question: "How did you feel while taking the test?")]),
-                MindsetSectionModel(headers: ["", "English",
-                 "Math",
-                 ""], questions: [
+                MindsetSectionModel(headers: ["English", "Reading",
+                 "Math No Calc", "Math Calc"], questions: [
                 MindsetQuestionModel(questionIndex: 7,
                                      question: "Which Section felt the best?"),
                 MindsetQuestionModel(questionIndex: 8,

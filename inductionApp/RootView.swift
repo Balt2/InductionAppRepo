@@ -151,6 +151,11 @@ class FirebaseManager: ObservableObject {
                             self.currentUser?.quickDataACT.createData(nsDictionary: structuredDataMapACT)
                         }
                         
+                        if let dataMapPSAT = dataDescription!["quickDataMapPSAT"] {
+                            let structuredDataMapPSAT = dataMapPSAT as! [String: [String : [String: Int]]]
+                            self.currentUser?.quickDataPSAT.createData(nsDictionary: structuredDataMapPSAT)
+                        }
+                        
                         completionHandler(true)
                     }else{
                         //ERROR: No association found
@@ -173,7 +178,7 @@ class FirebaseManager: ObservableObject {
     func createUser(uid: String, fn: String, ln: String, aid: String, accessCode: String, handler: @escaping (_ success: Bool) -> Void){
         //
         //
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false], "quickDataMapSAT": [:], "quickDataMapACT": [:], "accessCode": accessCode]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false, "psat1": false, "psat2": false], "quickDataMapSAT": [:], "quickDataMapACT": [:], "accessCode": accessCode]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)

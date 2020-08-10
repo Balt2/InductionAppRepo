@@ -364,7 +364,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     //Initiliaze a Test without the pdf yet
     init(jsonData: Data, corrections: Bool, user: User){
         self.testFromJson = self.createTestFromJson(data: jsonData)
-        
+        print(self.testFromJson)
         if self.testFromJson != nil{
             self.sections = self.createSectionArray(testFromJson: self.testFromJson!, corrections: corrections)
             self.numberOfSections = self.sections.count
@@ -762,9 +762,19 @@ class Test: ObservableObject, Hashable, Identifiable {
                     print("SUCCESS UPDATING QUICK DATA")
                 }
             }
-        }else if testType == .sat || testType == .psat{
+        }else if testType == .sat{
             user.quickDataSAT.addNewTest(test: self, testResultName: nameOfFile)
             self.db.collection("users").document(user.id).updateData(["quickDataMapSAT" : user.quickDataSAT.databaseDictionary]){error in
+                if let error = error{
+                    print("ERROR UPDATING QUICK DATA: \(error)")
+                    //probably should delete new entry in quick mapACT
+                }else{
+                    print("SUCCESS UPDATING QUICK DATA")
+                }
+            }
+        }else if testType == .psat{
+            user.quickDataPSAT.addNewTest(test: self, testResultName: nameOfFile)
+            self.db.collection("users").document(user.id).updateData(["quickDataMapPSAT" : user.quickDataPSAT.databaseDictionary]){error in
                 if let error = error{
                     print("ERROR UPDATING QUICK DATA: \(error)")
                     //probably should delete new entry in quick mapACT
@@ -786,18 +796,15 @@ class Test: ObservableObject, Hashable, Identifiable {
                 print("START MAIN ADDING TEST")
                 if self.testType == .act{
                     if user.allACTPerformanceData == nil{
-                        print("ACT IS NIL")
                         user.allACTPerformanceData = AllACTData(tests: [tempTest], user: user)
                         if user.showTestType == nil{
                             user.showTestType = .act
                         }
                         user.getPerformanceDataComplete = true
                     }else{
-                        print("ACT IS NOT NIL")
-                        print(user.allACTPerformanceData?.allTestData)
                         user.allACTPerformanceData!.addTest(test: tempTest)
                     }
-                }else if self.testType == .psat || self.testType == .sat{
+                }else if self.testType == .sat{
                     if user.allSATPerformanceData == nil{
                         user.allSATPerformanceData = AllACTData(tests: [tempTest], user: user)
                         if user.showTestType == nil{
@@ -806,6 +813,16 @@ class Test: ObservableObject, Hashable, Identifiable {
                         user.getPerformanceDataComplete = true
                     }else{
                         user.allSATPerformanceData!.addTest(test: tempTest)
+                    }
+                }else if self.testType == .psat{
+                    if user.allPSATPerformanceData == nil{
+                        user.allPSATPerformanceData = AllACTData(tests: [tempTest], user: user)
+                        if user.showTestType == nil{
+                            user.showTestType = .psat
+                        }
+                        user.getPerformanceDataComplete = true
+                    }else{
+                        user.allPSATPerformanceData!.addTest(test: tempTest)
                     }
                 }
             }

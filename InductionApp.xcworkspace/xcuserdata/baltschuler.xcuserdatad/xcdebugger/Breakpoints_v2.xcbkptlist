@@ -138,8 +138,8 @@
             filePath = "InductionApp/UserModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "420"
-            endingLineNumber = "420"
+            startingLineNumber = "431"
+            endingLineNumber = "431"
             landmarkName = "TestType"
             landmarkType = "13">
          </BreakpointContent>
