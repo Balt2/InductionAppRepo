@@ -447,16 +447,16 @@ enum TestType: String {
         MindsetQuestionModel(questionIndex: 3, question: "I defeat myself on tests"),
         MindsetQuestionModel(questionIndex: 4, question: "I feel panicky during tests"),
         MindsetQuestionModel(questionIndex: 5, question: "During the exam I am nervous and forget facts")
-        ]), MindsetSectionModel(headers: ["Not Much (less than 2hrs)",
-         "A Little (between 2 and 4hrs)",
-         "Decent Amount (between 4 and 8hrs)",
-         "A Lot (more than 8hrs)"], questions: [
+        ]), MindsetSectionModel(headers: ["Not Much",
+         "A Little",
+         "Decent Amount",
+         "A Lot"], subHeaders: ["Less than 2hrs", "Between 2 and 4hrs", "Between 4 and 8hrs", "More than 8hrs"], questions: [
         MindsetQuestionModel(questionIndex: 6,
                              question: "How much time have you spent on other work today?")]),
-            MindsetSectionModel(headers: ["Not Much (less than 4hrs)",
-             "A Little (between 4 and 6hrs)",
-             "Decent Amount (between 6 and 8hrs)",
-             "A Lot (more than 8hrs)"], questions: [
+            MindsetSectionModel(headers: ["Not Much",
+             "A Little",
+             "Decent Amount",
+             "A Lot"], subHeaders: ["Less than 4hrs", "Between 4 and 6hrs", "Between 6 and 8hrs", "More than 8hrs" ], questions: [
             MindsetQuestionModel(questionIndex: 7,
                                  question: "How much did you sleep last night?")]),
             MindsetSectionModel(headers: ["", "Yes","No",""], questions: [
@@ -490,12 +490,12 @@ enum TestType: String {
                                      question: "Which Section felt the best?"),
                 MindsetQuestionModel(questionIndex: 8,
                 question: "Which Section felt the worst?")
-                ]),
-                MindsetSectionModel(headers: [], questions: [
-                MindsetQuestionModel(questionIndex: 9,
-                                     question: "Is there anything you think could have affected your performacne?")])
-                
-            ])
+                ])])
+            
+            //,
+//            MindsetSectionModel(headers: [], questions: [
+//            MindsetQuestionModel(questionIndex: 9,
+//                                 question: "Is there anything you think could have affected your performacne?")])
             return postTestACT
         default:
             var postTestSAT = MindsetSurveyModel(name: "How was the Test?", sections: [MindsetSectionModel(headers: ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"],
@@ -517,12 +517,13 @@ enum TestType: String {
                                      question: "Which Section felt the best?"),
                 MindsetQuestionModel(questionIndex: 8,
                 question: "Which Section felt the worst?")
-                ]),
-                MindsetSectionModel(headers: [], questions: [
-                MindsetQuestionModel(questionIndex: 9,
-                                     question: "Is there anything you think could have affected your performacne?")])
+                ])
                 
             ])
+            
+//            MindsetSectionModel(headers: [], questions: [
+//            MindsetQuestionModel(questionIndex: 9,
+//                                 question: "Is there anything you think could have affected your performacne?")])
             return postTestSAT
         }
     }

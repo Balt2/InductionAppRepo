@@ -23,9 +23,11 @@ class MindsetSectionModel: Codable{
     var id = UUID()
     
     var headers: [String]
+    var subHeaders: [String]?
     var questions: [MindsetQuestionModel]
-    init(headers: [String], questions: [MindsetQuestionModel]){
+    init(headers: [String], subHeaders: [String]? = nil, questions: [MindsetQuestionModel] ){
         self.headers = headers
+        self.subHeaders = subHeaders
         self.questions = questions
     }
 }

@@ -26,14 +26,18 @@ struct MindsetView: View {
                     ForEach(self.model.sections, id: \.id){section in
                         Group{
                             HStack (spacing: 20){
-                                ForEach(section.headers, id: \.self){header in
-                                    Text(header).fontWeight(.bold).lineLimit(nil).frame(width: 80).multilineTextAlignment(.center)
+                                ForEach(0..<section.headers.count){i in
+                                    ComplexHeaderView(header: section.headers[i], subHeader: (section.subHeaders != nil) ? section.subHeaders![i] : "" )
+                                    .lineLimit(nil).frame(width: 80).multilineTextAlignment(.center)
+//                                        , subHeader: section.subHeaders == nil ? nil : section.subHeaders[i])
+//
+                                    //Text(header).fontWeight(.bold).
                                 }
-                            }.offset(x: 100, y: 0)
+                            }.offset(x: 160, y: 0) //TODO: Understand the 160
                             VStack{
                                 ForEach(section.questions, id: \.self){question in
                                     MindsetQuestionView(question: question, headers: section.headers, responseString: self.$responseString)
-                                        .frame(maxWidth: .infinity).background(Color.white)
+                                        .background(Color.white).frame(maxWidth: .infinity)
                                 }
                             }//.frame(maxWidth: .infinity).background(Color.white).padding([.top, .bottom], 10)
                         }
@@ -62,6 +66,7 @@ struct MindsetView: View {
 struct MindsetQuestionView: View {
     var question: MindsetQuestionModel
     var headers: [String]
+    var subHeaders: [String]?
     
     @State var chosenString: String = "N/A"
     @Binding var responseString: String
@@ -74,28 +79,50 @@ struct MindsetQuestionView: View {
                     Text(String(question.questionIndex))
                         .foregroundColor(Color.blue)
                 }
-                Text(question.question).fontWeight(.bold).foregroundColor(Color.orange).multilineTextAlignment(.center)
-            }.frame(width: 200)
+                Text(question.question).fontWeight(.bold).foregroundColor(Color.orange).multilineTextAlignment(.center).frame(width: 170)
+            }.frame(maxWidth: .infinity)//.frame(width: 200)
             Group{
                 if !headers.isEmpty{
                 
-                    ForEach(headers, id: \.self){string in
+                    ForEach(0..<headers.count){i in
                         ZStack{
-                               Text(string)
+                            ComplexHeaderView(header: self.headers[i], subHeader: self.subHeaders == nil ? "" : self.subHeaders![i])
                                 .multilineTextAlignment(.center).lineLimit(nil).frame(width: 80).opacity(0.0)
-                            Circle().fill(Color.blue).opacity(self.chosenString == string ? 1 : 0.01).overlay(Circle().stroke(Color.black)).frame(width: 20, height: 20).onTapGesture {
-                                self.question.answer = string
-                                self.chosenString = string
+                            
+                            Circle().fill(Color.blue).opacity(self.chosenString == self.headers[i] ? 1 : 0.01).overlay(Circle().stroke(Color.black)).frame(width: 20, height: 20).onTapGesture {
+                                self.question.answer = self.headers[i]
+                                self.chosenString = self.headers[i]
                             }
-                        }.padding(5).opacity(string == "" ? 0.0 : 1.0)
+                        }.padding(5).opacity(self.headers[i] == "" ? 0.0 : 1.0) //If there is no header for a spcific spot it gets a ""
                         
                     }
                 }else{
-                    TextField("Respond Here", text: self.$responseString).frame(width: 350).padding([.top, .bottom], 5).padding(.leading, 50) //TODO, can make TextEditor for ios 14
+                    TextField("Respond Here", text: self.$responseString).padding(10).border(Color.black).frame(width: 300) //.frame(width: 350).padding([.top, .bottom], 5).padding(.leading, 50) //TODO, can make TextEditor for ios 14
                 
                 }
             }
             .frame(height: 75)
+        }
+    }
+    
+}
+
+struct ComplexHeaderView: View {
+    var header: String
+    var subHeader: String
+    var body: some View {
+        Group{
+            if subHeader == ""{
+                Text("\(header)")
+                           .fontWeight(.bold)
+            }else{
+                
+                Text("\(header)\n")
+                    .fontWeight(.bold)
+                +
+                    Text(subHeader)
+                        .fontWeight(.light)
+            }
         }
     }
 }
