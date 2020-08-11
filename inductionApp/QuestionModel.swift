@@ -70,7 +70,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         if self.isACTMath && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D", "E"]
         }else if self.isACTMath {
-            self.answerLetters = ["F", "G", "H", "I", "J"]
+            self.answerLetters = ["F", "G", "H", "J", "K"]
         }else if testType == .act && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D"]
         }else if testType == .act {
@@ -94,7 +94,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         if self.isACTMath && (question.location.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D", "E"]
         }else if self.isACTMath {
-            self.answerLetters = ["F", "G", "H", "I", "J"]
+            self.answerLetters = ["F", "G", "H", "J", "K"]
         }else if testType == .act && (question.location.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D"]
         }else if testType == .act {
