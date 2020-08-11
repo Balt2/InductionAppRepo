@@ -187,7 +187,11 @@ struct SatFreeResponse: View {
                     VStack {
                         ForEach(symbols, id: \.self){symbol in
                             Circle().fill(symbol == "/" ? Color.clear : Color.black).opacity(self.firstCircle == symbol ? 1.0 : 0.01).overlay(Circle().stroke(symbol == "/" ? Color.clear : Color.black)).onTapGesture {
-                                self.firstCircle = symbol
+                                if self.firstCircle == symbol{
+                                    self.firstCircle = ""
+                                }else{
+                                    self.firstCircle = symbol
+                                }
                                 self.questionAnswered()
                             }.frame(width: 30, height: 30)
                         }
@@ -195,7 +199,11 @@ struct SatFreeResponse: View {
                     VStack {
                         ForEach(symbols, id: \.self){symbol in
                             Circle().fill(Color.black).opacity(self.secondCircle == symbol ? 1.0 : 0.01).overlay(Circle().stroke(Color.black)).onTapGesture {
-                                self.secondCircle = symbol
+                                if self.secondCircle == symbol{
+                                    self.secondCircle = ""
+                                }else{
+                                    self.secondCircle = symbol
+                                }
                                 self.questionAnswered()
                                }.frame(width: 30, height: 30)
                         }
@@ -203,7 +211,11 @@ struct SatFreeResponse: View {
                     VStack {
                         ForEach(symbols, id: \.self){symbol in
                             Circle().fill(Color.black).opacity(self.thirdCircle == symbol ? 1.0 : 0.01).overlay(Circle().stroke(Color.black)).onTapGesture {
-                                self.thirdCircle = symbol
+                                if self.thirdCircle == symbol{
+                                    self.thirdCircle = ""
+                                }else{
+                                    self.thirdCircle = symbol
+                                }
                                 self.questionAnswered()
                                }.frame(width: 30, height: 30)
                         }
@@ -211,7 +223,11 @@ struct SatFreeResponse: View {
                     VStack{
                         ForEach(symbols, id: \.self){symbol in
                             Circle().fill(symbol == "/" ? Color.clear : Color.black).opacity(self.fourthCicle == symbol ? 1.0 : 0.01).overlay(Circle().stroke(symbol == "/" ? Color.clear : Color.black)).onTapGesture {
-                                self.fourthCicle = symbol
+                                if self.fourthCicle == symbol{
+                                    self.fourthCicle = ""
+                                }else{
+                                    self.fourthCicle = symbol
+                                }
                                 self.questionAnswered()
                                 
                             }.frame(width: 30, height: 30)
@@ -225,7 +241,11 @@ struct SatFreeResponse: View {
     
     func questionAnswered(){
         question.userAnswer = self.firstCircle + self.secondCircle + self.thirdCircle + self.fourthCicle
-        question.currentState = .selected
+        if question.userAnswer != ""{
+            question.currentState = .selected
+        }else{
+            question.currentState = .omitted
+        }
         question.secondsToAnswer += section.sectionTimer.timeDelta
         
         //Logic to set the order Answered in. The numbers will have jumps
