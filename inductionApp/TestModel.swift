@@ -98,7 +98,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         
         if self.name == "Math"{
             self.breakTimer = CustomTimer(duration: 600)
-        }else if self.name == "Reading" && sectionFromJson.timeAllowed == 3900 { //3900 corresponeds to the sat time for reading section
+        }else if self.name == "Reading" && (sectionFromJson.timeAllowed == 3900 || sectionFromJson.timeAllowed == 3600) { //3900 corresponeds to the sat time for reading section
             self.breakTimer = CustomTimer(duration: 600)
         }else if self.name == "Math No Calculator"{
             self.breakTimer = CustomTimer(duration: 300)
@@ -403,6 +403,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     func setPDFForSection(images: [PageModel]){
         print(self.testFromJson?.testRefName)
+        pdfImages = images
         for section in self.sections{
             print(section.index)
             print(images.count)
@@ -669,11 +670,11 @@ class Test: ObservableObject, Hashable, Identifiable {
             sectionsForJson.append(tempSection)
         }
         
-        if englishScore != 0{
+        if (testType == .psat || testType == .sat){
             englishScore = englishScore * 10
         }
         
-        if mathScore != 0{
+        if (testType == .psat || testType == .sat){
             mathScore = self.scoreConvertDict[mathScore]?.mathSectionTestScore as! Int
         }
         
