@@ -204,6 +204,7 @@ struct TimerNavigationView: View {
     @Binding var shouldPopToRootView : Bool
     @Binding var showSheet: Bool
     @State private var now = ""
+    @State private var showAlert = false
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
     var body: some View {
@@ -266,7 +267,8 @@ struct TimerNavigationView: View {
                 Button(action: {
                     switch self.test.testState{
                     case .notStarted:
-                        self.test.startTest()
+                        self.showAlert = true
+                        //self.test.startTest()
                     case .inSection:
                         self.shouldScrollToTopNav = true
                         self.test.endSection(user: self.currentAuth.currentUser!)
@@ -287,6 +289,13 @@ struct TimerNavigationView: View {
                     HStack{
                         getControlButton(test: self.test, showSheet: self.$showSheet)
                     }
+                }.alert(isPresented: $showAlert){
+                    Alert(title: Text("Once you start the test you can’t pause or quit"),
+                          message: Text("Are you ready to take the test?"),
+                          primaryButton: .default(Text("Cancel")),
+                          secondaryButton: .default(Text("Yes")){
+                            self.test.startTest()
+                        })
                 }
                 
                 //Shows time text

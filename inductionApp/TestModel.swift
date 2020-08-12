@@ -409,7 +409,9 @@ class Test: ObservableObject, Hashable, Identifiable {
             print(images.count)
             let arraySlice = images[section.index.start..<section.index.end - 1]
             section.pages = Array(arraySlice)
+            
         }
+            
     }
     
     //Create a test fromo Data (coming from database mostly) and png data
