@@ -19,12 +19,12 @@ struct UserHomepageView: View {
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
     
-    @State var showSheet: Bool = true
+    @State var showSheet: Bool = false
     @State private var showSettingSheet: Bool = false
     
     //Used for quick data
     @State var updateHomePageView = true
-    @State var showInstructions = true
+    @State var showInstructions = false
     
     //Settings
     @State var showQuickDataType: TestType = .act
@@ -152,6 +152,10 @@ struct UserHomepageView: View {
                         }
                         self.showSettingSheet = false
                     }else{
+                        if self.user.showInstructions == true{
+                            self.user.showInstructions = false
+                            self.user.setInstructionsToFalse()
+                        }
                         self.showInstructions = false
                     }
                     

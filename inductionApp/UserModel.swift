@@ -73,6 +73,7 @@ class User: ObservableObject, Equatable {
     var testResultRefs: [String]
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
+    var showInstructions: Bool = false
     
     @ObservedObject var quickDataSAT: QuickData
     @ObservedObject var quickDataACT: QuickData
@@ -344,6 +345,16 @@ class User: ObservableObject, Equatable {
            
         }
         
+    }
+    
+    func setInstructionsToFalse(){
+        self.db.collection("users").document(self.id).updateData(["showInstructions" : false]){error in
+            if let error = error{
+                print("ERROR UPDATING Show Instructions: \(error)")
+            }else{
+                print("SUCCESS UPDATING Show instructions")
+            }
+        }
     }
 
     

@@ -21,7 +21,7 @@ struct AppRootView: View {
                 //Could also just be a white screenn until it firebase initailzes
                 Image("ilLogo")
             }else if authManager.currentUser != nil  {
-                UserHomepageView(user: authManager.currentUser!)
+                UserHomepageView(user: authManager.currentUser!, showSheet: authManager.currentUser!.showInstructions, showInstructions: authManager.currentUser!.showInstructions)
             }else{
                 SignupView()
             }
@@ -140,7 +140,11 @@ class FirebaseManager: ObservableObject {
                                                 id: document.documentID,
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
                                                 testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool]) //"1904sFilled",
-
+                        
+                        if let showInstructionsBool = dataDescription!["showInstructions"]{
+                            let shib = showInstructionsBool as! Bool
+                            self.currentUser?.showInstructions = shib
+                        }
                         if let dataMapSAT = dataDescription!["quickDataMapSAT"] {
                             let structuredDataMapSAT = dataMapSAT as! [String: [String : [String: Int]]]
                             self.currentUser?.quickDataSAT.createData(nsDictionary: structuredDataMapSAT)
@@ -178,7 +182,7 @@ class FirebaseManager: ObservableObject {
     func createUser(uid: String, fn: String, ln: String, aid: String, accessCode: String, handler: @escaping (_ success: Bool) -> Void){
         //
         //
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false, "psat1": false, "psat2": false], "quickDataMapSAT": [:], "quickDataMapACT": [:], "accessCode": accessCode]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled" "1874fpre-SR8fDgu9W8Nrp68z7qwpWNy1NcO2-08-01-2020"
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false, "psat1": false, "psat2": false], "quickDataMapSAT": [:], "quickDataMapACT": [:], "accessCode": accessCode, "showInstructions": true]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled" "1874fpre-SR8fDgu9W8Nrp68z7qwpWNy1NcO2-08-01-2020"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)
