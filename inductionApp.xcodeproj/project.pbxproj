@@ -40,9 +40,12 @@
 		2F7ACE2F248197C300D0D80A /* PastPerformanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7ACE2E248197C300D0D80A /* PastPerformanceView.swift */; };
 		2F8458D82477FA7300E8E62D /* AssociationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8458D72477FA7300E8E62D /* AssociationModel.swift */; };
 		2F87B4E72478CAC300C5CF05 /* ScrollViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F87B4E62478CAC300C5CF05 /* ScrollViewRepresentable.swift */; };
+		2F8EF29E24E42831009D38AA /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8EF29D24E42831009D38AA /* InstructionsView.swift */; };
 		2F945181244FFA33009521F7 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F945180244FFA33009521F7 /* TestView.swift */; };
 		2F945183244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */; };
 		2F9451852450009D009521F7 /* josh.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 2F9451842450009D009521F7 /* josh.jpeg */; };
+		2FB6D3B024E3990200F29121 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB6D3AF24E3990200F29121 /* PageViewController.swift */; };
+		2FC3D7B224E33DA50035FAA0 /* giphy.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2FC3D7B124E33DA50035FAA0 /* giphy.gif */; };
 		2FEEE3FF2450B5B0003DE2BD /* AnswerSheetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */; };
 		31AA690AE6CC2753079D9862 /* libPods-InductionApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9DC73592FDD3EC0EF64BE96 /* libPods-InductionApp.a */; };
 /* End PBXBuildFile section */
@@ -84,9 +87,12 @@
 		2F7ACE2E248197C300D0D80A /* PastPerformanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastPerformanceView.swift; sourceTree = "<group>"; };
 		2F8458D72477FA7300E8E62D /* AssociationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssociationModel.swift; sourceTree = "<group>"; };
 		2F87B4E62478CAC300C5CF05 /* ScrollViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewRepresentable.swift; sourceTree = "<group>"; };
+		2F8EF29D24E42831009D38AA /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
 		2F945180244FFA33009521F7 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestView.swift; path = InductionApp/TestView.swift; sourceTree = SOURCE_ROOT; };
 		2F945182244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "pdf_sat-practice-test-1.pdf"; sourceTree = "<group>"; };
 		2F9451842450009D009521F7 /* josh.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = josh.jpeg; sourceTree = "<group>"; };
+		2FB6D3AF24E3990200F29121 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
+		2FC3D7B124E33DA50035FAA0 /* giphy.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = giphy.gif; sourceTree = "<group>"; };
 		2FEEE3FE2450B5B0003DE2BD /* AnswerSheetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnswerSheetRow.swift; path = InductionApp/AnswerSheetRow.swift; sourceTree = SOURCE_ROOT; };
 		737DE53F86881C52B1DF0C17 /* Pods-InductionApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InductionApp.debug.xcconfig"; path = "Target Support Files/Pods-InductionApp/Pods-InductionApp.debug.xcconfig"; sourceTree = "<group>"; };
 		B46170FD9DB1CE6AE0253E91 /* Pods-InductionApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InductionApp.release.xcconfig"; path = "Target Support Files/Pods-InductionApp/Pods-InductionApp.release.xcconfig"; sourceTree = "<group>"; };
@@ -127,6 +133,7 @@
 			isa = PBXGroup;
 			children = (
 				2F2041A12472F00C002E811E /* InductionApp.entitlements */,
+				2F8EF29D24E42831009D38AA /* InstructionsView.swift */,
 				2F6A7D1C2474CCF200BFD3FA /* BarGraphViews.swift */,
 				2F20419F2472D93B002E811E /* PdfPageModel.swift */,
 				2F5DB6D82471828B009766A7 /* CustomTimer.swift */,
@@ -154,8 +161,10 @@
 				2F56678C247A14780014F1ED /* ApplePencilReachability.swift */,
 				038753F7244E9AA900F85970 /* LoginView.swift */,
 				038753F9244E9AC800F85970 /* UserHomepageView.swift */,
+				2FB6D3AF24E3990200F29121 /* PageViewController.swift */,
 				2F7ACE2C2481970600D0D80A /* BarGraphView.swift */,
 				2F40C48D248E981F00DCCA58 /* PerformanceDataModel.swift */,
+				2FC3D7B124E33DA50035FAA0 /* giphy.gif */,
 				2F5D7BD624DE47DE006DFFAE /* MindsetView.swift */,
 				2F5D7BD824DE4820006DFFAE /* MindsetModel.swift */,
 				2F7ACE2E248197C300D0D80A /* PastPerformanceView.swift */,
@@ -272,6 +281,7 @@
 				2F945183244FFF7F009521F7 /* pdf_sat-practice-test-1.pdf in Resources */,
 				2F6A7D132474A93200BFD3FA /* 1-ACT Exam 1904S.pdf in Resources */,
 				2F6A7D172474AE2500BFD3FA /* 1-ACT Exam 1906.pdf in Resources */,
+				2FC3D7B224E33DA50035FAA0 /* giphy.gif in Resources */,
 				03BEBC53244E7B6A001576EC /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -331,6 +341,7 @@
 				2F8458D82477FA7300E8E62D /* AssociationModel.swift in Sources */,
 				2F0DD2C8244F5F3D00AFFADE /* UserModel.swift in Sources */,
 				038753FA244E9AC800F85970 /* UserHomepageView.swift in Sources */,
+				2FB6D3B024E3990200F29121 /* PageViewController.swift in Sources */,
 				2F0DD2CA244F5F6300AFFADE /* TestModel.swift in Sources */,
 				03BEBC4D244E7B69001576EC /* AppDelegate.swift in Sources */,
 				2F7ACE2F248197C300D0D80A /* PastPerformanceView.swift in Sources */,
@@ -349,6 +360,7 @@
 				2F740D4524D5AE4500ABD085 /* OrientationInfoClass.swift in Sources */,
 				2F2041A02472D93B002E811E /* PdfPageModel.swift in Sources */,
 				2F945181244FFA33009521F7 /* TestView.swift in Sources */,
+				2F8EF29E24E42831009D38AA /* InstructionsView.swift in Sources */,
 				038753F8244E9AA900F85970 /* LoginView.swift in Sources */,
 				03BEBC51244E7B69001576EC /* SignupView.swift in Sources */,
 			);

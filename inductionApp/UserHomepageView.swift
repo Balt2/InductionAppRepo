@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Firebase
+import UIKit
 
 struct UserHomepageView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
@@ -21,10 +22,12 @@ struct UserHomepageView: View {
     
     //Used for quick data
     @State var updateHomePageView = true
+    @State var showInstructions = true
     
     //Settings
     @State var showQuickDataType: TestType = .act
     @State var leftHandMode: Bool = false
+    @State var currentPageInstructions: Int = 0
     //NOT USED
     
     @State var showDetailTest = false
@@ -113,7 +116,15 @@ struct UserHomepageView: View {
                             }.navigationViewStyle((StackNavigationViewStyle()))
                         }
                     
-
+                    //Instructiopns
+                    Button(action: {
+                        self.showInstructions = true
+                   }) {
+                       HStack {
+                           Image(systemName: "doc")
+                           Text("Instructions")
+                       }
+                   }.buttonStyle(buttonBackgroundStyle())
                     
                     //Sign out
                     Button(action: {
@@ -154,11 +165,18 @@ struct UserHomepageView: View {
                 }.padding([.top, .bottom], 20).frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width * 0.75 : UIScreen.main.bounds.width * 0.75)
                 
             }.navigationBarTitle("Home Page", displayMode: .inline)
+                .sheet(isPresented: $showInstructions){
+                    GeometryReader{g in
+                        PagedUIScrollView(imageNames: ["i1", "i2", "i3", "i4", "i5", "i6", "i7", "i8", "i9", "i10", "i11", "i12"], size: g.frame(in: .global).size, page: self.$currentPageInstructions)
+                    }
+            }
                         
                 
         }.navigationViewStyle((StackNavigationViewStyle()))
         
     }
+    
+
     //
     //
     //                    //                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
@@ -257,5 +275,6 @@ struct infoLabelStyle: ViewModifier {
             .padding()
     }
 }
+
 
 
