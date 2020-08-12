@@ -16,6 +16,7 @@ struct TestView: View {
     @State var shouldScroll: Bool = true
     @State var shouldScrollToTop: Bool = false
     @State var showSheet: Bool = true
+    @State var showAlert: Bool = false
     @State var neverUseIndex: Int = -1
     @State var preSurveySubmitted: Bool = false
     @Binding var shouldPopToRootView : Bool
@@ -91,7 +92,7 @@ struct TestView: View {
                                 PageView(model: page, section: self.testData.currentSection!).blur(radius: self.testData.begunTest ? 0 : 20)
                                     .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
                                 
-                            }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showSheet: self.$showSheet))
+                            }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showAlert: self.$showAlert, showSheet: self.$showSheet))
                                 .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
                             //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
                             
@@ -138,6 +139,25 @@ struct TestView: View {
             }else{
                 MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.postTestMindset!, preTest: false, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView, surveySubmitted: self.$preSurveySubmitted)
             }
+        }.alert(isPresented: self.$showAlert){
+            //Group{
+                if self.testData.begunTest == true {
+                    return Alert(title: Text("Are you sure you want to end the test?"),
+                      message: Text("You will not be able to edit this \(testData.isFullTest == true ? "test" : "assignment") again"),
+                      primaryButton: .default(Text("Cancel")),
+                      secondaryButton: .default(Text("OK")){
+                        self.showSheet = true
+                        self.testData.endTest()
+                    })
+                }else{
+                    return Alert(title: Text("Once you start the test you can’t pause or quit"),
+                      message: Text("Are you ready to take the test?"),
+                      primaryButton: .default(Text("Cancel")),
+                      secondaryButton: .default(Text("Yes")){
+                        self.testData.startTest()
+                    })
+                }
+            //}
         }
         
     }
@@ -172,8 +192,7 @@ struct PageView: View{
 struct EndTestNavigationView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
-    @State private var showAlert = false
-    @Binding var showSheet: Bool
+    @Binding var showAlert: Bool
     var submitComplete: Bool
     var body: some View {
         Button(action: {
@@ -181,14 +200,6 @@ struct EndTestNavigationView: View {
         }){
             Text(submitComplete == true ? "Submit" : "End Test")
                 .foregroundColor(.red)
-        }.alert(isPresented: $showAlert){
-            Alert(title: Text(submitComplete == true ? "Submit Assessment" : "Are you sure you want to end the test?"),
-                  message: Text("You will not be able to edit this \(test.isFullTest == true ? "test" : "assignment") again"),
-                  primaryButton: .default(Text("Cancel")),
-                  secondaryButton: .default(Text("OK")){
-                    self.showSheet = true
-                    self.test.endTest()
-                })
         }
         
     }
@@ -198,13 +209,12 @@ struct EndTestNavigationView: View {
 struct TimerNavigationView: View {
     @Binding var shouldScrollNav: Bool
     @Binding var shouldScrollToTopNav: Bool
-    
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
     @Binding var shouldPopToRootView : Bool
-    @Binding var showSheet: Bool
     @State private var now = ""
-    @State private var showAlert = false
+    @Binding var showAlert: Bool
+    @Binding var showSheet: Bool
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
     var body: some View {
@@ -289,13 +299,6 @@ struct TimerNavigationView: View {
                     HStack{
                         getControlButton(test: self.test, showSheet: self.$showSheet)
                     }
-                }.alert(isPresented: $showAlert){
-                    Alert(title: Text("Once you start the test you can’t pause or quit"),
-                          message: Text("Are you ready to take the test?"),
-                          primaryButton: .default(Text("Cancel")),
-                          secondaryButton: .default(Text("Yes")){
-                            self.test.startTest()
-                        })
                 }
                 
                 //Shows time text
@@ -334,7 +337,7 @@ struct TimerNavigationView: View {
         case .inSection: return AnyView(Text("End Section"))
         case .inBreak: return AnyView(Text("End Break, Next Section"))
         case .lastSection:
-            return AnyView(EndTestNavigationView(test: self.test, showSheet: $showSheet, submitComplete: true))
+            return AnyView(EndTestNavigationView(test: self.test, showAlert: $showAlert, submitComplete: true))
             
             
         case .testOver:
