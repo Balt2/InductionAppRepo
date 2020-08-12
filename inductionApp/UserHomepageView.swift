@@ -18,6 +18,8 @@ struct UserHomepageView: View {
     @ObservedObject var user: User
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
+    
+    @State var showSheet: Bool = true
     @State private var showSettingSheet: Bool = false
     
     //Used for quick data
@@ -28,6 +30,7 @@ struct UserHomepageView: View {
     @State var showQuickDataType: TestType = .act
     @State var leftHandMode: Bool = false
     @State var currentPageInstructions: Int = 0
+    let imageNames = ["i1", "i2", "i3", "i4", "i5", "i6", "i7", "i8", "i9", "i10", "i11", "i12"]
     //NOT USED
     
     @State var showDetailTest = false
@@ -75,49 +78,15 @@ struct UserHomepageView: View {
                         .disabled(user.getPerformanceDataComplete == false || user.showTestType == nil)
                     
                     Button(action: {
+                        self.showSheet = true
                         self.showSettingSheet = true
                     }){
                         Text("Settings")
                     }.buttonStyle(buttonBackgroundStyle())
-                        .sheet(isPresented: $showSettingSheet, onDismiss: {
-                            switch self.showQuickDataType{
-                            case .act:
-                                if self.user.allACTPerformanceData != nil {
-                                    self.user.showTestType = self.showQuickDataType
-                                }
-                            case .sat:
-                                if self.user.allSATPerformanceData != nil {
-                                    self.user.showTestType = self.showQuickDataType
-                                }
-                            case .psat:
-                                if self.user.allPSATPerformanceData != nil {
-                                    self.user.showTestType = self.showQuickDataType
-                                }
-                            }
-                        } ){
-                            NavigationView{
-                                Form{
-                                    Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
-                                        VStack{
-                                            Picker(selection: self.$showQuickDataType, label: Text("Test Type")){
-                                                Text("SAT").tag(TestType.sat).disabled(self.user.allSATPerformanceData == nil)
-                                                Text("ACT").tag(TestType.act).disabled(self.user.allACTPerformanceData == nil)
-                                                Text("PSAT").tag(TestType.psat).disabled(self.user.allPSATPerformanceData == nil)
-                                            }
-                                        }
-                                    }
-//                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
-//                                        Toggle(isOn: self.$leftHandMode){
-//                                            Text("Left Hand Mode")
-//                                        }
-//                                    }
-                                }.navigationBarTitle("Settings")
-
-                            }.navigationViewStyle((StackNavigationViewStyle()))
-                        }
                     
                     //Instructiopns
                     Button(action: {
+                        self.showSheet = true
                         self.showInstructions = true
                    }) {
                        HStack {
@@ -165,14 +134,81 @@ struct UserHomepageView: View {
                 }.padding([.top, .bottom], 20).frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width * 0.75 : UIScreen.main.bounds.width * 0.75)
                 
             }.navigationBarTitle("Home Page", displayMode: .inline)
-                .sheet(isPresented: $showInstructions){
-                    GeometryReader{g in
-                        PagedUIScrollView(imageNames: ["i1", "i2", "i3", "i4", "i5", "i6", "i7", "i8", "i9", "i10", "i11", "i12"], size: g.frame(in: .global).size, page: self.$currentPageInstructions)
+                .sheet(isPresented: $showSheet, onDismiss: {
+                    if self.showSettingSheet == true{
+                        switch self.showQuickDataType{
+                        case .act:
+                            if self.user.allACTPerformanceData != nil {
+                                self.user.showTestType = self.showQuickDataType
+                            }
+                        case .sat:
+                            if self.user.allSATPerformanceData != nil {
+                                self.user.showTestType = self.showQuickDataType
+                            }
+                        case .psat:
+                            if self.user.allPSATPerformanceData != nil {
+                                self.user.showTestType = self.showQuickDataType
+                            }
+                        }
+                        self.showSettingSheet = false
+                    }else{
+                        self.showInstructions = false
+                    }
+                    
+                }){
+                    Group{
+                        if self.showInstructions == true{
+                            NavigationView{
+                            VStack (spacing: 0){
+                                GeometryReader{g in
+                                    PagedUIScrollView(imageNames: self.imageNames, size: g.frame(in: .global).size, page: self.$currentPageInstructions)
+                                    
+                                }
+                                HStack{
+                                    ForEach(0..<self.imageNames.count){index in
+                                        Circle().fill(Color.gray).opacity(index == self.currentPageInstructions ? 1 : 0.5).frame(width:  10, height: 10)
+                                    }
+                                }.padding(.bottom, 15)
+                                
+                            }.navigationBarTitle(Text(self.getTitleForInstructions(index: self.currentPageInstructions)))
+                            }.navigationViewStyle((StackNavigationViewStyle()))
+                        }else{
+                             NavigationView{
+                                Form{
+                                    Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
+                                        VStack{
+                                            Picker(selection: self.$showQuickDataType, label: Text("Test Type")){
+                                                Text("SAT").tag(TestType.sat).disabled(self.user.allSATPerformanceData == nil)
+                                                Text("ACT").tag(TestType.act).disabled(self.user.allACTPerformanceData == nil)
+                                                Text("PSAT").tag(TestType.psat).disabled(self.user.allPSATPerformanceData == nil)
+                                            }
+                                        }
+                                    }
+//                                    Section(footer: Text("For any questions or concerns please email us at: info@inductionLearning.com")){
+//                                        Toggle(isOn: self.$leftHandMode){
+//                                            Text("Left Hand Mode")
+//                                        }
+//                                    }
+                                }.navigationBarTitle("Settings")
+
+                            }.navigationViewStyle((StackNavigationViewStyle()))
+                        }
                     }
             }
                         
                 
         }.navigationViewStyle((StackNavigationViewStyle()))
+        
+    }
+    
+    func getTitleForInstructions(index: Int) -> String{
+        if index < 8 {
+            return "Downloading Your Tests"
+        }else if index < 9{
+            return "Tool Choices"
+        }else{
+            return "Looking into Tests"
+        }
         
     }
     

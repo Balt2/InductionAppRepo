@@ -65,9 +65,11 @@ struct PagedUIScrollView : UIViewRepresentable {
             
             // Using This Function For Getting Currnet Page
             // Follow Me...
+//            CGFloat width = scrollView.frame.size.width;
+//            NSInteger page = (scrollView.contentOffset.x + (0.5f * width)) / width;
             
-            let page = Int(scrollView.contentOffset.x / UIScreen.main.bounds.width)
-            
+            let page = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
+            print("PAGE VALUE: \(page)")
             self.parent.page = page
         }
     }
@@ -86,7 +88,7 @@ struct InstructionList : View {
                  
                      
                  // Mistakenly Used Geomtry Reader...
-                Image(image).resizable().aspectRatio(contentMode: .fit).padding(10)
+                Image(image).resizable().aspectRatio(contentMode: .fit)//.padding(10)
                  //Card(page: self.$page, width: UIScreen.main.bounds.width, data: i)
              }
          }
