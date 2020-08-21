@@ -16,12 +16,14 @@ class AllACTData{
     var sectionNames: [String]?
     var higherSectionNames: [String]? //SAT only has math and english while act should have all for sub sections for this
     var overallPerformance: BarData?
+    var overallPerformanceTimeOfDay: BarData?
     var sectionsOverall: [String: BarData]?
     var testType: TestType?
     var user: User?
     init(tests: [ACTFormatedTestData], user: User){
         if tests.count > 0{
             self.testType = tests[0].testType!
+            print(tests[0].dateTaken)
             let tempTests = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
             for (index, test) in tempTests.enumerated(){
                 test.createData(index: index)
@@ -56,9 +58,20 @@ class AllACTData{
                 yAxisSegments: 4,
                 yAxisTotal: self.testType!.getTotalScore(),
                 barEntries: [])
+            
+            //Scatter plot data
+            var overallBarDataTimeOfDay = BarData(
+                title: "\(self.testType!.rawValue) Performance by Time of Day",
+                xAxisLabel: "Time of Day",
+                yAxisLabel: "Score",
+                yAxisSegments: 4,
+                yAxisTotal: self.testType!.getTotalScore(),
+                barEntries: [])
+            
             var sectionEntries = [String: [BarEntry]]()
             for test in self.allTestData!{
                 overallBarData.barEntries.append(test.overall!)
+                overallBarDataTimeOfDay.barEntries.append(test.todBarEntry!)
                 for (key, sectionData) in test.sectionsOverall{
                     if sectionEntries[key] == nil{
                         sectionEntries[key] = [sectionData]
@@ -84,6 +97,7 @@ class AllACTData{
             
             DispatchQueue.main.async {
                 self.overallPerformance = overallBarData
+                self.overallPerformanceTimeOfDay = overallBarDataTimeOfDay
                 self.sectionsOverall = sectionGraphs
                 if self.user != nil {
                     print("SETTING PERFORAMNCE BACK")
@@ -110,6 +124,7 @@ class ACTFormatedTestData: Test{
     
     var overall: BarEntry? //BarEntry(xLabel: date, yEntries: ([height: overallScore], orange)
     //var overallTime: BarEntry //BarEntry(xLabel: date, yEntries: ([height: time], orange)
+    var todBarEntry: BarEntry?
     var sectionsOverall = [String: BarEntry]() //(SectionName, Entry for the section)
     var subSectionGraphs = [String: BarData]() //(SectionName, BarData)
     var subSectionTime = [String: BarData]()
@@ -143,23 +158,32 @@ class ACTFormatedTestData: Test{
     
     
     func createData(index: Int){
-        self.overall = BarEntry(
-            xLabel: "\(self.testFromJson!.dateTaken!)",
+
+        //xLabel: "\(String(describing: self.testFromJson!.dateTaken!.components(separatedBy: [" "]).first!))"
+        self.overall = BarEntry(xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
             yEntries: [(height: CGFloat(self.overallScore),
                         color: Color("salmon"))],
             index: index)
-
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h a"
+        formatter.amSymbol = "AM"
+        formatter.pmSymbol = "PM"
+        
+        self.todBarEntry = BarEntry(xLabel: formatter.string(from: self.dateTaken!), yEntries: [(height: CGFloat(self.overallScore), color: Color("salmon"))])
+        
+       
         
         //Only for SAT:
         if self.testType == .sat || self.testType == .psat{
             let englishSectionEntry = BarEntry(
-            xLabel: "\(testFromJson!.dateTaken!)",
+            xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
                 yEntries: [(height: CGFloat(self.englishScore),
                         color: Color("salmon"))],
             index: index)
             sectionsOverall["English"] = englishSectionEntry
             let mathSectionEntry = BarEntry(
-            xLabel: "\(testFromJson!.dateTaken!)",
+            xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
                 yEntries: [(height: CGFloat(self.mathScore), //TODO Sometime mathScore will crash bc its nil
                         color: Color("salmon"))],
             index: index)
@@ -180,7 +204,7 @@ class ACTFormatedTestData: Test{
             //Only for ACT because all 4 sections have their own scaled score
             if self.testType == .act{
                 let subSectionEntry = BarEntry(
-                    xLabel: "\(testFromJson!.dateTaken!)",
+                    xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
                     yEntries: [(height: CGFloat(section.scaledScore!),
                                 color: Color("salmon"))],
                     index: index)
@@ -415,4 +439,10 @@ class QuickData: ObservableObject {
     }
     
     
+}
+
+extension Date{
+    func getHourLabel() -> String{
+        return "FOUR"
+    }
 }

@@ -26,8 +26,8 @@ struct ScatterPlot: View{
                     HStack(spacing: 0){
                         YAXisLabelView(data: self.data, scale: true, isScatter: true).padding(.bottom, 10).padding(.top, -10).padding(.trailing, 5) //padding(.leading, 20)
                         
-                           ScatterGrid(data: self.data).padding(.trailing, 10)
-                       }
+                        ScatterGrid(data: self.data).padding(.trailing, 10)
+                    }
                            
                     Text(self.data.xAxisLabel)
                     HStack{
@@ -53,6 +53,7 @@ struct BarChart: View {
     let data: BarData
     var showLegend: Bool
     var isQuickData: Bool
+    var backgroundColor = Color("ightBlue")
     
     
     var body: some View {

@@ -66,7 +66,7 @@ struct PastPerformanceView: View {
                             .edgesIgnoringSafeArea(.all)
                             .padding(.all, 0)
                         
-                        
+                        ScatterPlot(data: (user.currentPerformanceData?.overallPerformanceTimeOfDay!)!).frame(width: UIScreen.main.bounds.width)
                         //BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
                         //                            .highPriorityGesture(DragGesture()
                         //

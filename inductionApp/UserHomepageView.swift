@@ -81,7 +81,10 @@ struct UserHomepageView: View {
                         self.showSheet = true
                         self.showSettingSheet = true
                     }){
-                        Text("Settings")
+                        HStack{
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
                     }.buttonStyle(buttonBackgroundStyle())
                     
                     //Instructiopns

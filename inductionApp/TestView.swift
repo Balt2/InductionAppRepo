@@ -140,7 +140,6 @@ struct TestView: View {
                 MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.postTestMindset!, preTest: false, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView, surveySubmitted: self.$preSurveySubmitted)
             }
         }.alert(isPresented: self.$showAlert){
-            //Group{
                 if self.testData.begunTest == true {
                     return Alert(title: Text("Are you sure you want to end the test?"),
                       message: Text("You will not be able to edit this \(testData.isFullTest == true ? "test" : "assignment") again"),
@@ -157,7 +156,6 @@ struct TestView: View {
                         self.testData.startTest()
                     })
                 }
-            //}
         }
         
     }

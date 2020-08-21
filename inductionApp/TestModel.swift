@@ -345,7 +345,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                     self.mathScore = self.testFromJson?.mathScore as! Int
                 }
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "MM-dd-yyyy"
+                dateFormatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
                 self.dateTaken = date
             }else{
@@ -375,7 +375,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                     self.mathScore = self.testFromJson?.mathScore as! Int
                 }
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "MM-dd-yyyy"
+                dateFormatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
                 self.dateTaken = date
             }else{
@@ -384,21 +384,49 @@ class Test: ObservableObject, Hashable, Identifiable {
                 }
             }
             
-            user.getPngs(testRef: self.testFromJson!.testRefName){pngs in
+            self.getPngsU(user: user){pngs in
                 DispatchQueue.global(qos: .utility).async {
-                let pdfModelImages = TestPDF(pngData: pngs).pages
+                    let pdfModelImages = TestPDF(pngData: pngs).pages
                     DispatchQueue.main.sync {
                         self.setPDFForSection(images: pdfModelImages)
                         self.loadedPDFIn = true
                     }
                 }
-               
             }
+            
+//            user.getPngs(testRef: self.testFromJson!.testRefName){pngs in
+//                DispatchQueue.global(qos: .utility).async {
+//                let pdfModelImages = TestPDF(pngData: pngs).pages
+//                    if pdfModelImages.count <= self.sections.last?.index.end {
+//
+//                    }
+//                    DispatchQueue.main.sync {
+//                        self.setPDFForSection(images: pdfModelImages)
+//                        self.loadedPDFIn = true
+//                    }
+//                }
+//
+//            }
             
         }
         
               
         print("donne: \(self.name)")
+    }
+    
+    func getPngsU(user: User, completionHandler: @escaping (_ completion: [Data])  -> ()){
+        user.getPngs(testRef: self.testFromJson!.testRefName){pngs in
+            if pngs.count <= (self.sections.last?.index.end)!{
+                print("RECURSIVE PNGS CALLED")
+                self.getPngsU(user: user){pngsNext in
+                    
+                    completionHandler(pngsNext)
+                }
+            }else{
+                completionHandler(pngs)
+            }
+            //completionHandler(pngs)
+        }
     }
     
     func setPDFForSection(images: [PageModel]){
@@ -431,7 +459,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                     self.mathScore = self.testFromJson?.mathScore as! Int
                 }
                 let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "MM-dd-yyyy"
+                dateFormatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
                 let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
                 self.dateTaken = date
             }else{
@@ -461,7 +489,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.englishScore = self.testFromJson!.english!
             self.mathScore = self.testFromJson!.mathScore!
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MM-dd-yyyy"
+            dateFormatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
             let date = dateFormatter.date(from: (self.testFromJson?.dateTaken)!)
             self.dateTaken = date
         }
@@ -682,7 +710,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         
         print("TESTING TestType BOOLEAN")
         print(self.testType?.rawValue)
-        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, testType: self.testType!.rawValue, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, mathScore: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy"), preTestMindset: self.preTestMindset, postTestMindset: self.postTestMindset)
+        let testForJson = TestFromJson(numberOfSections: self.numberOfSections!, testType: self.testType!.rawValue, name: self.name, testRefName: self.testFromJson!.testRefName, sections: sectionsForJson, overallScore: overallScore, mathScore: mathScore, english: englishScore, dateTaken: Date().toString(dateFormat: "MM-dd-yyyy HH:mm:ss"), preTestMindset: self.preTestMindset, postTestMindset: self.postTestMindset)
         //Encoding information
         let encoder = JSONEncoder()
         do{
