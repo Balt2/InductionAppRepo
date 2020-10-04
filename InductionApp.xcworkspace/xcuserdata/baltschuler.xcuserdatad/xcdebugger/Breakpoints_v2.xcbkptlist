@@ -32,7 +32,7 @@
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "8347E712-F056-4D6E-B2A1-1766BBDC73D3 - 5ec6b07fad0a11b6"
+                  uuid = "8347E712-F056-4D6E-B2A1-1766BBDC73D3 - 3b6ccb4f2476a2a6"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -47,7 +47,7 @@
                   offsetFromSymbolStart = "620">
                </Location>
                <Location
-                  uuid = "8347E712-F056-4D6E-B2A1-1766BBDC73D3 - a50cb63461a1d23e"
+                  uuid = "8347E712-F056-4D6E-B2A1-1766BBDC73D3 - c0a6cd04e8dd61c9"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -138,10 +138,26 @@
             filePath = "InductionApp/UserModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "456"
-            endingLineNumber = "456"
+            startingLineNumber = "458"
+            endingLineNumber = "458"
             landmarkName = "TestType"
             landmarkType = "13">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "16B5D4F6-A07C-4315-8DB6-C2B912C9216F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "inductionApp/RootView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
+            landmarkName = "init()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

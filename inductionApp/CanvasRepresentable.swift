@@ -128,10 +128,46 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func makeUIView(context: Context) -> PKCanvasView {
         //if isAnswerSheet {
+        
+        
+//        if page.canvas == nil{
+//            let c = PKCanvasView()
+//            c.isOpaque = false
+//            
+//            if #available(iOS 14.0, *) {
+//                c.drawingPolicy = .anyInput
+//            } else {
+//                c.allowsFingerDrawing = true
+//                // Fallback on earlier versions
+//            }
+//            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
+//            c.delegate = context.coordinator
+//            question.canvas = c
+//            return c
+//        }else{
+//            let c = page.canvas!
+//            c.isOpaque = true
+//            if #available(iOS 14.0, *) {
+//                c.drawingPolicy = .anyInput
+//            } else {
+//                c.allowsFingerDrawing = true
+//                // Fallback on earlier versions
+//            }
+//            c.delegate = context.coordinator
+//            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
+//            page.canvas = c
+//            return c
+//        }
+        
         if question.canvas == nil && isAnswerSheet == true {
             let c = PKCanvasView()
             c.isOpaque = false
-            c.allowsFingerDrawing = true
+            if #available(iOS 14.0, *) {
+                c.drawingPolicy = .anyInput
+            } else {
+                c.allowsFingerDrawing = true
+                // Fallback on earlier versions
+            }
             c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             c.delegate = context.coordinator
             question.canvas = c
@@ -145,7 +181,12 @@ struct CanvasRepresentable: UIViewRepresentable {
         }else if page.canvas == nil {
             let c = PKCanvasView()
             c.isOpaque = false
-            c.allowsFingerDrawing = true
+            if #available(iOS 14.0, *) {
+                c.drawingPolicy = .anyInput
+            } else {
+                c.allowsFingerDrawing = true
+                // Fallback on earlier versions
+            }
             c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
             c.isScrollEnabled = false
             c.delegate = context.coordinator

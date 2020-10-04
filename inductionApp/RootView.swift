@@ -15,18 +15,29 @@ struct AppRootView: View {
     @EnvironmentObject var authManager: FirebaseManager
     
     var body: some View {
-        Group {
-            if authManager.initialized == false {
+        return Group {
+            
+            if authManager.currentUser != nil{
+                UserHomepageView(user: authManager.currentUser!, showSheet: authManager.currentUser!.showInstructions, showInstructions: authManager.currentUser!.showInstructions)
+            }else if authManager.initialized == false{
                 //Loading view
                 //Could also just be a white screenn until it firebase initailzes
-                Image("ilLogo")
-            }else if authManager.currentUser != nil  {
-                UserHomepageView(user: authManager.currentUser!, showSheet: authManager.currentUser!.showInstructions, showInstructions: authManager.currentUser!.showInstructions)
+                Image("ilLogo").opacity(authManager.initialized ? 0.5: 1.0)
             }else{
                 SignupView()
             }
+            
+//            if authManager.initialized == false {
+//                //Loading view
+//                //Could also just be a white screenn until it firebase initailzes
+//                Image("ilLogo").opacity(authManager.initialized ? 0.5: 1.0)
+//            }else if authManager.currentUser != nil  {
+//                UserHomepageView(user: authManager.currentUser!, showSheet: authManager.currentUser!.showInstructions, showInstructions: authManager.currentUser!.showInstructions)
+//            }else{
+//                SignupView()
+//            }
            
-        }
+        }.opacity((authManager.initialized || authManager.currentUser != nil)  ? 1.0: 1.0)
     }
 }
 
@@ -38,7 +49,13 @@ class FirebaseManager: ObservableObject {
     @Published var associations = Set<Association>()
     @Published var accessCodes = Set<String>()
     @Published var handle: AuthStateDidChangeListenerHandle? //Not sure if this should be published
-    @Published var initialized = false
+    @Published var initialized = false{
+        didSet{
+            print("App is Initialized: \(initialized)")
+            print(self.currentUser)
+        }
+    } //Should be set to false initially TODO{
+    var handler: AuthStateDidChangeListenerHandle?
     //@Published var pencilManager = ApplePencilReachability()
     var db: Firestore!
 
@@ -59,10 +76,11 @@ class FirebaseManager: ObservableObject {
         }
         
         //State listener for authentication
-        Auth.auth().addStateDidChangeListener { (authFromDataB, user) in //let handle =
+        //self.initialized = true
+        handle = Auth.auth().addStateDidChangeListener { (authFromDataB, user) in //let handle =
             print("Listeninng for auth changes")
             if let user = user {
-                //We got a user
+                //We got a user9
                 print("User: \(user)")
                 self.getUser(id: user.uid, completionHandler: { (success) -> Void in //Sets the current user
                     if success {
@@ -76,9 +94,11 @@ class FirebaseManager: ObservableObject {
                     }
                 })
             }else{
+                print("No User loged in")
                 self.initialized = true
             }
         }
+        
         
         
         

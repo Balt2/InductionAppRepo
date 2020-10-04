@@ -69,7 +69,8 @@ class User: ObservableObject, Equatable {
     @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
     
-    var testRefsMap: [String: Bool]
+    //var testRefsMap: [String: Bool] = [:]
+    @ObservedObject var testRefsMap: ObservableDict
     var testResultRefs: [String]
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
@@ -87,7 +88,7 @@ class User: ObservableObject, Equatable {
         self.lastName = ln
         self.association = association
         self.testResultRefs = testResultRefs
-        self.testRefsMap = testRefsMap
+        self.testRefsMap = ObservableDict(dict: testRefsMap)
         
         quickDataSAT = QuickData(testType: .sat)
         quickDataACT = QuickData(testType: .act)
@@ -376,16 +377,17 @@ class User: ObservableObject, Equatable {
     }
     
     func uploadedTestPDF(testRef: String, completionHander: @escaping (_ completition: Bool) -> ()){
-        self.testRefsMap[testRef] = true
+        self.testRefsMap.dict[testRef] = true
         self.db.collection("users").document(self.id).updateData([
-            "testRefsMap": self.testRefsMap
+            "testRefsMap": self.testRefsMap.dict
         ]){error in
             if let error = error{
-                self.testRefsMap[testRef] = false
+                self.testRefsMap.dict[testRef] = false
                 print("ERROR Updating testRefsMap")
                 completionHander(false)
             }else{
                 completionHander(true)
+                //self.testRefsMap.dict = self.testRefsMap.dict
             }
         }
     }
@@ -437,7 +439,7 @@ class User: ObservableObject, Equatable {
         for test in self.tests{
             if sectionDict[test.testType!] == nil{
                 sectionDict[test.testType!] = [test]
-            }else if self.testRefsMap[test.testFromJson!.testRefName] == false{
+            }else if self.testRefsMap.dict[test.testFromJson!.testRefName] == false{
                 sectionDict[test.testType!]!.append(test)
             }else{
                 sectionDict[test.testType!]!.insert(test, at: 0)
@@ -563,6 +565,23 @@ enum TestType: String {
         }
     }
 }
+
+class ObservableDict: ObservableObject, Hashable{
+    static func == (lhs: ObservableDict, rhs: ObservableDict) -> Bool {
+        lhs.dict.keys == rhs.dict.keys
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    var id = UUID()
+    @Published var dict: [String: Bool]
+    init(dict: [String: Bool]){
+        self.dict = dict
+    }
+}
+
+
 
 
 

@@ -47,7 +47,6 @@ struct PagedUIScrollView : UIViewRepresentable {
     
     func updateUIView(_ uiView: UIScrollView, context: Context) {
         
-        
     }
     
     class Coordinator : NSObject,UIScrollViewDelegate{
@@ -88,7 +87,9 @@ struct InstructionList : View {
                  
                      
                  // Mistakenly Used Geomtry Reader...
-                Image(image).resizable().aspectRatio(contentMode: .fit)//.padding(10)
+                Image(image).resizable().aspectRatio(contentMode: .fit)
+                
+                //.padding(10)
                  //Card(page: self.$page, width: UIScreen.main.bounds.width, data: i)
              }
          }

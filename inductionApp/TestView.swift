@@ -72,6 +72,7 @@ struct TestView: View {
                             
                             .offset(self.offset)
                             .introspectScrollView{tableView in
+                                
                                 tableView.contentInsetAdjustmentBehavior = .always
                                 if self.shouldScroll != tableView.isScrollEnabled{
                                     tableView.isScrollEnabled = self.shouldScroll
@@ -85,36 +86,53 @@ struct TestView: View {
                     }
                     
                     
-                    ScrollView() {
-                        
-                        VStack{
-                            ForEach(self.testData.currentSection!.pages, id: \.self){ page in
-                                PageView(model: page, section: self.testData.currentSection!).blur(radius: self.testData.begunTest ? 0 : 20)
-                                    .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
+                    ScrollView(.vertical, showsIndicators: self.shouldScroll ? true : false) {
+                        if #available(iOS 14.0, *) {
+                            ScrollViewReader{scrollViewN in
+                                VStack{
+                                    ForEach(self.testData.currentSection!.pages, id: \.self){ page in
+                                        PageView(model: page, section: self.testData.currentSection!).blur(radius: self.testData.begunTest ? 0 : 20)
+                                            .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
+                                            .id(self.testData.currentSection!.pages.firstIndex(of: page))
+                                        
+                                    }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showAlert: self.$showAlert, showSheet: self.$showSheet))
+                                    .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
+                                    //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
+                                }.onTapGesture {
+                                    print("ben")
+                                    //scrollViewN.scrollTo(0)
+                                }
                                 
-                            }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showAlert: self.$showAlert, showSheet: self.$showSheet))
-                                .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
-                            //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
-                            
-                            
-                            
-                        }
-                    }.gesture(self.shouldScroll == false ? nil : DragGesture()
-                        .onChanged{_ in
-                            //Should be be changing locations and scaling?
-                    }.onEnded(){gesture in
-                        if self.testData.showAnswerSheet == false && gesture.predictedEndLocation.x > 400{
-                            self.testData.showAnswerSheet = true
-                            self.testData.currentSection?.scalePages()
-                        }
-                        }).introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
-                            scrollView.contentInsetAdjustmentBehavior = .always
-                            scrollView.isScrollEnabled = self.shouldScroll
-                            if self.shouldScrollToTop == true{
-                                scrollView.scrollToTop(adjustedContentOffset: scrollView.adjustedContentInset.top)
-                                self.shouldScrollToTop = false
                             }
+                        } else {
+                            // Fallback on earlier versions
+                        }
                     }
+                    .introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
+                        scrollView.contentInsetAdjustmentBehavior = .always
+                        if self.shouldScroll != scrollView.isScrollEnabled{
+                            scrollView.isScrollEnabled = self.shouldScroll
+                            print("SCROLL VIEW NOT SCROLLABLE")
+                            print(self.shouldScroll)
+                            print(scrollView.isScrollEnabled)
+                        }
+                    
+                        if self.shouldScrollToTop == true{
+                            scrollView.scrollToTop(adjustedContentOffset: scrollView.adjustedContentInset.top)
+                            self.shouldScrollToTop = false
+                            
+                        }
+                    }
+//                    .gesture(self.shouldScroll == false ? nil : DragGesture()
+//                        .onChanged{_ in
+//                            //Should be be changing locations and scaling?
+//                        }.onEnded(){gesture in
+//                            if self.testData.showAnswerSheet == false && gesture.predictedEndLocation.x > 400{
+//                                self.testData.showAnswerSheet = true
+//                                self.testData.currentSection?.scalePages()
+//                            }
+//                    })
+                    
                     
                 }
                 
@@ -141,7 +159,7 @@ struct TestView: View {
             }
         }.alert(isPresented: self.$showAlert){
                 if self.testData.begunTest == true {
-                    return Alert(title: Text("Are you sure you want to end the test?"),
+                    return Alert(title: Text("Are you sure you want to end the t-est?"),
                       message: Text("You will not be able to edit this \(testData.isFullTest == true ? "test" : "assignment") again"),
                       primaryButton: .default(Text("Cancel")),
                       secondaryButton: .default(Text("OK")){
@@ -363,7 +381,7 @@ struct TestTable: View {
             ForEach(self.getOrderedKeys(), id: \.self){key in
                 Section(header: Text(key.rawValue)){
                     ForEach(self.sectionDict[key]!){test in
-                        if self.user.testRefsMap[test.testFromJson!.testRefName] == false{
+                        if self.user.testRefsMap.dict[test.testFromJson!.testRefName] == false{
                             Button(action: {
                                 self.showPicker.toggle()
                             }){
@@ -383,7 +401,7 @@ struct TestTable: View {
                             }.isDetailLink(false).frame(height: 90)
                         }
                     }
-                }
+                }.opacity(self.user.testRefsMap.dict == [:] ? 1.0 : 1.0)
             }
         }.navigationBarTitle(Text("Choose Test to Take"))
         
@@ -467,6 +485,10 @@ struct DocumentPicker: UIViewControllerRepresentable{
                 parent.user.uploadedTestPDF(testRef: parent.testRefString){b in
                     print("UPdated testRefMap: \(b)")
                 }
+                
+                //A Hack to re-draw the view
+                parent.showErrorPDF = true
+                parent.showErrorPDF = false
             }else{
                 print("WRONG PDF UPLOADED")
                 parent.showErrorPDF = true

@@ -20,11 +20,11 @@ struct UserHomepageView: View {
     @State var isStudyActive: Bool = false
     
     @State var showSheet: Bool = false
-    @State private var showSettingSheet: Bool = false
+    @State var showSettingSheet: Bool = false
     
     //Used for quick data
-    @State var updateHomePageView = true
-    @State var showInstructions = false
+    @State var updateHomePageView: Bool = true
+    @State var showInstructions: Bool = false
     
     //Settings
     @State var showQuickDataType: TestType = .act
@@ -52,14 +52,14 @@ struct UserHomepageView: View {
                                 .foregroundColor(Color.white)
                                 .font(.system(size: 30))
                         }.frame(width: 80)
-                        Text("\(currentAuth.currentUser!.firstName + " " + currentAuth.currentUser!.lastName)")
+                        Text("\(self.user.firstName + " " + self.user.lastName)")
                             .foregroundColor(Color.blue)
                             .fontWeight(.bold)
                     }.frame(height: 80)
                     //Buttons
                     
                     //Link for taking a test
-                    NavigationLink(destination: TestTable(user: currentAuth.currentUser!, rootIsActive: self.$isTestActive, sectionDict: currentAuth.currentUser!.createSectionsForStudyTable()), isActive: self.$isTestActive){
+                    NavigationLink(destination: TestTable(user: self.user, rootIsActive: self.$isTestActive, sectionDict: self.user.createSectionsForStudyTable()), isActive: self.$isTestActive){
                         HStack{
                             getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
                             Text(user.getTestsComplete == true ?  "Choose Test!" : "Loading Tests..." )
@@ -80,6 +80,8 @@ struct UserHomepageView: View {
                     Button(action: {
                         self.showSheet = true
                         self.showSettingSheet = true
+                        print("SETTINGS NOW TRUE?")
+                        
                     }){
                         HStack{
                             Image(systemName: "gear")
@@ -91,6 +93,7 @@ struct UserHomepageView: View {
                     Button(action: {
                         self.showSheet = true
                         self.showInstructions = true
+                        print("INSTRUCTIONS NOW TRUE?")
                    }) {
                        HStack {
                            Image(systemName: "doc")
@@ -154,12 +157,14 @@ struct UserHomepageView: View {
                             }
                         }
                         self.showSettingSheet = false
-                    }else{
+                    }else if self.showInstructions == true{
+                        //Setting a boolean to indicate that the user has already seen the instructions. this should be called once for each user
                         if self.user.showInstructions == true{
                             self.user.showInstructions = false
                             self.user.setInstructionsToFalse()
                         }
                         self.showInstructions = false
+                        
                     }
                     
                 }){
@@ -179,7 +184,7 @@ struct UserHomepageView: View {
                                 
                             }.navigationBarTitle(Text(self.getTitleForInstructions(index: self.currentPageInstructions)))
                             }.navigationViewStyle((StackNavigationViewStyle()))
-                        }else{
+                        }else if self.showSettingSheet == true{
                              NavigationView{
                                 Form{
                                     Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
@@ -201,10 +206,11 @@ struct UserHomepageView: View {
                             }.navigationViewStyle((StackNavigationViewStyle()))
                         }
                     }
-            }
+                }
                         
                 
         }.navigationViewStyle((StackNavigationViewStyle()))
+        .opacity( (self.showInstructions || self.showSettingSheet) ? 1.0 : 1.0) //You need to initialize all state variables with somethign "related" to swiftui
         
     }
     
