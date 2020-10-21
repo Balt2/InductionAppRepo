@@ -150,7 +150,6 @@ class FirebaseManager: ObservableObject {
         docRef.getDocument {(document, error) in
             print("GETTING DOC REF")
             if let document = document, document.exists{
-                print("HELLO?")
                 let dataDescription = document.data()
                 
                 self.getAssociations(){got in

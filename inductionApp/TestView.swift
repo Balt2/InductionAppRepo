@@ -42,33 +42,33 @@ struct TestView: View {
                             }.disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
                             
                         }.frame(width: 300 + offset.width)
-                            .gesture(self.shouldScroll == false ? nil : DragGesture()
-                                .onChanged{gesture in
-                                    print(gesture)
-                                    //                                    if gesture.translation.width < 0{
-                                    //                                        self.offset = CGSize(width: gesture.translation.width, height: 0)
-                                    //                                    }else if gesture.translation.width > 15 && self.testData.showAnswerSheet == false{
-                                    //                                        self.offset = CGSize(width: gesture.translation.width, height: 0)
-                                    //                                    }//Conditions to bring it back.
-                                    
-                            }.onEnded{gesture in
-                                
-                                if gesture.predictedEndLocation.x < -100 {
-                                    self.testData.showAnswerSheet = false
-                                    self.testData.currentSection?.scalePages()
-                                    
-                                }
-                                
-                                //                                if gesture.translation.width < -150 {
-                                //                                    self.offset = CGSize(width: -299, height: 0)
-                                //                                    self.testData.showAnswerSheet = false
-                                //                                }else if gesture.translation.width < 0{
-                                //                                    self.offset = CGSize.zero
-                                //                                }else if gesture.translation.width > 15 && self.testData.showAnswerSheet == false{
-                                //                                    self.offset = CGSize.zero
-                                //                                }
-                                
-                                })
+//                            .gesture(self.shouldScroll == false ? nil : DragGesture()
+//                                .onChanged{gesture in
+//                                    print(gesture)
+//                                    //                                    if gesture.translation.width < 0{
+//                                    //                                        self.offset = CGSize(width: gesture.translation.width, height: 0)
+//                                    //                                    }else if gesture.translation.width > 15 && self.testData.showAnswerSheet == false{
+//                                    //                                        self.offset = CGSize(width: gesture.translation.width, height: 0)
+//                                    //                                    }//Conditions to bring it back.
+//
+//                            }.onEnded{gesture in
+//
+//                                if gesture.predictedEndLocation.x < -100 {
+//                                    self.testData.showAnswerSheet = false
+//                                    self.testData.currentSection?.scalePages()
+//
+//                                }
+//
+//                                //                                if gesture.translation.width < -150 {
+//                                //                                    self.offset = CGSize(width: -299, height: 0)
+//                                //                                    self.testData.showAnswerSheet = false
+//                                //                                }else if gesture.translation.width < 0{
+//                                //                                    self.offset = CGSize.zero
+//                                //                                }else if gesture.translation.width > 15 && self.testData.showAnswerSheet == false{
+//                                //                                    self.offset = CGSize.zero
+//                                //                                }
+//
+//                                })
                             
                             .offset(self.offset)
                             .introspectScrollView{tableView in
@@ -85,54 +85,13 @@ struct TestView: View {
                         
                     }
                     
-                    
-                    ScrollView(.vertical, showsIndicators: self.shouldScroll ? true : false) {
-                        if #available(iOS 14.0, *) {
-                            ScrollViewReader{scrollViewN in
-                                VStack{
-                                    ForEach(self.testData.currentSection!.pages, id: \.self){ page in
-                                        PageView(model: page, section: self.testData.currentSection!).blur(radius: self.testData.begunTest ? 0 : 20)
-                                            .disabled( !(self.testData.testState == .inSection || self.testData.testState == .lastSection ) )
-                                            .id(self.testData.currentSection!.pages.firstIndex(of: page))
-                                        
-                                    }.navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showAlert: self.$showAlert, showSheet: self.$showSheet))
-                                    .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
-                                    //.foregroundColor(self.shouldScroll == true || self.shouldScrollToTop ? .none : .none) //Forground color modifier jusut to indicate to the view that shouldscroll is being looked at and the view should change.
-                                }.onTapGesture {
-                                    print("ben")
-                                    //scrollViewN.scrollTo(0)
-                                }
-                                
-                            }
-                        } else {
-                            // Fallback on earlier versions
-                        }
-                    }
-                    .introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
-                        scrollView.contentInsetAdjustmentBehavior = .always
-                        if self.shouldScroll != scrollView.isScrollEnabled{
-                            scrollView.isScrollEnabled = self.shouldScroll
-                            print("SCROLL VIEW NOT SCROLLABLE")
-                            print(self.shouldScroll)
-                            print(scrollView.isScrollEnabled)
-                        }
-                    
-                        if self.shouldScrollToTop == true{
-                            scrollView.scrollToTop(adjustedContentOffset: scrollView.adjustedContentInset.top)
-                            self.shouldScrollToTop = false
-                            
-                        }
-                    }
-//                    .gesture(self.shouldScroll == false ? nil : DragGesture()
-//                        .onChanged{_ in
-//                            //Should be be changing locations and scaling?
-//                        }.onEnded(){gesture in
-//                            if self.testData.showAnswerSheet == false && gesture.predictedEndLocation.x > 400{
-//                                self.testData.showAnswerSheet = true
-//                                self.testData.currentSection?.scalePages()
-//                            }
-//                    })
-                    
+                    CollectionViewRepresentable(test: self.testData, twoFingerScroll: self.$shouldScroll, scrollToTop: self.$shouldScrollToTop)
+                        .disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
+                        .blur(radius: self.testData.begunTest == false ? 30 : 0.0)
+                        .navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showAlert: self.$showAlert, showSheet: self.$showSheet))
+                        .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
+                        
+                        
                     
                 }
                 
@@ -217,7 +176,6 @@ struct EndTestNavigationView: View {
             Text(submitComplete == true ? "Submit" : "End Test")
                 .foregroundColor(.red)
         }
-        
     }
     
 }
@@ -252,6 +210,7 @@ struct TimerNavigationView: View {
                 
                 //Pencil Button - Enables the pencil
                 Button(action: {
+                    
                     if self.test.isEraserEnabled == true{
                         self.test.isEraserEnabled = false
                     }
@@ -265,6 +224,7 @@ struct TimerNavigationView: View {
                 
                 //Eraser Button - Enables the eraser
                 Button(action: {
+                    
                     if self.test.isEraserEnabled == false{
                         self.test.isEraserEnabled = true
                     }
@@ -278,15 +238,15 @@ struct TimerNavigationView: View {
                 
                 
                 //Minus means minimize answer sheet. Plus means show it
-                Button(action: {
-                    self.test.showAnswerSheet.toggle()
-                    self.test.currentSection?.scalePages()
-                    
-                }){
-                    Image(systemName: self.test.showAnswerSheet == true ? "minus.circle" : "plus.circle")
-                        .foregroundColor(.blue)
-                        .font(.title)
-                }.padding()
+//                Button(action: {
+//                    self.test.showAnswerSheet.toggle()
+//                    self.test.currentSection?.scalePages()
+//
+//                }){
+//                    Image(systemName: self.test.showAnswerSheet == true ? "minus.circle" : "plus.circle")
+//                        .foregroundColor(.blue)
+//                        .font(.title)
+//                }.padding()
                 
             }
             HStack {
@@ -335,6 +295,7 @@ struct TimerNavigationView: View {
                             }else{
                                 self.now = self.test.currentSection!.sectionTimer.timeLeftFormatted
                             }
+                            
                     }.foregroundColor(self.test.currentSection!.sectionTimer.timeRemaining < 10.0 ? .red : .black)
                 }
                 Spacer()
