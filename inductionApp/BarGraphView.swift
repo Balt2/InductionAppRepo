@@ -210,7 +210,7 @@ struct ScatterGrid: View{
     var body: some  View{
         ScrollView(.horizontal){
             //GeometryReader{widthGeometry in
-                VStack(alignment: .trailing){
+                VStack(alignment: .leading){
                     ZStack{
                         GeometryReader{geometry in
                             self.createGridLines(geometry: geometry.size).stroke(Color.gray)
@@ -221,9 +221,9 @@ struct ScatterGrid: View{
                                 }
                             }
                         }
+                        
                     }
                     XAxisLabelView(data: self.data, scale: false).frame(width: self.diameter * CGFloat(self.data.barEntries.count)).padding([.trailing, .leading], self.diameter / 2.0)
-                    
                 }
         }.frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width * 0.8 : UIScreen.main.bounds.width * 0.8)
     }
@@ -234,7 +234,9 @@ struct ScatterGrid: View{
         for i in (0...data.yAxisSegments){
             let yLoc = CGFloat(i) * (geometry.height / CGFloat(data.yAxisSegments) )
             path.move(to: CGPoint(x: 0, y: yLoc))
-            path.addLines([CGPoint(x: 0, y: yLoc), CGPoint(x: geometry.width, y: yLoc)])
+            path.addLines([CGPoint(x: 0, y: yLoc), CGPoint(x: 2*geometry.width + CGFloat(25*data.barEntries.count), y: yLoc)])
+            print("GEOMETRY")
+            print(geometry.width)
             
         }
         
@@ -253,8 +255,8 @@ struct ScatterGrid: View{
         }
         
         //Y-Axis Right
-        path.move(to: CGPoint(x: geometry.width, y: 0))
-        path.addLines([CGPoint(x: geometry.width, y: 0), CGPoint(x: geometry.width, y: geometry.height)])
+        path.move(to: CGPoint(x: 2*geometry.width + CGFloat(25*data.barEntries.count), y: 0))
+        path.addLines([CGPoint(x: 2*geometry.width + CGFloat(25*data.barEntries.count), y: 0), CGPoint(x: 2*geometry.width + CGFloat(25*data.barEntries.count), y: geometry.height)])
         
         
         return path

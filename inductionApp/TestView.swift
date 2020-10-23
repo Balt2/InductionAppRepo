@@ -70,13 +70,21 @@ struct TestView: View {
 //
 //                                })
                             
-                            .offset(self.offset)
+                        .offset(self.shouldScroll ? self.offset : self.offset)
                             .introspectScrollView{tableView in
                                 
                                 tableView.contentInsetAdjustmentBehavior = .always
-                                if self.shouldScroll != tableView.isScrollEnabled{
-                                    tableView.isScrollEnabled = self.shouldScroll
+                                print("SHOULD SCROLL?")
+                                print(self.shouldScroll)
+                                if self.shouldScroll == false {
+                                    tableView.panGestureRecognizer.minimumNumberOfTouches = 2
+                                }else{
+                                    tableView.panGestureRecognizer.minimumNumberOfTouches = 1
                                 }
+//                                if self.shouldScroll != tableView.isScrollEnabled{
+//                                    tableView.isScrollEnabled = self.shouldScroll
+//                                }
+                                
                                 //print("Before Table Content Inset: \(tableView.contentInset)")
                                 //print("Befeore TABLE CONTEENT OFFSET: \(tableView.contentOffset)")
                                 //print("Before Table Adjected Content: \(tableView.adjustedContentInset)")
