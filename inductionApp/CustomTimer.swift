@@ -27,7 +27,7 @@ class CustomTimer: ObservableObject {
         print(allotedTime)
         print(timeRemaining)
         print("four SECOND IN")
-        return (allotedTime - timeRemaining < 4.0 && allotedTime != timeRemaining )
+        return (allotedTime - timeRemaining < 4.0 && allotedTime != timeRemaining)
     }
     
     @Published var timeLeftFormatted = ""
