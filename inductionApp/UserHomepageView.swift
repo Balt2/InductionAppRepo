@@ -170,20 +170,29 @@ struct UserHomepageView: View {
                 }){
                     Group{
                         if self.showInstructions == true{
-                            NavigationView{
-                            VStack (spacing: 0){
-                                GeometryReader{g in
-                                    PagedUIScrollView(imageNames: self.imageNames, size: g.frame(in: .global).size, page: self.$currentPageInstructions)
-                                    
-                                }
-                                HStack{
-                                    ForEach(0..<self.imageNames.count){index in
-                                        Circle().fill(Color.gray).opacity(index == self.currentPageInstructions ? 1 : 0.5).frame(width:  10, height: 10)
-                                    }
-                                }.padding(.bottom, 15)
-                                
-                            }.navigationBarTitle(Text(self.getTitleForInstructions(index: self.currentPageInstructions)))
-                            }.navigationViewStyle((StackNavigationViewStyle()))
+                            if #available(iOS 14.0, *){
+                                NavigationView{
+                                    InstructionScroll(imageNames: self.imageNames, page: self.$currentPageInstructions)
+                                        .navigationBarTitle(Text(self.getTitleForInstructions(index: self.currentPageInstructions)))
+                                }.navigationViewStyle((StackNavigationViewStyle()))
+                            }else{
+                                NavigationView{
+                                    VStack (spacing: 0){
+                                        GeometryReader{g in
+        
+                                            PagedUIScrollView(imageNames: self.imageNames, size: g.frame(in: .global).size, page: self.$currentPageInstructions)
+        
+                                        }
+                                        HStack{
+                                            ForEach(0..<self.imageNames.count){index in
+                                                Circle().fill(Color.gray).opacity(index == self.currentPageInstructions ? 1 : 0.5).frame(width:  10, height: 10)
+                                            }
+                                        }.padding(.bottom, 15)
+        
+                                    }.navigationBarTitle(Text(self.getTitleForInstructions(index: self.currentPageInstructions)))
+                                }.navigationViewStyle((StackNavigationViewStyle()))
+                            }
+                            
                         }else if self.showSettingSheet == true{
                              NavigationView{
                                 Form{

@@ -23,6 +23,13 @@ class CustomTimer: ObservableObject {
         }
     }
     
+    var fourSecondIn: Bool {
+        print(allotedTime)
+        print(timeRemaining)
+        print("four SECOND IN")
+        return (allotedTime - timeRemaining < 4.0 && allotedTime != timeRemaining )
+    }
+    
     @Published var timeLeftFormatted = ""
     
     // gets the time delta between the last question answered and the current one

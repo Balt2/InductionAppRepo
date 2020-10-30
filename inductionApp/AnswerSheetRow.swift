@@ -146,7 +146,7 @@ struct SatFreeResponse: View {
     
 
     var body: some View {
-        VStack{
+        VStack(){
             HStack(spacing: 0){
                 Text(String(question.location.row + 1)).padding(.trailing, 15)
                 ZStack{
@@ -176,10 +176,10 @@ struct SatFreeResponse: View {
                 }
             }.frame(width: 270, height: 50)
             HStack{
-                VStack(){
+                VStack{
                     ForEach(symbols, id: \.self){symbol in
                         Group{
-                            Text(symbol).font(.body).fontWeight(.regular).frame(width: 10, height: 15).padding([.top, .bottom], 11.5)
+                            Text(symbol).font(.body).fontWeight(.regular).frame(width: 10, height: 15).padding([.top, .bottom], 8)
                         }
                     }
                 }
@@ -233,7 +233,7 @@ struct SatFreeResponse: View {
                             }.frame(width: 30, height: 30)
                         }
                     }.padding([.leading, .trailing], 10)
-                }.disabled(self.disabled)
+                }.disabled(self.disabled)//.offset(x: 0, y: -30)
             }.frame(width: 270)
         }.frame(width: 270)
         

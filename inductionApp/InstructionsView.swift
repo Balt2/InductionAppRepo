@@ -8,6 +8,48 @@
 
 import SwiftUI
 
+
+struct InstructionScroll: View {
+    var imageNames: [String]
+    @Binding var page: Int
+    var body: some View {
+        ScrollView {
+            if #available(iOS 14.0, *) {
+                LazyHStack{
+                    InstructionPageView(imageNames: imageNames, page: self.$page)
+                }
+            }else{
+                // Fallback on earlier versions
+            }
+        }
+    }
+}
+
+
+struct InstructionPageView: View {
+    var imageNames: [String]
+    @Binding var page : Int
+    var body: some View {
+        if #available(iOS 14.0, *) {
+            TabView(selection: self.$page) {
+                ForEach(0..<imageNames.count) { i in
+                    ZStack {
+                        //Text("BEN")
+                        Image(imageNames[i]).resizable().aspectRatio(contentMode: .fit)
+                    }.clipShape(RoundedRectangle(cornerRadius: 10.0, style: .continuous))
+                    .tag(i)
+                }
+                .padding(.all, 10)
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.6, height: 500)
+            .tabViewStyle(PageTabViewStyle())
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+}
+
+
 struct PagedUIScrollView : UIViewRepresentable {
     
     

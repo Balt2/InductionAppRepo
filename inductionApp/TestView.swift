@@ -197,6 +197,7 @@ struct TimerNavigationView: View {
     @State private var now = ""
     @Binding var showAlert: Bool
     @Binding var showSheet: Bool
+    @State var disableButton: Bool = false
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
     var body: some View {
@@ -259,6 +260,7 @@ struct TimerNavigationView: View {
             }
             HStack {
                 Button(action: {
+                    self.disableButton = true
                     switch self.test.testState{
                     case .notStarted:
                         self.showAlert = true
@@ -279,11 +281,13 @@ struct TimerNavigationView: View {
                     case .testOver:
                         print("Test over")
                     }
+                    self.disableButton = false
+                    
                 }){
                     HStack{
                         getControlButton(test: self.test, showSheet: self.$showSheet)
                     }
-                }
+                }.disabled(self.disableButton || self.test.currentSection!.sectionTimer.fourSecondIn) //()!
                 
                 //Shows time text
                 
