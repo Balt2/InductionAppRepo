@@ -52,7 +52,7 @@ struct LoginView: View {
                     .bold()
                     .padding()
                     .frame(minWidth: 0, maxWidth: .infinity)
-                    .background(Color("salmon"))
+                    .background(Color(red: 0.15, green: 0.68, blue: 0.37))
                     .cornerRadius(10)
                     .padding(.horizontal)
             }.alert(isPresented: $showingErrorCredentials) {

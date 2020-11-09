@@ -126,7 +126,7 @@ struct TestView: View {
             }
         }.alert(isPresented: self.$showAlert){
                 if self.testData.begunTest == true {
-                    return Alert(title: Text("Are you sure you want to end the t-est?"),
+                    return Alert(title: Text("Are you sure you want to end the test?"),
                       message: Text("You will not be able to edit this \(testData.isFullTest == true ? "test" : "assignment") again"),
                       primaryButton: .default(Text("Cancel")),
                       secondaryButton: .default(Text("OK")){

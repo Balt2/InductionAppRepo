@@ -47,6 +47,7 @@ struct ScatterPlot: View{
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.black, lineWidth: 2)
                 )
+        .padding()
     }
 }
 
@@ -94,6 +95,7 @@ struct BarChart: View {
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.black, lineWidth: 2)
                 )
+        .padding()
         
         
         

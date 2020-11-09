@@ -111,6 +111,9 @@ struct SignupView: View {
             .padding()
         }.navigationViewStyle(StackNavigationViewStyle())
             .edgesIgnoringSafeArea(.bottom)
+        .onTapGesture {
+            self.hideKeyboard()
+        }
         
     }
     
@@ -134,13 +137,15 @@ struct FormField: View {
         VStack {
             if isSecure {
                 SecureField(fieldName, text: $fieldValue)
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: 30, weight: .semibold, design: .rounded))
                     .padding(.horizontal)
                 
             } else {
                 TextField(fieldName, text: $fieldValue)
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: 30, weight: .semibold, design: .rounded))
                     .padding(.horizontal)
+                    .autocapitalization(fieldName == "Email" || fieldName == "Password" ? UITextAutocapitalizationType.none : UITextAutocapitalizationType.words)
+                    .keyboardType(fieldName == "Email" ? UIKeyboardType.emailAddress : UIKeyboardType.default)
             }
             
             Divider()
@@ -172,3 +177,11 @@ struct RequirementText: View {
         }
     }
 }
+
+#if canImport(UIKit)
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+#endif
