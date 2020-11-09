@@ -162,7 +162,7 @@ class ACTFormatedTestData: Test{
         //xLabel: "\(String(describing: self.testFromJson!.dateTaken!.components(separatedBy: [" "]).first!))"
         self.overall = BarEntry(xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
             yEntries: [(height: CGFloat(self.overallScore),
-                        color: Color("salmon"))],
+                        color: Color(red: 0.15, green: 0.68, blue: 0.37))],
             index: index)
         
         let formatter = DateFormatter()
@@ -170,7 +170,7 @@ class ACTFormatedTestData: Test{
         formatter.amSymbol = "AM"
         formatter.pmSymbol = "PM"
         
-        self.todBarEntry = BarEntry(xLabel: formatter.string(from: self.dateTaken!), yEntries: [(height: CGFloat(self.overallScore), color: Color("salmon"))])
+        self.todBarEntry = BarEntry(xLabel: formatter.string(from: self.dateTaken!), yEntries: [(height: CGFloat(self.overallScore), color: Color(red: 0.15, green: 0.68, blue: 0.37))])
         
        
         
@@ -179,13 +179,13 @@ class ACTFormatedTestData: Test{
             let englishSectionEntry = BarEntry(
             xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
                 yEntries: [(height: CGFloat(self.englishScore),
-                        color: Color("salmon"))],
+                        color: Color(red: 0.15, green: 0.68, blue: 0.37))],
             index: index)
             sectionsOverall["English"] = englishSectionEntry
             let mathSectionEntry = BarEntry(
             xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
                 yEntries: [(height: CGFloat(self.mathScore), //TODO Sometime mathScore will crash bc its nil
-                        color: Color("salmon"))],
+                        color: Color(red: 0.15, green: 0.68, blue: 0.37))],
             index: index)
             sectionsOverall["Math"] = mathSectionEntry
         }
@@ -206,7 +206,7 @@ class ACTFormatedTestData: Test{
                 let subSectionEntry = BarEntry(
                     xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
                     yEntries: [(height: CGFloat(section.scaledScore!),
-                                color: Color("salmon"))],
+                                color: Color(red: 0.15, green: 0.68, blue: 0.37))],
                     index: index)
                 sectionsOverall[section.name] = subSectionEntry
             }
@@ -403,7 +403,7 @@ class QuickData: ObservableObject {
             for (testName, dateMap) in nsDictionary{
                 for (date, sectionMap) in dateMap {
                     
-                    let newOverallBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(sectionMap["overall"]!), color: Color("salmon"))])
+                    let newOverallBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(sectionMap["overall"]!), color: Color(red: 0.15, green: 0.68, blue: 0.37))])
                     overallBarData.barEntries.append(newOverallBarEntry)
                     
                     
@@ -411,7 +411,7 @@ class QuickData: ObservableObject {
                     sectionMapWOOverall["overall"] = nil
                     
                     for (sectionName, score) in sectionMapWOOverall{
-                        let newBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(score), color: Color("salmon"))])
+                        let newBarEntry = BarEntry(xLabel: date, yEntries: [(height: CGFloat(score), color: Color(red: 0.15, green: 0.68, blue: 0.37))])
                         if self.sectionBarData[sectionName] == nil{
                             sectionBarData[sectionName] = BarData(title: "\(sectionName) Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: testType.getSubSectionTotalScore(), barEntries: [newBarEntry])
                         }else{

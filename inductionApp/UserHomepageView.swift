@@ -31,6 +31,9 @@ struct UserHomepageView: View {
     @State var leftHandMode: Bool = false
     @State var currentPageInstructions: Int = 0
     let imageNames = ["i1", "i2", "i3", "i4", "i5", "i6", "i7", "i8", "i9", "i10", "i11", "i12"]
+    
+    private let blueColor = Color(red: 0.12, green: 0.58, blue: 0.84)
+    private let greenColor = Color(red: 0.15, green: 0.68, blue: 0.37)
     //NOT USED
     
     @State var showDetailTest = false
@@ -46,7 +49,7 @@ struct UserHomepageView: View {
                     //Circle with initilias and name
                     HStack{
                         ZStack{
-                            Circle().foregroundColor(.blue)//.background(Color.black)
+                            Circle().foregroundColor(blueColor)//.background(Color.black)
                             Text(String(user.firstName.first ?? "N") + String(user.lastName.first ?? "A"))
                                 .fontWeight(.bold)
                                 .foregroundColor(Color.white)
@@ -126,7 +129,7 @@ struct UserHomepageView: View {
                             Group{
                                 //Spacer()
                                 ZStack{
-                                    RoundedRectangle(cornerRadius: 15).frame(width: 120, height: 40).foregroundColor(self.updateHomePageView ? Color("salmon") : Color("salmon"))
+                                    RoundedRectangle(cornerRadius: 15).frame(width: 120, height: 40).foregroundColor(self.updateHomePageView ? greenColor : greenColor)
                                     Text(sectionName).foregroundColor(sectionName == self.user.currentQuickData.currentSectionString ? .white : .black)
                                 }.onTapGesture {
                                     self.user.currentQuickData.currentSectionString = sectionName
@@ -302,7 +305,7 @@ struct buttonBackgroundStyle: ButtonStyle {
         configuration.label
             .padding()
             .foregroundColor(.white)
-            .background(disabled == true ? Color(.lightGray) : Color("salmon"))
+            .background(disabled == true ? Color(.lightGray) : Color(red: 0.12, green: 0.58, blue: 0.84))
             .cornerRadius(40)
             .padding()
             .scaleEffect(configuration.isPressed ? 0.9 : 1.0)
@@ -315,7 +318,7 @@ struct nameLabelStyle: ViewModifier {
             .font(.system(.body, design: .rounded))
             .foregroundColor(.white)
             .padding()
-            .background(Color("lightBlue"))
+            .background(Color(red: 0.12, green: 0.58, blue: 0.84))
             .cornerRadius(20)
     }
 }
@@ -328,7 +331,7 @@ struct infoLabelStyle: ViewModifier {
             .foregroundColor(.white)
             .frame(minWidth: 0, maxWidth: .infinity)
             .padding()
-            .background(Color("lightBlue"))
+            .background(Color(red: 0.12, green: 0.58, blue: 0.84))
             .cornerRadius(20)
             .padding()
     }

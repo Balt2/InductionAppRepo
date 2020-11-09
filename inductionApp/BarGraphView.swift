@@ -16,7 +16,7 @@ struct ScatterPlot: View{
     let data: BarData
     var body: some View{
         ZStack{ //Whole backgoruund of graph
-                   Color("lightBlue").opacity(orientationInfo.orientation.rawValue == "ben" ? 1.0 : 1.0)
+            Color(.white).opacity(orientationInfo.orientation.rawValue == "ben" ? 1.0 : 1.0)
                    
                    VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                        Text(self.data.title)
@@ -41,8 +41,12 @@ struct ScatterPlot: View{
                     
                    }
                    
-        }.cornerRadius(20.0).aspectRatio(2.0, contentMode: .fill).padding([.leading, .trailing], 30) //.frame(width: (UIScreen.main.bounds.width) * 0.95, alignment: .center) // frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.width * 0.475)
+        }.aspectRatio(2.0, contentMode: .fill).padding([.leading, .trailing], 30) //.frame(width: (UIScreen.main.bounds.width) * 0.95, alignment: .center) // frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.width * 0.475)
             //.aspectRatio(self.ar, contentMode: .fit)
+        .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.black, lineWidth: 2)
+                )
     }
 }
 
@@ -53,16 +57,15 @@ struct BarChart: View {
     let data: BarData
     var showLegend: Bool
     var isQuickData: Bool
-    var backgroundColor = Color("ightBlue")
     
     
     var body: some View {
         ZStack{ //Whole backgoruund of graph
-            Color("lightBlue").opacity( (orientationInfo.orientation.rawValue == "ben" || data.barEntries[0].xLabel == " ") ? 1.0 : 1.0)
+            Color(.white).opacity( (orientationInfo.orientation.rawValue == "ben" || data.barEntries[0].xLabel == " ") ? 1.0 : 1.0)
             
             VStack{ //VSTACK FOR GRAPH TO PLACE TITLE, BARS, AND X-AXIS LABEL
                 Text(self.data.title)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .font(.title)
                     .padding([.top, .bottom], 10)
                 HStack{
@@ -85,8 +88,15 @@ struct BarChart: View {
             }
             Text(data.barEntries[0].xLabel == " " ? "NO DATA" : "").font(.system(size: 50.0))
             
-        }.cornerRadius(20.0).aspectRatio(2.0, contentMode: self.isQuickData ? .fit : .fill).padding([.leading, .trailing], 30) //.frame(width: (UIScreen.main.bounds.width) * 0.95, alignment: .center)
+        }.aspectRatio(2.0, contentMode: self.isQuickData ? .fit : .fill).padding([.leading, .trailing], 30) //.frame(width: (UIScreen.main.bounds.width) * 0.95, alignment: .center)
             .opacity(data.barEntries[0].xLabel == " " ? 0.25 : 1.0)
+        .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.black, lineWidth: 2)
+                )
+        
+        
+        
             
 //            .frame(width: (UIScreen.main.bounds.width) * 0.95, height: (UIScreen.main.bounds.width) * 0.475, alignment: .center) // ?? UIScreen.main.bounds.width
 //            .aspectRatio(self.ar, contentMode: .fit).padding([.leading, .trailing], 30)

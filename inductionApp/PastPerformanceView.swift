@@ -42,10 +42,10 @@ struct PastPerformanceView: View {
                         HStack{
                             ZStack{
                                 RoundedRectangle(cornerRadius: 5)
-                                    .fill(Color("lightBlue"))
+                                    .fill(Color(red: 0.15, green: 0.68, blue: 0.37))
                                     .font(orientationInfo.orientation.rawValue == "Ben" ? .largeTitle : .largeTitle)
                                     .frame(width: 300)
-                                Text("\(user.showTestType!.rawValue) Results").font(.system(.largeTitle)).foregroundColor(.red)
+                                Text("\(user.showTestType!.rawValue) Results").font(.system(.largeTitle)).foregroundColor(.black)
                             }
                             
                         }
@@ -66,7 +66,7 @@ struct PastPerformanceView: View {
                             .edgesIgnoringSafeArea(.all)
                             .padding(.all, 0)
                         
-                        ScatterPlot(data: (user.currentPerformanceData?.overallPerformanceTimeOfDay!)!).frame(width: UIScreen.main.bounds.width)
+                        //ScatterPlot(data: (user.currentPerformanceData?.overallPerformanceTimeOfDay!)!).frame(width: UIScreen.main.bounds.width)
                         //BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
                         //                            .highPriorityGesture(DragGesture()
                         //
@@ -134,7 +134,7 @@ struct RawDataView: View{
         ScrollView(.vertical){
             ZStack{
                 RoundedRectangle(cornerRadius: 5)
-                   .fill(Color("lightBlue"))
+                   .fill(Color(red: 0.12, green: 0.58, blue: 0.84))
                    .font(.largeTitle)
                 Text("\(data.name) taken on: \(data.dateTaken!.toString(dateFormat: "EEEE, MMM d, yyyy"))")
                 .font(.largeTitle)
@@ -145,7 +145,7 @@ struct RawDataView: View{
             
             ZStack{
                 Ellipse()
-                    .fill(Color("lightBlue"))
+                    .fill(Color(red: 0.12, green: 0.58, blue: 0.84))
                     .frame(width: 300, height: 100)
                 Text("Score: \(Int(self.data.overall!.yEntries[0].height))")
                     .font(.largeTitle)
@@ -157,7 +157,7 @@ struct RawDataView: View{
                     //Group{
                        ZStack{
                            RoundedRectangle(cornerRadius: 5)
-                               .fill(Color("lightBlue"))
+                               .fill(Color(red: 0.12, green: 0.58, blue: 0.84))
                                .font(.largeTitle)
                         Text("English: \(self.data.englishScore)")
                                .font(.largeTitle)
@@ -166,7 +166,7 @@ struct RawDataView: View{
                        Spacer()
                         ZStack{
                             RoundedRectangle(cornerRadius: 5)
-                                .fill(Color("lightBlue"))
+                                .fill(Color(red: 0.12, green: 0.58, blue: 0.84))
                                 .font(.largeTitle)
                             Text("Math: \(self.data.mathScore)")
                                 .font(.largeTitle)
@@ -182,7 +182,7 @@ struct RawDataView: View{
                         Group{
                             ZStack{
                                 RoundedRectangle(cornerRadius: 5)
-                                    .fill(Color("lightBlue"))
+                                    .fill(Color(red: 0.12, green: 0.58, blue: 0.84))
                                     .font(.largeTitle)
                                 Text("\(sectionKey): \(Int(self.data.sectionsOverall[sectionKey]!.yEntries[0].height))")
                                     .font(.largeTitle)
@@ -250,7 +250,7 @@ struct CostumeBarView : View {
             .padding(.top, (UIApplication.shared.windows.first?.safeAreaInsets.top)!)
             .padding(.horizontal)
             .padding(.bottom, 10)
-            .background(Color("salmon"))
+            .background(Color(red: 0.15, green: 0.68, blue: 0.37))
     }
 }
 

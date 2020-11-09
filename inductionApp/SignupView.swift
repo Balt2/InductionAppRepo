@@ -82,7 +82,7 @@ struct SignupView: View {
                             .bold()
                             .padding()
                             .frame(minWidth: 0, maxWidth: .infinity)
-                            .background(Color(red: 255/255, green: 126/255, blue: 103/255))
+                            .background(Color(red: 0.15, green: 0.68, blue: 0.37))
                             .cornerRadius(10)
                             .padding(.horizontal)
                         
@@ -100,7 +100,7 @@ struct SignupView: View {
                             Text("Sign in")
                                 .font(.system(.body, design: .rounded))
                                 .bold()
-                                .foregroundColor(Color(red: 255/255, green: 126/255, blue: 103/255))
+                                .foregroundColor(Color(red: 0.15, green: 0.68, blue: 0.37))
                         }.padding(.bottom, 25.0)
                     }
                 }
