@@ -245,7 +245,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 03BEBC44244E7B69001576EC /* Build configuration list for PBXProject "InductionApp" */;
+			buildConfigurationList = 03BEBC44244E7B69001576EC /* Build configuration list for PBXProject "inductionApp" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -500,7 +500,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = InductionApp/InductionApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_ASSET_PATHS = "\"inductionApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4P5YU9T8SH;
 				ENABLE_PREVIEWS = YES;
@@ -510,7 +510,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "jzb-me.com-jzb-me.com-jzb-me.com";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
@@ -526,7 +526,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = InductionApp/InductionApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_ASSET_PATHS = "\"inductionApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 4P5YU9T8SH;
 				ENABLE_PREVIEWS = YES;
@@ -536,7 +536,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "jzb-me.com-jzb-me.com-jzb-me.com";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
@@ -548,7 +548,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		03BEBC44244E7B69001576EC /* Build configuration list for PBXProject "InductionApp" */ = {
+		03BEBC44244E7B69001576EC /* Build configuration list for PBXProject "inductionApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03BEBC5B244E7B6A001576EC /* Debug */,
