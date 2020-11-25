@@ -82,7 +82,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     var timed: Bool?
     
     
-    init(sectionFromJson: TestSectionFromJson, pages: [PageModel] = [PageModel](), name: String, questions: [Question], inkingTool: PKInkingTool) {
+    init(sectionFromJson: TestSectionFromJson, pages: [PageModel] = [PageModel](), name: String, questions: [Question], inkingTool: PKInkingTool, testType: TestType) {
         self.allotedTime = Double(sectionFromJson.timeAllowed)
         self.leftOverTime = Double(sectionFromJson.timeAllowed)
         self.index = (start: sectionFromJson.startIndex, end: sectionFromJson.endIndex)
@@ -98,7 +98,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         
         if self.name == "Math"{
             self.breakTimer = CustomTimer(duration: 600)
-        }else if self.name == "Reading" && (sectionFromJson.timeAllowed == 3900 || sectionFromJson.timeAllowed == 3600) { //3900 corresponeds to the sat time for reading section
+        }else if self.name == "Reading" && testType == .sat  { //3900 corresponeds to the sat time for reading section (sectionFromJson.timeAllowed == 3900 || sectionFromJson.timeAllowed == 3600 || sectionFromJ)
             self.breakTimer = CustomTimer(duration: 600)
         }else if self.name == "Math No Calculator"{
             self.breakTimer = CustomTimer(duration: 300)
@@ -671,7 +671,7 @@ class Test: ObservableObject, Hashable, Identifiable {
                 arraySlice = pdfImages[section.startIndex..<section.endIndex-1]
             }
 
-            let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList, inkingTool: corrections ? PKInkingTool(.pen, color: .red, width: 1) : PKInkingTool(.pen, color: .black, width: 1))
+            let tempSection = TestSection(sectionFromJson: section, pages: Array(arraySlice), name: section.name , questions: questionList, inkingTool: corrections ? PKInkingTool(.pen, color: .red, width: 1) : PKInkingTool(.pen, color: .black, width: 1), testType: TestType(rawValue: testFromJson.testType)!)
             
                 sections.append(tempSection)
             
