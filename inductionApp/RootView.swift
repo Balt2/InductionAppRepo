@@ -198,10 +198,10 @@ class FirebaseManager: ObservableObject {
     }
     
     //This creats a user in the database
-    func createUser(uid: String, fn: String, ln: String, aid: String, accessCode: String, handler: @escaping (_ success: Bool) -> Void){
+    func createUser(uid: String, fn: String, ln: String, aid: String, accessCode: String, timeAndHalf: Bool, handler: @escaping (_ success: Bool) -> Void){
         //
         //
-        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, "cb5" : false, "cb6": false, "cb9": false, "cb7": false, "psat1": false, "psat2": false], "quickDataMapSAT": [:], "quickDataMapACT": [:], "accessCode": accessCode, "showInstructions": true]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled" "1874fpre-SR8fDgu9W8Nrp68z7qwpWNy1NcO2-08-01-2020"
+        self.db.collection("users").document(uid).setData(["firstN": fn, "lastN": ln, "associationID": aid, "testResultRefs": [], "studyResultRefs": [], "studyRefs": [] , "testRefsMap": ["1572cpre": false, "1874fpre": false, "67c": false, (timeAndHalf ? "cb5-tmh" : "cb5") : false, (timeAndHalf ? "cb6-tmh" : "cb6"): false, (timeAndHalf ? "cb9-tmh" : "cb9"): false, (timeAndHalf ? "cb7-tmh" : "cb7"): false, "psat1": false, "psat2": false], "quickDataMapSAT": [:], "quickDataMapACT": [:], "accessCode": accessCode, "showInstructions": true]){ error in //"1904S", //TestResutlRefs: "1912SFilled", "1906Filled" "1874fpre-SR8fDgu9W8Nrp68z7qwpWNy1NcO2-08-01-2020"
             if let error = error {
                 print("Error creating user document: \(error.localizedDescription)")
                 handler(false)
@@ -224,7 +224,7 @@ class FirebaseManager: ObservableObject {
                     //The authResult has user.uid and user.email
                     print("Sucess creating authenticated account: \(authResult!)")
                     //We now want to create this user in our database
-                    self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, accessCode: noSpacesAccessCode, handler: {(success) -> Void in
+                    self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, accessCode: noSpacesAccessCode, timeAndHalf: userRegModel.timeAndHalf, handler: {(success) -> Void in
                         if success {
                             //Self.getUser
                             //Firebase automatically gets user so we dont need to call this

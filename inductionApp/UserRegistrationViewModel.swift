@@ -19,6 +19,7 @@ class UserRegistrationViewModel: ObservableObject {
     @Published var lastName = ""
     @Published var associationID = "nututors"
     @Published var accessCode = ""
+    var timeAndHalf = false
     
     
     // Output

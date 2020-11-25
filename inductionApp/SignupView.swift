@@ -17,6 +17,7 @@ struct SignupView: View {
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var showingErrorCredentials = false
+    @State private var getTimeAndHalf = false
     
     var body: some View {
         NavigationView {
@@ -42,21 +43,26 @@ struct SignupView: View {
                     
                     HStack {
                         VStack {
-                            FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
+                            FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: false) //true
                             RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordLengthValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 8 characters", isStrikeThrough: userRegistrationViewModel.isPasswordLengthValid)
                             RequirementText(iconName: "lock.open", iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "One uppercase letter", isStrikeThrough: userRegistrationViewModel.isPasswordCapitalLetter)
                         }
                         .padding()
                         VStack {
-                            FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationViewModel.passwordConfirm, isSecure: true)
+                            FormField(fieldName: "Confirm Password", fieldValue: $userRegistrationViewModel.passwordConfirm, isSecure: false) //true
                             RequirementText(iconColor: userRegistrationViewModel.isPasswordCapitalLetter ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "Your confirm password should be the same as password", isStrikeThrough: userRegistrationViewModel.isPasswordConfirmValid)
                                 .padding()
+                            
                         }
                     }
                     
+                    Toggle(isOn: $getTimeAndHalf, label: {
+                        Text("Do you get time and a half on the ACT, SAT or PSAT?").foregroundColor(Color.secondary)
+                    }).frame(width:500, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                     
                     Button(action: {
                         //Check if email is valid, check if password is minum 8 characters and has on upercase letter, Check confirm password is equal to password
+                        self.userRegistrationViewModel.timeAndHalf = self.getTimeAndHalf
                         if !(self.currentAuth.associations.contains(where: {$0.associationID == self.userRegistrationViewModel.associationID })){
                             self.showingErrorCredentials = true
                         }
