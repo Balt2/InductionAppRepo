@@ -23,6 +23,7 @@ struct TestView: View {
     @ObservedObject var testData: Test
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var offset = CGSize.zero
+    @EnvironmentObject var orientationInfo: OrientationInfo
     
     var body: some View {
         
@@ -98,6 +99,7 @@ struct TestView: View {
                         .blur(radius: self.testData.begunTest == false ? 30 : 0.0)
                         .navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showAlert: self.$showAlert, showSheet: self.$showSheet))
                         .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
+                        .opacity(orientationInfo.orientation.rawValue == "BEN" ? 1.0 : 1.0)
                         
                         
                     

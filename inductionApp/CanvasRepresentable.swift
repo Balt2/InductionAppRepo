@@ -19,6 +19,7 @@ struct CanvasRepresentable: UIViewRepresentable {
     var canvasGeo: CGSize
     
     
+    
     //This checks to see if this instance of the struct is an answer sheet. If it is we want to check location
     
     class Coordinator: NSObject, PKCanvasViewDelegate {

@@ -116,6 +116,7 @@ struct CollectionViewRepresentable: UIViewRepresentable {
     @ObservedObject var test: Test
     @Binding var twoFingerScroll: Bool
     @Binding var scrollToTop: Bool
+    @EnvironmentObject var orientationInfo: OrientationInfo
     
     
     func makeUIView(context: Context) -> UICollectionView {
@@ -133,7 +134,7 @@ struct CollectionViewRepresentable: UIViewRepresentable {
         return collectionView
     }
 
-    func updateUIView(_ uiView: UICollectionView, context: Context) {
+    func updateUIView(_ uiView: UICollectionView, context: Context){
         print("UPDATE UIVIEW")
         
         if !self.twoFingerScroll{
