@@ -340,7 +340,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.name = self.testFromJson!.name
             if corrections == true{
                 print("CREATING CORRECTIONS: ACT: \(self.testType?.rawValue)")
-                if self.testType == .sat{
+                if (self.testType! == .sat || self.testType! == .psat){
                     self.englishScore = self.testFromJson?.english as! Int
                     self.mathScore = self.testFromJson?.mathScore as! Int
                 }
@@ -370,7 +370,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.postTestMindset = self.testType?.getPostTestSurvey()
             self.name = self.testFromJson!.name
             if corrections == true{
-                if self.testType == .sat{
+                if self.testType! == .sat || self.testType! == .psat{
                     self.englishScore = self.testFromJson?.english as! Int
                     self.mathScore = self.testFromJson?.mathScore as! Int
                 }
@@ -454,7 +454,7 @@ class Test: ObservableObject, Hashable, Identifiable {
             self.testType = TestType(rawValue: self.testFromJson!.testType)
             self.name = self.testFromJson!.name
             if corrections == true{
-                if self.testType == .sat{
+                if self.testType! == .sat || self.testType! == .psat {
                     self.englishScore = self.testFromJson?.english as! Int
                     self.mathScore = self.testFromJson?.mathScore as! Int
                 }

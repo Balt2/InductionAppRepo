@@ -71,6 +71,11 @@ class AllACTData{
             var sectionEntries = [String: [BarEntry]]()
             for test in self.allTestData!{
                 overallBarData.barEntries.append(test.overall!)
+                
+                if test.testType! == .psat{
+                    print("HELLO PSET")
+                    print(test.overall?.yEntries)
+                }
                 overallBarDataTimeOfDay.barEntries.append(test.todBarEntry!)
                 for (key, sectionData) in test.sectionsOverall{
                     if sectionEntries[key] == nil{

@@ -366,7 +366,7 @@ class User: ObservableObject, Equatable {
     
     //Get file from FIrebase storage
     func getFile(ref: StorageReference, pdf: Bool, completionHandler: @escaping (_ completion: Data?) -> ()) {
-        ref.getData(maxSize: pdf == true ? (40 * 1024 * 1024) : (1 * 1024 * 1024)){data, error in
+        ref.getData(maxSize: pdf == true ? (40 * 1024 * 1024) : (5 * 1024 * 1024)){data, error in
             if let error = error {
                 print("error retriving file at: \(ref.fullPath) with error: \(error)")
                 completionHandler(nil)
@@ -437,6 +437,7 @@ class User: ObservableObject, Equatable {
     func createSectionsForStudyTable() -> [TestType: [Test]] {
         var sectionDict = [TestType: [Test]]()
         for test in self.tests{
+
             if sectionDict[test.testType!] == nil{
                 sectionDict[test.testType!] = [test]
             }else if self.testRefsMap.dict[test.testFromJson!.testRefName] == false{
