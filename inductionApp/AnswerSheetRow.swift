@@ -137,12 +137,20 @@ struct SatFreeResponse: View {
     @ObservedObject var section: TestSection
     var disabled: Bool
     
-    @State var firstCircle = ""
-    @State var secondCircle = ""
-    @State var thirdCircle = ""
-    @State var fourthCicle = ""
+    @State var firstCircle: String = ""
+    @State var secondCircle: String = ""
+    @State var thirdCircle: String = ""
+    @State var fourthCicle: String = ""
+    
     var symbols = ["/", ".", "0", "1", "2", "3", "4", "5",
     "6", "7", "8", "9"]
+    
+//    init(currentAnswer: String) {
+//        _firstCircle = State(initialValue: currentAnswer[0])
+//        _secondCircle = State(initialValue: currentAnswer[1])
+//        _thirdCircle = State(initialValue: currentAnswer[2])
+//        _fourthCicle = State(initialValue: currentAnswer[3])
+//    }
     
 
     var body: some View {
@@ -175,6 +183,12 @@ struct SatFreeResponse: View {
                     }
                 }
             }.frame(width: 270, height: 50)
+            .onAppear(){
+                firstCircle = question.userAnswer[0]
+                secondCircle = question.userAnswer[1]
+                thirdCircle = question.userAnswer[2]
+                fourthCicle = question.userAnswer[3]
+            }
             HStack{
                 VStack{
                     ForEach(symbols, id: \.self){symbol in

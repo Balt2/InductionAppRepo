@@ -831,9 +831,6 @@ class Test: ObservableObject, Hashable, Identifiable {
                 if self.testType == .act{
                     if user.allACTPerformanceData == nil{
                         user.allACTPerformanceData = AllACTData(tests: [tempTest], user: user)
-                        if user.showTestType == nil{
-                            user.showTestType = .act
-                        }
                         user.getPerformanceDataComplete = true
                     }else{
                         user.allACTPerformanceData!.addTest(test: tempTest)
@@ -841,9 +838,6 @@ class Test: ObservableObject, Hashable, Identifiable {
                 }else if self.testType == .sat{
                     if user.allSATPerformanceData == nil{
                         user.allSATPerformanceData = AllACTData(tests: [tempTest], user: user)
-                        if user.showTestType == nil{
-                            user.showTestType = .sat
-                        }
                         user.getPerformanceDataComplete = true
                     }else{
                         user.allSATPerformanceData!.addTest(test: tempTest)
@@ -851,14 +845,12 @@ class Test: ObservableObject, Hashable, Identifiable {
                 }else if self.testType == .psat{
                     if user.allPSATPerformanceData == nil{
                         user.allPSATPerformanceData = AllACTData(tests: [tempTest], user: user)
-                        if user.showTestType == nil{
-                            user.showTestType = .psat
-                        }
                         user.getPerformanceDataComplete = true
                     }else{
                         user.allPSATPerformanceData!.addTest(test: tempTest)
                     }
                 }
+                user.showTestType = self.testType
             }
         }
         self.reset()
