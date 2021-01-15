@@ -11,14 +11,18 @@ import Firebase
 import UIKit
 
 struct UserHomepageView: View {
+    //CURRENT AUTH FROM FIREBASE
     @EnvironmentObject var currentAuth: FirebaseManager
+    //POSSIBLY CAN BE DELETED BUT NOT TOTALLY SURE.
     @Environment(\.managedObjectContext) var managedObjectContext
+    //INFORMATION ABOUT THE ORIENTATION OF THE SCREEN. CAUSES THE SCREEN TO RE-RENDER IF
     @EnvironmentObject var orientationInfo: OrientationInfo
-    
+    //CURRENT USER
     @ObservedObject var user: User
+    //VARIABLE TO DETEMRINE IFA  STUDENT IS TAKING A TEST OR IS STUDYING
     @State var isTestActive: Bool = false
     @State var isStudyActive: Bool = false
-    
+    //SHOW SHEET IS TRUE IF THE INSTRUCTIONS OR SETTINGS PAGE SHOULD BE DISPLAYED
     @State var showSheet: Bool = false
     @State var showSettingSheet: Bool = false
     
@@ -38,7 +42,6 @@ struct UserHomepageView: View {
     
     @State var showDetailTest = false
     @State var allDataTestIndex = -1
-    //var emptyBarEntry = BarEntry(xLabel: "No Date", yEntries: [(height: 0, color: Color.gray)])
     var emptyData = BarData(title: "ACT Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 36, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
     
     var body: some View {
@@ -122,12 +125,12 @@ struct UserHomepageView: View {
                 
                 
                 VStack{
+                    //PRESENT A BARCHART FOR THE QUICK DATA
                     BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.overallBarData, showLegend: false, isQuickData: true)
                     
                     HStack{
                         ForEach(user.currentQuickData.sectionNames, id: \.self){sectionName in
                             Group{
-                                //Spacer()
                                 ZStack{
                                     RoundedRectangle(cornerRadius: 15).frame(width: 120, height: 40).foregroundColor(self.updateHomePageView ? greenColor : greenColor)
                                     Text(sectionName).foregroundColor(sectionName == self.user.currentQuickData.currentSectionString ? .white : .black)
@@ -137,14 +140,15 @@ struct UserHomepageView: View {
                                 }
                             }
                         }
-                        //Spacer()
                     }
                     BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentQuickData.currentSectionBarData, showLegend: false, isQuickData: true)
                 }.padding([.top, .bottom], 20).frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width * 0.75 : UIScreen.main.bounds.width * 0.75)
                 
             }.navigationBarTitle("Home Page", displayMode: .inline)
                 .sheet(isPresented: $showSheet, onDismiss: {
+                    //SHOW SEETTINGS PAGE OR INSTRUCTIONS PAGE
                     if self.showSettingSheet == true{
+                        //SETTINGS LOGIC
                         switch self.showQuickDataType{
                         case .act:
                             if self.user.allACTPerformanceData != nil {
@@ -161,6 +165,7 @@ struct UserHomepageView: View {
                         }
                         self.showSettingSheet = false
                     }else if self.showInstructions == true{
+                        //INSTRUCTIONS LOGIC
                         //Setting a boolean to indicate that the user has already seen the instructions. this should be called once for each user
                         if self.user.showInstructions == true{
                             self.user.showInstructions = false
@@ -173,6 +178,7 @@ struct UserHomepageView: View {
                 }){
                     Group{
                         if self.showInstructions == true{
+                            //INSTRUCTIONS VIEW. USES DIFFERENT STRUCTURES IF USER IS USING IOS 14 OR LESS THAN THAT
                             if #available(iOS 14.0, *){
                                 NavigationView{
                                     InstructionScroll(imageNames: self.imageNames, page: self.$currentPageInstructions)
@@ -197,6 +203,7 @@ struct UserHomepageView: View {
                             }
                             
                         }else if self.showSettingSheet == true{
+                            //SETTINGS VIEW
                              NavigationView{
                                 Form{
                                     Section(footer: Text("Select which test you want to take. This will change the contents of your testing library")){
@@ -238,26 +245,7 @@ struct UserHomepageView: View {
     }
     
 
-    //
-    //
-    //                    //                            NavigationLink(destination: StudyTable(user: currentAuth.currentUser!, rootIsActive: self.$isStudyActive), isActive: self.$isStudyActive){
-    //                    //                                HStack{
-    //                    //                                    getLoadingIcon(imageName: "folder", checkBool: user.getTestsComplete) //Folder or activity indicator saying it is loading
-    //                    //                                    Text(user.getTestsComplete == true ?  "Study Library" : "Loading Library..." )
-    //                    //                                }
-    //                    //                            }.isDetailLink(false).buttonStyle(buttonBackgroundStyle(disabled: user.getTestsComplete == false))
-    //                    //                                .disabled(user.getTestsComplete == false)
-    //
-    //
-    //                Image("ilLogo")
-    //                    .resizable()
-    //                    .aspectRatio(contentMode: .fit)
-    //                    .frame(width: 300)
-    //                    .padding()
-    //            }
-    //        }
-    //    }
-    
+//SHOWS ACTIVITY ICON IF NECESSAR
     func getLoadingIcon(imageName: String, checkBool: Bool) -> AnyView{
         if checkBool == true {
             return AnyView(Image(systemName: imageName))
@@ -299,6 +287,7 @@ extension View where Self == ActivityIndicator {
 //    }
 //}
 
+//SOME DESIGNS SO THERE IS CONSISTENCY ON THE PAGE
 struct buttonBackgroundStyle: ButtonStyle {
     var disabled: Bool?
     func makeBody(configuration: Configuration) -> some View {

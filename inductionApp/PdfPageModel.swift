@@ -12,7 +12,7 @@ import PencilKit
 import Combine
 
 
-//Model for individual pdf pages
+//Model for individual pdf pages. This contains information about what the user drew, what the pdf image for that page is and waht the page number is
 class PageModel: ObservableObject, Hashable, Identifiable {
     
     static func == (lhs: PageModel, rhs: PageModel) -> Bool {
@@ -22,7 +22,9 @@ class PageModel: ObservableObject, Hashable, Identifiable {
 
     var id = UUID()
     @Published var shouldScale = false
+    //This is what people write on top of when using finger or apple pencil
     @Published var canvas: PKCanvasView?
+    //PDF Image
     var uiImage: UIImage
     var pageID: Int
     
@@ -36,7 +38,7 @@ class PageModel: ObservableObject, Hashable, Identifiable {
         self.uiImage = page.uiImage
         self.pageID = page.pageID
     }
-    
+
     func reset(){
         canvas = nil
     }
@@ -60,25 +62,32 @@ class TestPDF: Hashable {
     
     init(name: String){
         self.pdfName = name
+        //Temp for when we get a real name
         self.testRef = "BEN"
         self.createPages(name: name)
     }
     init(data: Data, testRef: String){
         self.testRef = testRef
         let pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(String(describing: testRef))1.jpg")
-        if FileManager.default.fileExists(atPath: pdfURL.path){
-            print("TRYING TO GET IMAGES FROM DISK!")
-            self.createPages()
-        }else{
-            self.createPages(data: data)
-        }
+        //We had for a time been storing the PDF files on the machine. We are no longer doing this but I am keeping code for reference if ever 
+//        if FileManager.default.fileExists(atPath: pdfURL.path){
+//            print("TRYING TO GET IMAGES FROM DISK!")
+//            self.createPages()
+//        }
+        //else{
+        
+            self.createPages(data: data) //Create Data from pulling from database
+        //}
     }
     
+    //This init allows you to create pages from PNG Data
     init(pngData: [Data]){
+        //Temp database
         self.testRef = "BEN"
+       
         self.createPages(fromPNGData: pngData)
     }
-    
+    //Used to create pages from PNG Data
     func createPages(fromPNGData pngData: [Data]){
         for (index, png) in pngData.enumerated() {
             if let pngImage = UIImage(data: png){
@@ -86,7 +95,7 @@ class TestPDF: Hashable {
             }
         }
     }
-    
+    //Load a pdf as a test
     func createPages(name: String){
         var pageCounter = 1
         let path = Bundle.main.path(forResource: name, ofType: "pdf")
@@ -100,6 +109,7 @@ class TestPDF: Hashable {
         }
     }
     
+    //Used for getting the images directly from the disk. Not using at the moment but could use. Be careful with using the path and make sure to use a consistent one if changed.
     func createPages(){
         var pageCounter = 1
         var pdfURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef)1.jpg")
@@ -144,7 +154,7 @@ class TestPDF: Hashable {
             }
         }
     }
-    
+    //Used when loading a PDF in as the content for a test
     private func createUIImage(document: CGPDFDocument, page: Int) -> UIImage?{
         
         guard let page = document.page(at: page) else {return nil}
@@ -168,6 +178,7 @@ class TestPDF: Hashable {
         hasher.combine(pages)
     }
     
+    //Getting location of documents in the system
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]

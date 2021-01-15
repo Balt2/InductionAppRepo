@@ -9,7 +9,10 @@
 import SwiftUI
 
 
+//This struct dispays the instruction view that users can swipe through on the homepage. used for IOS 14+
 struct InstructionScroll: View {
+    //Name of the images that we want to displayed in order of display.
+    //Images are in the asset folder and nammed i1, i2.., i8 or i9
     var imageNames: [String]
     @Binding var page: Int
     var body: some View {
@@ -20,12 +23,13 @@ struct InstructionScroll: View {
                 }
             }else{
                 // Fallback on earlier versions
+                //We have a different struucture for < ios 14
             }
         }
     }
 }
 
-
+//This view is used for each of the images in the instruction view
 struct InstructionPageView: View {
     var imageNames: [String]
     @Binding var page : Int
@@ -34,7 +38,6 @@ struct InstructionPageView: View {
             TabView(selection: self.$page) {
                 ForEach(0..<imageNames.count) { i in
                     ZStack {
-                        //Text("BEN")
                         Image(imageNames[i]).resizable().aspectRatio(contentMode: .fit)
                     }.clipShape(RoundedRectangle(cornerRadius: 10.0, style: .continuous))
                     .tag(i)
@@ -50,6 +53,7 @@ struct InstructionPageView: View {
 }
 
 
+//This is used to present the instruuctuion view for ios < 13
 struct PagedUIScrollView : UIViewRepresentable {
     
     
@@ -116,11 +120,12 @@ struct PagedUIScrollView : UIViewRepresentable {
     }
 }
 
+//Used inside the PagedUIScrollView
 struct InstructionList : View {
      
      @Binding var page : Int
      var imageNames: [String]
-    var size: CGSize
+     var size: CGSize
      var body: some View{
          
          HStack(spacing: 0){

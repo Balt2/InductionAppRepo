@@ -11,6 +11,7 @@ import Firebase
 import PencilKit
 import Combine
 
+//MODEL FOR ASSOCIATIOSN. NOT USED HEAVILY YET
 struct Association: Hashable{
     
     static func == (lhs: Association, rhs: Association) -> Bool {

@@ -14,13 +14,15 @@ import Combine
 import Introspect
 
 struct CorrectionView: View {
+    //WHEN THEY ARE LOOKING AT THE TEST THE SAME VARIABLES TAHT WE HAVE FOR THE TEST VIEW ARE USED FOR TEH CORRECITON VIEW
     @Binding var shouldScroll: Bool
     @Binding var shouldScrollToTop: Bool
     
     @Binding var showPopUp: Bool
     @State var popUpQuestionIndex: Int = 0
-    
+    //TEST RESULT DATA. DIFFERENT THAN TEST DATA BEFORE THE USER HAS TAKEN THE TEST
     @ObservedObject var testData: ACTFormatedTestData
+    //USED FOR DRAGGING
     @State private var offset = CGSize.zero
     
     var body: some View {
@@ -32,9 +34,10 @@ struct CorrectionView: View {
             VStack{
                 HStack{
                     if testData.showAnswerSheet == true{
-
+                        //LIST OF SECTIONS LIKE FOR THE TEST VIEW
                         List{
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
+                                //LOOP THROUGH ALL THE QUESTIONS
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
                                     AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.testType! == .act, disabled: true, shouldScroll: self.$shouldScroll, showPopUp: self.$showPopUp, popUpQuestionIndex: self.$popUpQuestionIndex)
                                 }
@@ -68,7 +71,7 @@ struct CorrectionView: View {
                         }
 
                     }
-                    
+                    //BECAUSE WE DON'T REQUIRE ADVANCED CONTROL OF THE PAGES WE CAN USE A SWFTUI SCROLL VEIW RATHER THAN A UISCROLLVEIW REPRESENTABLE
                     ScrollView() {
                         VStack{
                             ForEach(self.testData.currentSection!.pages, id: \.self){ page in
@@ -76,13 +79,13 @@ struct CorrectionView: View {
 
                             }
 
-
                         }
                     }.onTapGesture {
                         if self.showPopUp == true{
                             self.togglePopUp(showPopUp: false)
                         }
                     }.introspectScrollView{scrollView in //In the future the scrollView should be made UIViewRepresentable
+                            //UIVIEW REPRESENTABLE SHOULD BE IMPLEMENTED IF YOU WANT USERS TO BE ABLE TO DRAW ON THE TEST.
                             scrollView.contentInsetAdjustmentBehavior = .always
                             scrollView.isScrollEnabled = self.shouldScroll
                             if self.shouldScrollToTop == true{
@@ -92,6 +95,7 @@ struct CorrectionView: View {
                     }
                 }
             }
+            //POP UP THAT GIVES USERS INFORMATION ABOUT THE SPECIFIC QUESTION THEY TAPPED
             if self.showPopUp {
                 ZStack {
                     Color.white
@@ -136,7 +140,7 @@ struct CorrectionView: View {
 //Helpful links: Alert  - https://www.hackingwithswift.com/books/ios-swiftui/showing-alert-messages
 //Workaround for popToRootView - https://stackoverflow.com/questions/57334455/swiftui-how-to-pop-to-root-view
 
-
+//NAVIGATION BAR WITH BUTTONS FOR EACH SECTION AND NOW TIMER
 struct CorrectionNavigationBar: View {
     @Binding var shouldScrollNav: Bool
     @Binding var shouldScrollToTop: Bool

@@ -11,8 +11,11 @@ import SwiftUI
 
 
 struct ScatterPlot: View{
+    //VARIABLE TO KNOW THE CURRENT OREITNATION OF SCREEN
     @EnvironmentObject var orientationInfo: OrientationInfo
+    //ASPECT RATIO
     var ar: CGFloat = 2
+    //DATA. IT IS CALLED BARDATA BUT BARDATA IS FLEXIBLE SUCH THAT IT CAN BE USED FOR SCATTOR PLOTS OR BAR GRAPHS
     let data: BarData
     var body: some View{
         ZStack{ //Whole backgoruund of graph
@@ -52,11 +55,17 @@ struct ScatterPlot: View{
 }
 
 struct BarChart: View {
+    
     @EnvironmentObject var orientationInfo: OrientationInfo
+    //A VARIABLE THAT IF TRUE ALLOWS THE BARS TO BE CLICKED AND THE USER SENT TO A PAGE WITH MORE INFORMATION ABOUT THEIR PERFERMANCE
     @Binding var showDetailTest : Bool
+    //DETERMINES WHAT, IF ANY TEST THE USER CLICKS AND THEN SENDS THEM TO A NEW VIEW WITH INFORMATION ABTOUT TAHT TEST
     @Binding var allDataTestIndex: Int
+    //DATA FOR THIS BAR GRAPH
     let data: BarData
+    //SHOW LEGEND OR NOT
     var showLegend: Bool
+    //TELLS THE BAR GRAPH IF THAT DATA IS FORO QUICK DATA
     var isQuickData: Bool
     
     
@@ -105,7 +114,7 @@ struct BarChart: View {
     }
     
 }
-
+//STRUCUTRE FOR WHAT APPEARS ON THE XAXIS
 struct XAxisLabelView: View{
     var data: BarData
     var scale: Bool //true if xaxisView holdsnames of bar data or just numbers (x or y axis). True = typical y-axis data
@@ -127,7 +136,7 @@ struct XAxisLabelView: View{
             }
         }
     }
-    
+    //DETERMINE SPECIFIC LABLES FOR THE AXIS
     func getAxisLabel(i: Int) -> String{
         if scale == true{
             let label = (CGFloat(i) / CGFloat(data.yAxisSegments)) * CGFloat(data.yAxisTotal)
@@ -137,6 +146,7 @@ struct XAxisLabelView: View{
         }
         
     }
+    //DERMINE SIZE SO THAT EACH NUMEBR CAN BE SEEN
     func fontSize() -> CGFloat{
         if data.barEntries.count < 4{
             return 16.0
@@ -157,7 +167,7 @@ struct XAxisLabelView: View{
         }
     }
 }
-
+//Y AXIS VIEW
 struct YAXisLabelView: View{
     var data: BarData
     var scale: Bool
@@ -215,6 +225,8 @@ struct YAXisLabelView: View{
     }
     
 }
+
+//THIS STRUCTURE PRESENTS A SCATTER PLOT. HOW EVERYTHING LOOKS IS VERY SPECIFIC BASED ON THE STACKS AND THE ORDER WITH WHICH THEY ARE PUT. IT WAS NOT SIMPLE TO FIGURE OUT THE EXACT LOGIC NOR EASY TO EXPLAIN. THERE MAY BE A BETTER WAY AND SO FEEL FREE TO PLAY WITH MANY OF THE VARIABLES WE HAVE HERE
 struct ScatterGrid: View{
     @EnvironmentObject var orientationInfo: OrientationInfo
     var data: BarData
@@ -239,6 +251,7 @@ struct ScatterGrid: View{
                 }
         }.frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width * 0.8 : UIScreen.main.bounds.width * 0.8)
     }
+    //CREATE GRID FOR SCATTER PLOT
     func createGridLines(geometry: CGSize) -> Path{
         var path = Path()
         
@@ -276,6 +289,8 @@ struct ScatterGrid: View{
     }
 
 }
+
+//GRID FOR BAR CHART
 struct Grid: View {
     var data: BarData
     var horizontal: Bool

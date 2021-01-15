@@ -19,22 +19,24 @@ class User: ObservableObject, Equatable {
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
     }
-    
+
     var db = Firestore.firestore() //Instance of database
+    //USER INFORMATION
     let id: String
     let firstName: String
     let lastName: String
     var association: Association
-    
+    //LIST OF THEIR TESTS TO TAKE
     @Published var tests: [Test] = []
     
-    
+    //VARIABLE THAT CONTAINS INFORMATION ABOUT EACH OF THE TYPES OF TESTS THEY HAVE TAKEN
     @Published var allACTPerformanceData: AllACTData?
     @Published var allSATPerformanceData: AllACTData?
     @Published var allPSATPerformanceData: AllACTData?
     
-
+    //THIS SHOWS THE CUURRENT TEST TYPE
     @Published var showTestType: TestType?
+    //DETERMINING WHICH TESTS THEY HAVE ALREADY TAKEN AND THEN SETTING THAT TO THE CURRENT TEST TYPE. THIS CAN BE CAHNGED IN THE SETTINGS PAGE
     var currentPerformanceData: AllACTData?{
         if showTestType == .act {
             return allACTPerformanceData
@@ -46,7 +48,7 @@ class User: ObservableObject, Equatable {
             return nil
         }
     }
-    
+    //DETERMINING WHICH TEST SHOULD SHOW AS QUICK DATA
     var currentQuickData: QuickData {
         if showTestType == .act {
             return quickDataACT
@@ -64,23 +66,28 @@ class User: ObservableObject, Equatable {
     
     
     
-    
+    //VARIABLE WILL CHANGE ONCE ALL TESTS HAVE BEEN LOADED IN FROM THE DB
     @Published var getTestsComplete = false
+    //VARIABLE WILL CHANGE ONCE ALL THEIR PERFORMANCE DATA HAS BEEN LOADED IN
     @Published var getPerformanceDataComplete = false
     var performancePDF = [PageModel]()
     
-    //var testRefsMap: [String: Bool] = [:]
+    //CONTAINS THE INFORMATION ABOUT WHICH TESTS THEY HAVE DOWNLOADED AND WHICH THEY HAVE YET TO DOWNLOAD
     @ObservedObject var testRefsMap: ObservableDict
+    //LIST OF THE REFERENCES TO THE TESTS THEY HAVE TAKE
     var testResultRefs: [String]
+    
     var studyRefs: [String] = []
     var studyResultRefs: [String] = []
+    //VARIABLE TO DETEMRINE WHEATHER THEY NEED TO BE SHOWN INSTRCTIONS. FALSE UNLESS USER HAS JSUT CREATED AN ACCOUNT
     var showInstructions: Bool = false
     
+    //QUICK DATA
     @ObservedObject var quickDataSAT: QuickData
     @ObservedObject var quickDataACT: QuickData
     @ObservedObject var quickDataPSAT: QuickData
     
-    
+    //INIT  A USER
     init(fn: String, ln: String, id: String, association: Association, testResultRefs: [String], testRefsMap: [String: Bool]) {//, completionHandler: @escaping (_ succsess: Bool) -> ()){
         print("INIT USER begin")
         self.id = id
@@ -94,44 +101,7 @@ class User: ObservableObject, Equatable {
         quickDataACT = QuickData(testType: .act)
         quickDataPSAT = QuickData(testType: .psat)
         
-        //Getting Associations image
-//        let imageRef: StorageReference = Storage.storage().reference().child(association.imagePath)
-//
-//
-//        self.getFile(ref: imageRef, pdf: false){image in
-//            //Image is data, the UI will turn it into a UIImage
-//            if let imageData = image{
-//                print("Got Association Image")
-//                self.association.image = UIImage(data: imageData)
-//            }
-//        }
-        
-        //Get the test pdf and json pairs
-//        self.getPdfJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
-//
-//            print (!testsData.isEmpty)
-//            if !testsData.isEmpty{
-//                print("TEST DATA NOT EMPTY")
-//                DispatchQueue.global(qos: .utility).async {
-//                   var tempArray: [Test] = []
-//                    for test in testsData{
-//                           let tempTest = Test(jsonData: test.json, pdfData: test.pdf, corrections: false)
-//                           tempArray.append(tempTest)
-//                       }
-//                       //If boolean is false then no tests exist
-//                       print("Got Tests, User Init")
-//                       DispatchQueue.main.sync {
-//                           self.tests.append(contentsOf: tempArray)
-//                           self.getTestsComplete = true
-//                       }
-//               }
-//            }else{
-//                print("ERROR Getting tests")
-//                DispatchQueue.main.sync {
-//                    self.getTestsComplete = true
-//                }
-//            }
-//        }
+       
         
         //Getting the real tests without the pdf/png. Will wait to do this.
         self.getTestJsons(searchArray: Array(testRefsMap.keys)){jsons in
@@ -157,32 +127,6 @@ class User: ObservableObject, Equatable {
         
         
         
-        //Getting the real tests
-//        self.getPngsJsonPair(isTestResult: false, searchArray: Array(testRefsMap.keys)){testsData in
-//            if !testsData.isEmpty{
-//                print("TEST DATA NOT EMPTY")
-//                DispatchQueue.global(qos: .utility).async {
-//                   var tempArray: [Test] = []
-//                    for test in testsData{
-//                        let tempTest = Test(jsonData: test.json, pngData: test.pngs, corrections: false)
-//                           //let tempTest = Test(jsonData: test.json, pdfData: test.pdf, corrections: false)
-//                           tempArray.append(tempTest)
-//                       }
-//                   //If boolean is false then no tests exist
-//                   print("Got Tests, User Init")
-//                   DispatchQueue.main.sync {
-//                    self.tests.append(contentsOf: tempArray)
-//                       self.getTestsComplete = true
-//                   }
-//               }
-//            }else{
-//                print("ERROR Getting tests")
-//                DispatchQueue.main.sync {
-//                    self.getTestsComplete = true
-//                }
-//            }
-//
-//        }
 
         //Get the test result pdf and json pairs
         self.getPdfJsonPair(isTestResult: true, searchArray: testResultRefs){dataArr in
@@ -195,7 +139,6 @@ class User: ObservableObject, Equatable {
                         actPerformanceTests.append(tempNewPerformanceTest)
                     }
                     
-                    //                        ACTFormatedTestData(data: data, index: index, pdfPages: associatedTestPages!, tutorPDFName: "BreiteJ-CB1")
                     DispatchQueue.main.async{
                         //Loading in the performance PDFs
                         let actTests = actPerformanceTests.filter {$0.testType! == .act}
@@ -244,6 +187,7 @@ class User: ObservableObject, Equatable {
         print("DONE CREATING USER")
     }
     
+    //FUNCTION TAHT GETS TEH PDF OF A TEST
     func getPDFForTest(urlPath: URL, refPdf: StorageReference, completionHandler: @escaping (_ pdfData: Data?) -> ()){
         print("GETTING PDF FOR TEST")
         if FileManager.default.fileExists(atPath: urlPath.path){
@@ -294,20 +238,13 @@ class User: ObservableObject, Equatable {
                     guard let jsonData = jsonD else {return}
                     dataArray.append((pdf: pdfData, json: jsonData))
                     count += 1
-//                    do {
-//                        print("Writing document to file manager")
-//                        try jsonData.write(to: jsonURL)
-//                        print("Success Writing Document to file manager")
-//                    }
-//                    catch {
-//                        print("ERROR WRITING DOCUMENT")
-//                    }
                     if count == searchArray.count {completionHandler(dataArray)}
                 }
             }
         }
     }
     
+    //GETS ALL THE JSONS FOR THE TESTS FROM THE DATABASE
     func getTestJsons(searchArray: [String], completionHandler: @escaping (_ completion: [Data]) -> ()){
         var dataArray = [Data]()
         var count = 0 //Used to determine if the array has been searched and we can have the completion handler
@@ -324,7 +261,7 @@ class User: ObservableObject, Equatable {
         }
     }
     
-    
+    //GETS THE PNGS AND THE JSONS
     func getPngsJsonPair(isTestResult: Bool, searchArray: [String], completionHandler: @escaping (_ completion: [(pngs: [Data], json: Data)]) -> ()){
         var count = 0 //Used to determine if the array has been searched and we can have the completion handler
         var dataArray = [(pngs: [Data], json: Data)]()
@@ -332,8 +269,6 @@ class User: ObservableObject, Equatable {
         for testRef in searchArray {
             let testRefOriginal = testRef.components(separatedBy: "-").first
             let refJson: StorageReference = Storage.storage().reference().child("\(association.associationID)/\(isTestResult ? "testResults" : "tests")/\(testRef).json")
-            //let refPngs: StorageReference = Storage.storage().reference().child("\(association.associationID)/tests/\(isTestResult ? testRefOriginal! : testRef)")
-           //let jsonURL = self.getDocumentsDirectory().appendingPathComponent("\(testRef).json")
             getPngs(testRef: isTestResult ? testRefOriginal! : testRef){pngData in
                 self.getFile(ref: refJson, pdf: false){jsonD in
                     guard let jsonData = jsonD else {return}
@@ -347,6 +282,7 @@ class User: ObservableObject, Equatable {
         }
         
     }
+    //USED TO SET INSTRUCTIONS TO FALSE IN THE DATABASE ONCE THEY HAVE REMOVED IT FROM SCREEN
     
     func setInstructionsToFalse(){
         self.db.collection("users").document(self.id).updateData(["showInstructions" : false]){error in
@@ -358,7 +294,7 @@ class User: ObservableObject, Equatable {
         }
     }
 
-    
+    //GET URL FROM THE USERS FILEMANAGER SYSTEM
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
@@ -375,7 +311,7 @@ class User: ObservableObject, Equatable {
             }
         }
     }
-    
+    //UPLOAD A TEST RESULT JSON TO THE DATABASE
     func uploadedTestPDF(testRef: String, completionHander: @escaping (_ completition: Bool) -> ()){
         self.testRefsMap.dict[testRef] = true
         self.db.collection("users").document(self.id).updateData([
@@ -404,11 +340,7 @@ class User: ObservableObject, Equatable {
                 print("ERROR GETTTING PNGs")
                 //Probably want to revert back to PDFs
             }else{
-                print("PRINTING ITEMS")
-               
-//                let sortedResults = result.items.sorted(by: {$0.name < $1.name})
-//                print(sortedResults)
-                //let sortedResults = result.items.sorted(by: <)
+
                 
                 for (index, item) in result.items.enumerated(){
                     self.getFile(ref: item, pdf: false) {data in
@@ -416,8 +348,6 @@ class User: ObservableObject, Equatable {
                             print("ERROR GETTING SPECIFIC Png")
                             //Probably want to revert back to PDFs
                         }else{
-//                            print("GOT PNG")
-//                            print(item)
                             pngsWName.append((name: item.name, data: data!))
                             //pngs.append(data!)
                             if index == result.items.count  - 1 {
@@ -433,7 +363,7 @@ class User: ObservableObject, Equatable {
             }
         }
     }
-    
+    //WILL CREATE SECTIONS FOR STUDY TABLE. NEEDS TO BE IMPLEMENTED MORE FULLY
     func createSectionsForStudyTable() -> [TestType: [Test]] {
         var sectionDict = [TestType: [Test]]()
         for test in self.tests{
@@ -451,7 +381,7 @@ class User: ObservableObject, Equatable {
     }
     
 }
-
+//ENUM FOR TEST TYPE. BASIC INFORMATION INCLUDED
 enum TestType: String {
     case sat = "SAT"
     case act = "ACT"
@@ -478,7 +408,7 @@ enum TestType: String {
             return 760
         }
     }
-    
+    //RETURN PRE TEST SURVEY
     func getPreTestSurvey() -> MindsetSurveyModel{
         var preTestModel = MindsetSurveyModel(name: "What's your mindset?", sections: [MindsetSectionModel(headers: ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"],
                                            questions: [MindsetQuestionModel(questionIndex: 1, question: "I feel tense during tests"),
@@ -505,7 +435,7 @@ enum TestType: String {
         ])
         return preTestModel
     }
-    
+    //RETURN POST TEST SURVE
     func getPostTestSurvey() -> MindsetSurveyModel{
         switch self {
         case .act:
@@ -531,10 +461,7 @@ enum TestType: String {
                 question: "Which Section felt the worst?")
                 ])])
             
-            //,
-//            MindsetSectionModel(headers: [], questions: [
-//            MindsetQuestionModel(questionIndex: 9,
-//                                 question: "Is there anything you think could have affected your performacne?")])
+           
             return postTestACT
         default:
             var postTestSAT = MindsetSurveyModel(name: "How was the Test?", sections: [MindsetSectionModel(headers: ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"],
@@ -559,14 +486,13 @@ enum TestType: String {
                 
             ])
             
-//            MindsetSectionModel(headers: [], questions: [
-//            MindsetQuestionModel(questionIndex: 9,
-//                                 question: "Is there anything you think could have affected your performacne?")])
+
             return postTestSAT
         }
     }
 }
 
+//OBSERVABLE DICT SO THAT IF A VALUE CHANGES THE VIEW WILL UPDATE (BECAUSE THE STATE WILL UPDATE)
 class ObservableDict: ObservableObject, Hashable{
     static func == (lhs: ObservableDict, rhs: ObservableDict) -> Bool {
         lhs.dict.keys == rhs.dict.keys

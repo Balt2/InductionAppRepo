@@ -76,6 +76,7 @@ struct CanvasRepresentable: UIViewRepresentable {
 
                 }
                 print("After looping through points: \(numberOfPixels)")
+                //WE USE THE FACT THAT IF MORE THAN 100 PIXELS ARE COLORED IN THEN, THE USER HAS SUFFICIENTLY CIRCLED IN ONE OF THE ANSWERS
                 if numberOfPixels > 100{
                     if (parent.question.currentState == .omitted) {
                         parent.question.userAnswer = question
@@ -128,38 +129,8 @@ struct CanvasRepresentable: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> PKCanvasView {
-        //if isAnswerSheet {
-        
-        
-//        if page.canvas == nil{
-//            let c = PKCanvasView()
-//            c.isOpaque = false
-//            
-//            if #available(iOS 14.0, *) {
-//                c.drawingPolicy = .anyInput
-//            } else {
-//                c.allowsFingerDrawing = true
-//                // Fallback on earlier versions
-//            }
-//            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
-//            c.delegate = context.coordinator
-//            question.canvas = c
-//            return c
-//        }else{
-//            let c = page.canvas!
-//            c.isOpaque = true
-//            if #available(iOS 14.0, *) {
-//                c.drawingPolicy = .anyInput
-//            } else {
-//                c.allowsFingerDrawing = true
-//                // Fallback on earlier versions
-//            }
-//            c.delegate = context.coordinator
-//            c.tool = section == nil ? PKInkingTool(.pen, color: .black, width: 1) : section!.inkingTool
-//            page.canvas = c
-//            return c
-//        }
-        
+       
+       //DELEGATE AND TOOL SELECTING WHENEVER THIS VIEW IS CREATED. I THINK THIS VIEW CAN BE RECRETATED FOR THE SAME QUESTION OR PAGE THAT ALREADY HAS SOME WRITING ON IT SO THATS WHY WE CHECK
         if question.canvas == nil && isAnswerSheet == true {
             let c = PKCanvasView()
             c.isOpaque = false
@@ -204,45 +175,10 @@ struct CanvasRepresentable: UIViewRepresentable {
     
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         
-//        print(tool.width)
-//        uiView.tool
-//        uiView.tool = PKInkingTool(.pen, color: .black, width: 0.2)
-//        tool = uiView.tool as! PKInkingTool
-//        print(tool.width)
-       
-        
-//        if isAnswerSheet == true{
-//           // uiView.layer.addSublayer(question.canvas!.layer)
-//
-//            if question.canvas == nil{
-//                print("NILLL VIEW")
-//                //question.canvas = uiView
-//            }else if question.canvas != uiView{
-//                print("DIFFFERENT VIEW")
-//            }
-//            if question.canvas?.delegate == nil{
-//                print("Nill Delgate")
-//                question.canvas?.delegate = context.coordinator
-//            }
-//
-////            if question.canvas?.delegate as! Coordinator != context.coordinator{
-////
-////                print("Different Coordinator")
-////                //question.canvas?.delegate = context.coordinator
-////            }
-////
-//
-//
-////            print("UPDATE VIEW")
-////            print(uiView)
-////            print(question.canvas)
-////
-////            print(context.coordinator)
-////            print(question.canvas?.delegate)
-//        }
         if page.pageID != -1 { //It is a real page rather than a question
             
             let scale = (x: CGFloat(canvasGeo.width) / uiView.bounds.size.width, y: CGFloat(canvasGeo.height) / uiView.bounds.size.height)
+            //HELPFUUL PIECES OF INFORMATION TAHT YO HAVE TO DEBUG
 //            print("CANVAS GEO: \(canvasGeo)")
 //            print("View sent: \(uiView.bounds)")
 //            print("Canvas View: \(page.canvas?.bounds)")
@@ -272,7 +208,7 @@ struct CanvasRepresentable_Previews: PreviewProvider {
         Text("Hello, World!")
     }
 }
-
+//USED TO GET HOW MANY PIXELS ARE BLACK
 extension UIImage {
     subscript (x: Int, y: Int) -> UIColor? {
         guard x >= 0 && x < Int(size.width) && y >= 0 && y < Int(size.height),

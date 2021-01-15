@@ -27,15 +27,16 @@ struct SignupView: View {
                     
                     VStack {
                         HStack {
+                            //Getting information from User
                             FormField(fieldName: "First Name", fieldValue: $userRegistrationViewModel.firstName)
                             FormField(fieldName: "Last Name", fieldValue: $userRegistrationViewModel.lastName)
                         }
                     }
                     VStack {
                         HStack{
+                            //More info from user
                             FormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
                             FormField(fieldName: "Access Code", fieldValue: $userRegistrationViewModel.accessCode)
-                            //FormField(fieldName: "Association ID", fieldValue: $userRegistrationViewModel.associationID)
                         }
                         RequirementText(iconColor: userRegistrationViewModel.isemailValid ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255), text: "A minimum of 4 characters and valid email", isStrikeThrough: userRegistrationViewModel.isemailValid)
                             .padding()
@@ -55,7 +56,7 @@ struct SignupView: View {
                             
                         }
                     }
-                    
+                    //This toggle is to determine if the person gets extra time
                     Toggle(isOn: $getTimeAndHalf, label: {
                         Text("Do you get time and a half on the ACT, SAT or PSAT?").foregroundColor(Color.secondary)
                     }).frame(width:500, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
@@ -97,7 +98,7 @@ struct SignupView: View {
                               message: Text("Please make sure you are creating an account with a new email and that you are using a valid association ID. Make sure there is no white space in association ID"),
                               dismissButton: .default(Text("OK")))
                     }
-                    
+                    //If the already have account go to the login view
                     HStack {
                         Text("Already have an account?")
                             .font(.system(.body, design: .rounded))
@@ -112,7 +113,6 @@ struct SignupView: View {
                 }
                 Image("ilLogo").resizable()
                     .aspectRatio(contentMode: .fit)
-                // Spacer()
             }
             .padding()
         }.navigationViewStyle(StackNavigationViewStyle())
@@ -125,13 +125,14 @@ struct SignupView: View {
     
     
 }
-
+//So you can test in the editor. I did not really use this. Would just run on simulator
 struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
         SignupView().previewDevice(PreviewDevice(rawValue: "iPad Pro (12.9-inch)"))
     }
 }
 
+//Re-used for every input field. Thus they all have the same style
 struct FormField: View {
     var fieldName = ""
     @Binding var fieldValue: String

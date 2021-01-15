@@ -11,12 +11,14 @@ import Firebase
 
 struct LoginView: View {
     
-    
+    //MODEL FOR CAPTURING LOGIN INFORMATION
     @ObservedObject private var userRegistrationViewModel = UserRegistrationViewModel()
+    //INSTANCE OF CURRENT AUTH TO GET INFORMATION ABOUT CURRENT USER
     @EnvironmentObject var currentAuth: FirebaseManager
     @State private var showingErrorCredentials = false
     
     func signIn () {
+        //TRY TO SIGN IN WITH GIVEN CREDENTIALS. THIS SENDS A REQUEST TO FIREBASE
         currentAuth.signIn(email: userRegistrationViewModel.email, password: userRegistrationViewModel.password){ (result, error) in
             if error != nil{
                 self.showingErrorCredentials = true
@@ -32,7 +34,7 @@ struct LoginView: View {
         VStack {
             
             Spacer(minLength: 50)
-            
+            //USER INPUTS
             userFormField(fieldName: "Email", fieldValue: $userRegistrationViewModel.email)
                 .padding()
             FormField(fieldName: "Password", fieldValue: $userRegistrationViewModel.password, isSecure: true)
@@ -73,7 +75,7 @@ struct LoginView_previews: PreviewProvider {
     }
 }
 
-
+//RE-USABLE STRUCT FOR INPUTS SO ITS CONSTANT ON THE PAGE
 struct userFormField: View {
     var fieldName = ""
     @Binding var fieldValue: String

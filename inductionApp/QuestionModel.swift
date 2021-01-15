@@ -21,32 +21,40 @@ class Question: ObservableObject, Hashable, Identifiable {
         hasher.combine(id)
     }
     
+    //Unique ID for hashable protocal
     var id = UUID()
+    //ID of question from JSON file
     let officialID: String
+    //Sub section as given by the college board or some other governering body
     let officialSub: String
+    //Tutor sub for costumization
     let tutorSub: String
+    //Students answer
     let answer: String
+    //Reason for answer as given by json
     let reason: String
+    //Locaiton in test
     let location: IndexPath
     let testType: TestType
     let isACTMath: Bool
     let freeResponse: Bool //This variable determines whether a the question needs a free response answer sheet cell
-    var answerLetters = ["A", "B", "C", "D"]
+    var answerLetters = ["A", "B", "C", "D"] //Default for SAT. Reset if you have a ACT or other type of test
     
    
     var answerOrdredIn = 0
     
     @Published var userAnswer = ""
     @Published var currentState = QuestionState.omitted
+    //This is the value that we send as the result
     var finalState: QuestionState {
            get{
-               //self.checkAnswer()
                return self.currentState
            }
            set{
             self.currentState = newValue
            }
        }
+    //Initialize the question. We dont create a canvas until the section is started.
     @Published var secondsToAnswer = 0.0
     @Published var canvas: PKCanvasView?
     
@@ -66,7 +74,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.isACTMath = isActMath
         self.secondsToAnswer = Double(q.secondsToAnswer ?? 0)
         self.finalState = QuestionState(rawValue: q.finalState ?? "O") ?? QuestionState.omitted
-        
+        //ip = indexPath of question. + 1 because it starts at (0,0)
         if self.isACTMath && (ip.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D", "E"]
         }else if self.isACTMath {
@@ -90,7 +98,7 @@ class Question: ObservableObject, Hashable, Identifiable {
         self.location = question.location
         self.isACTMath = question.isACTMath
 
-        
+        //Setting the letters for questions based on what type of ttest
         if self.isACTMath && (question.location.row + 1) % 2 == 1 {
             self.answerLetters = ["A", "B", "C", "D", "E"]
         }else if self.isACTMath {
@@ -110,6 +118,7 @@ class Question: ObservableObject, Hashable, Identifiable {
             currentState = .right
         }else {
             print("CHECKING WRONG ANSWER")
+            //Checking free response questions as the answer to those comes as a list of strings
             let answerArray = answer.split(separator: ",")
             let answerArrayStr = answerArray.map {String($0)}
             if answerArrayStr.contains(userAnswer) {

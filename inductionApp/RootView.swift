@@ -11,14 +11,15 @@ import Firebase
 
 struct AppRootView: View {
     
-
+    //INFORMATION ABOUT FIREBASE AND USER WHO IS LOGGED IN
     @EnvironmentObject var authManager: FirebaseManager
     
     var body: some View {
         return Group {
-            
+            //IF WE HAVE A USER THEN WE GO TO THE HOMEPAGE
             if authManager.currentUser != nil{
                 UserHomepageView(user: authManager.currentUser!, showSheet: authManager.currentUser!.showInstructions, showInstructions: authManager.currentUser!.showInstructions)
+            //IF NO USER WE WAIT FOR THE AUTHMANAGER TO BE INIZLIED AND THEN WE GO TO THE SIGN UP PAGE
             }else if authManager.initialized == false{
                 //Loading view
                 //Could also just be a white screenn until it firebase initailzes
@@ -26,16 +27,6 @@ struct AppRootView: View {
             }else{
                 SignupView()
             }
-            
-//            if authManager.initialized == false {
-//                //Loading view
-//                //Could also just be a white screenn until it firebase initailzes
-//                Image("ilLogo").opacity(authManager.initialized ? 0.5: 1.0)
-//            }else if authManager.currentUser != nil  {
-//                UserHomepageView(user: authManager.currentUser!, showSheet: authManager.currentUser!.showInstructions, showInstructions: authManager.currentUser!.showInstructions)
-//            }else{
-//                SignupView()
-//            }
            
         }.opacity((authManager.initialized || authManager.currentUser != nil)  ? 1.0: 1.0)
     }
@@ -103,7 +94,7 @@ class FirebaseManager: ObservableObject {
         
         
     }
-    
+    //GETS THE VIABLE ACCESS CODES FROM THE DATABASE
     func getAccessCodes(completionHander: @escaping (_ success: Set<String>) -> Void){
         let ref = db.collection("accessCodes")
         var tempAccessSet = Set<String>()
@@ -120,7 +111,7 @@ class FirebaseManager: ObservableObject {
             }
         }
     }
-    
+    //GETS TEH VIABLE ASSOCIACIIONS THAT WE ARE WORKING.
     func getAssociations(completionHander: @escaping (_ success: Bool) -> Void) {
         let ref = db.collection("association")
         ref.getDocuments(){(querySnnapshot, error) in
@@ -146,7 +137,7 @@ class FirebaseManager: ObservableObject {
     //This gets a users information from the database
     func getUser(id: String, completionHandler: @escaping (_ success: Bool) -> Void) {
         let docRef = db.collection("users").document(id)
-        print("GET USER CALLED") // TODO: PROBLEM HERE occosioanllyy while loading. Add a variable to that call and then if it goes on for 5 seconds try again
+        print("GET USER CALLED")
         docRef.getDocument {(document, error) in
             print("GETTING DOC REF")
             if let document = document, document.exists{
@@ -160,6 +151,7 @@ class FirebaseManager: ObservableObject {
                                                 association: self.associations.first(where: {$0.associationID == dataDescription!["associationID"] as! String })!,
                                                 testResultRefs: dataDescription!["testResultRefs"]! as! [String], testRefsMap: (dataDescription!["testRefsMap"])! as! [String: Bool]) //"1904sFilled",
                         
+                        //SETTING DATA FOR THE USER ONCE WE RECIEVE INFORMATION
                         if let showInstructionsBool = dataDescription!["showInstructions"]{
                             let shib = showInstructionsBool as! Bool
                             self.currentUser?.showInstructions = shib
@@ -226,15 +218,6 @@ class FirebaseManager: ObservableObject {
                     //We now want to create this user in our database
                     self.createUser(uid: (authResult?.user.uid)!, fn: userRegModel.firstName, ln: userRegModel.lastName, aid: userRegModel.associationID, accessCode: noSpacesAccessCode, timeAndHalf: userRegModel.timeAndHalf, handler: {(success) -> Void in
                         if success {
-                            //Self.getUser
-                            //Firebase automatically gets user so we dont need to call this
-//                            self.db.collection("accessCodes").document(noSpacesAccessCode).delete(){ err in
-//                                if let err = err {
-//                                    print("Error removing document: \(err)")
-//                                } else {
-//                                    print("Document successfully removed!")
-//                                }
-//                            }
                             handler((created: true, error: ""))
                         } else{
                             //Failutre to create user
@@ -252,11 +235,11 @@ class FirebaseManager: ObservableObject {
         }
         
     }
-    
+    //SIGN IN FNCTION
     func signIn(email: String, password: String, handler: @escaping AuthDataResultCallback) {
         Auth.auth().signIn(withEmail: email, password: password, completion: handler)
     }
-    
+    //SIGN OUT FUNCITON
     func signOut () -> Bool {
         do {
             try Auth.auth().signOut()

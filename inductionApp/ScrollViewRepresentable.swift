@@ -14,20 +14,24 @@ import UIKit
 
 
 
-//TO make correct CollectionViewRepresentable Steps. Currently We use introspect
+//TO make correct CollectionViewRepresentable Steps.
 //1. Look at how PKCanvasView is implemented normally
 //2. Set the controller of the canvas view to the CollectionView controller and implement any funcitons
 //3. look at how UIViewRepresentable is implemented for UITable view or Scroll or anything that has cells rather than whole view controllers as subclasses.
 class PageCell: UICollectionViewCell, PKCanvasViewDelegate {
+    
     private static let reuseId = "pageCell"
-    //var imageView: UIImageView?
+    //INFORMATION ABOUT SPECIFIC PAGE
+    //TEST SECTION
     var testSection: TestSection?
+    //WHAT PAGE IS THIS
     var pageIndex: Int?
+    //LOGIC FOR REPRESENTABLS
     static func registerWithCollectionView(collectionView: UICollectionView) {
         collectionView.register(PageCell.self, forCellWithReuseIdentifier: reuseId)
         
     }
-
+    //GIVING THE CELL THE INFORMATION ABOUT THE PAGE
     static func getReusedCellFrom(collectionView: UICollectionView, cellForItemAt indexPath: IndexPath, currentSection: TestSection) -> PageCell{
         print("WHAT ABOUT HIS>")
         let newCell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseId, for: indexPath) as! PageCell
@@ -41,7 +45,7 @@ class PageCell: UICollectionViewCell, PKCanvasViewDelegate {
     }
     
     
-
+    //INITAILZING VIEWS THAT WILL GO IN EACH CELL
     var imageView: UIImageView = {
         let view = UIImageView()
         return view
@@ -66,6 +70,7 @@ class PageCell: UICollectionViewCell, PKCanvasViewDelegate {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(self.imageView)
         contentView.addSubview(self.canvasView)
+        //UIVIEW STUFF
         
         NSLayoutConstraint.activate([
                     canvasView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -112,9 +117,14 @@ class PageCell: UICollectionViewCell, PKCanvasViewDelegate {
     }
 }
 
+
 struct CollectionViewRepresentable: UIViewRepresentable {
+    //THE COLLECTION VIEW REPRESENTABLE THAT WE PUT ALL OUR COLLECTION VIEW PAGE CELLS IN
+    //INFORMATION ABOTU THE TEST
     @ObservedObject var test: Test
+    //SHOULD THE USER BE ABLE TO SCROLL (IF NOT THEN THEY CAN DRAW WITH THEIR FINGERS
     @Binding var twoFingerScroll: Bool
+    //SCROLL TO THE TOP WHEN THEY START A NEW SECTION AND THE PDF IMAGES CHANGE
     @Binding var scrollToTop: Bool
     @EnvironmentObject var orientationInfo: OrientationInfo
     
@@ -130,7 +140,6 @@ struct CollectionViewRepresentable: UIViewRepresentable {
         collectionView.delegate = context.coordinator
         
         PageCell.registerWithCollectionView(collectionView: collectionView)
-        print("HELLO?")
         return collectionView
     }
 
@@ -147,7 +156,7 @@ struct CollectionViewRepresentable: UIViewRepresentable {
             uiView.scrollToTop(adjustedContentOffset: 0)
             //self.scrollToTop = false
         }
-        
+        //RELOAD THE DATA IN THE COLLECTION VIEW
         uiView.reloadData()
         
     }
@@ -167,16 +176,13 @@ struct CollectionViewRepresentable: UIViewRepresentable {
 
         init(_ collectionViewRepresentable: CollectionViewRepresentable) {
             self.parent = collectionViewRepresentable
-            print("BENSDFSDFSDGS")
             
         }
 
         // MARK: UICollectionViewDataSource
 
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            print("PAGES IN COLLECTION VIEW")
-            print(self.parent.test.name)
-            print(self.parent.test.currentSection!.pages.count)
+
             return self.parent.test.currentSection!.pages.count
             
         }
@@ -192,8 +198,6 @@ struct CollectionViewRepresentable: UIViewRepresentable {
 
             
             cell.imageView.image = parent.test.currentSection!.pages[indexPath.row].uiImage
-            print(indexPath.row)
-            print("HELLO WORLD")
             return cell
         }
 
@@ -206,55 +210,3 @@ struct CollectionViewRepresentable: UIViewRepresentable {
     }
 }
 
-
-
-
-//
-//struct CollectionViewRepresentable: UIViewRepresentable {
-//    @ObservedObject var currentSection: TestSection
-//
-//    func makeCoordinator() -> Coordinator {
-//        Coordinator(self)
-//    }
-//
-//    func makeUIView(context: Context) -> UICollectionView  {
-//        UICollectionViewFlowLayout
-//        let collectionView = UICollectionView(f)
-//
-//        for page in currentSection.pages {
-//            let collectionCell = UICollectionViewCell()
-//            let imageSubview = UIImageView(image: page.uiImage)
-//            let c = PKCanvasView(frame: imageSubview.frame)
-//            c.isOpaque = false
-//            c.allowsFingerDrawing = false
-//            //c.isScrollEnabled = true
-//            page.canvas = c
-//            imageSubview.addSubview(c)
-//            collectionCell.addSubview(imageSubview)
-//            collectionView.addSubview(collectionCell)
-//
-//        }
-//        collectionView.backgroundColor = .blue
-//
-//
-//        return collectionView
-//    }
-//
-//    func updateUIView(_ uiView: UICollectionView, context: Context) {
-//        print("BEN")
-//        // code to update scroll view from view state, if needed
-//    }
-//
-//    class Coordinator: NSObject {
-//        var collectionView: CollectionViewRepresentable
-//
-//        init(_ collectionView: CollectionViewRepresentable) {
-//            self.collectionView = collectionView
-//        }
-//
-//    }
-//
-//
-//}
-//
-//

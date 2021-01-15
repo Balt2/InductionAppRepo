@@ -12,17 +12,29 @@ import Combine
 import Introspect
 import MobileCoreServices
 
+//The test view displays the test
 struct TestView: View {
+    //Should the test and answer sheet be scrollable or not. If not, the user can draw with finger
     @State var shouldScroll: Bool = true
+    //Used to instruct the UICollectionView to scroll to the top after a section is finished
     @State var shouldScrollToTop: Bool = false
+    //Used to determine if the pre or post test module sheets should show up.
     @State var showSheet: Bool = true
+    //End of test alert
     @State var showAlert: Bool = false
+    //Dummy variable that is used to have the screen re-draw itself. could probably be gotten rid
     @State var neverUseIndex: Int = -1
+    //Boolean value telling you if the pre survey has been submitted. If it has then when showSheet = true, the post survey will show.
     @State var preSurveySubmitted: Bool = false
+    //If you should leave the test
     @Binding var shouldPopToRootView : Bool
+    //Actual data for test
     @ObservedObject var testData: Test
+    //Has login and user information from firebase
     @EnvironmentObject var currentAuth: FirebaseManager
+    //Used for the offset of the answer sheet. This is used if drag is re-implemented
     @State private var offset = CGSize.zero
+    //Used to re-draw the screen when the user flips the orientation of the screen
     @EnvironmentObject var orientationInfo: OrientationInfo
     
     var body: some View {
@@ -33,16 +45,22 @@ struct TestView: View {
                 .foregroundColor(.black)
             VStack{
                 HStack{
+                    //DISPLAYS THE ANSWER SHEET
                     if testData.showAnswerSheet == true{
                         
                         List{
+                            //SECTION HEADER TELLING YOU WAHT THE CURRENT SECTION IS
                             Section(header: Text("Section \(self.testData.currentSection!.sectionIndex + 1)")) {
+                                //LOOOP THROUGH EACH SECTION OF THE TEST
                                 ForEach(self.testData.currentSection!.questions, id: \.self){question in
+                                    //CREATE INSTANCE OF ANSWER SHEET ROW
                                     AnswerSheetRow(question: question, section: self.testData.currentSection!, actMath: self.testData.currentSection!.name == "Math" && self.testData.testType! == .act, shouldScroll: self.$shouldScroll, showPopUp: self.$shouldScroll, popUpQuestionIndex: self.$neverUseIndex)
                                 }
+                                //LOGIC TO DISABLE DRAWING ON THE ANSWER SHEET IF THE USER IS NOT IN A SECTION OR THEY HAVE SUUBMITED THE LAST SECTION
                             }.disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
                             
                         }.frame(width: 300 + offset.width)
+                        //DRAG LOGIC. NEEDS TO BE REFINED
 //                            .gesture(self.shouldScroll == false ? nil : DragGesture()
 //                                .onChanged{gesture in
 //                                    print(gesture)
@@ -93,11 +111,14 @@ struct TestView: View {
                         }
                         
                     }
-                    
+                    //COLLECTION VIEW THAT PRESENTS THE TEST PAGES. WE USE A COLLECTION VIEW REPRESENTABLE SO THAT WE HAVE MORE CONTROL OVER HOW THE VIEW ACTS (SCROLLING TO TOP, DRAWING WITH FINER)
                     CollectionViewRepresentable(test: self.testData, twoFingerScroll: self.$shouldScroll, scrollToTop: self.$shouldScrollToTop)
                         .disabled(!(self.testData.testState == .inSection || self.testData.testState == .lastSection ))
+                        //WE HAVE BLUR BEFORE THE TEST BEGINS
                         .blur(radius: self.testData.begunTest == false ? 30 : 0.0)
+                        //THESE ITEMS INCLUDE THE SECTION TIMER AND BUTTONS TO GO THE NEXT SECTION
                         .navigationBarItems(trailing: TimerNavigationView(shouldScrollNav: self.$shouldScroll, shouldScrollToTopNav: self.$shouldScrollToTop, test: self.testData, shouldPopToRootView: self.$shouldPopToRootView, showAlert: self.$showAlert, showSheet: self.$showSheet))
+                        //HIDE BACK BUTTON ONCE THEY HAVE BEGUN THE TEST
                         .navigationBarBackButtonHidden(self.testData.timed && self.testData.begunTest)
                         .opacity(orientationInfo.orientation.rawValue == "BEN" ? 1.0 : 1.0)
                         
@@ -107,12 +128,15 @@ struct TestView: View {
                 
             }.blur(radius: (!self.showSheet) ? 0 : 50.0) //TODO: Add a loading if they finish //self.testData.loadedPDFIn && 
         }
+    
         .sheet(isPresented: self.$showSheet, onDismiss: {
+            //THEY HAVE FINSIHED THE TEST
             if self.testData.currentSectionIndex > 0 {
                 self.testData.sendResultJson(user: self.currentAuth.currentUser!) //TODO: Dont force
                 self.shouldPopToRootView = false
                 
             }else{
+                //THE HAVE JUST SUBMITED THE PRE-TEST MODULE
                 if !self.testData.loadedPDFIn {
                     self.preSurveySubmitted = true
                     self.showSheet = true
@@ -122,8 +146,10 @@ struct TestView: View {
             }
         }){
             if self.testData.currentSectionIndex < 1{ //Should be test.bugan. TODO testData.begunTest
+                //DISPLAY PRE-TEST MODULE
                 MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.preTestMindset!, preTest: true, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView, surveySubmitted: self.$preSurveySubmitted)
             }else{
+                //POST TEST MODULE
                 MindsetView(presentView: self.$showSheet, test: self.testData, model: self.testData.postTestMindset!, preTest: false, user: self.currentAuth.currentUser!, shouldPopToRoot: self.$shouldPopToRootView, surveySubmitted: self.$preSurveySubmitted)
             }
         }.alert(isPresented: self.$showAlert){
@@ -153,7 +179,7 @@ struct TestView: View {
 
 
 
-
+//RE-USABLE STRUCTURE USED FOR EACH PAGE
 struct PageView: View{
     var model: PageModel
     var section: TestSection?
@@ -162,6 +188,7 @@ struct PageView: View{
     
     var body: some View {
         
+        //DISPLAYS ONE PAGE
         ZStack{
             Image(uiImage: self.model.uiImage).resizable().aspectRatio(contentMode: .fill)
             
@@ -174,6 +201,7 @@ struct PageView: View{
 //Helpful links: Alert  - https://www.hackingwithswift.com/books/ios-swiftui/showing-alert-messages
 //Workaround for popToRootView - https://stackoverflow.com/questions/57334455/swiftui-how-to-pop-to-root-view
 
+//THE VIEW THAT APPEARS WHEN THE USER
 struct EndTestNavigationView: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     @ObservedObject var test: Test
@@ -190,16 +218,26 @@ struct EndTestNavigationView: View {
     
 }
 
+//VIEW THAT CONTAINS ALL THE BUTTONS AND VIEW FOR TIMING
 struct TimerNavigationView: View {
+    //VALUE THAT DETERMINED IF THE VIEWS SHOULD BE SCROLLALABLE (OR NTO SO PEOPLE CAN DRAW WITH THEIR FINGER)
     @Binding var shouldScrollNav: Bool
+    //SAME AS TESTVIEW
     @Binding var shouldScrollToTopNav: Bool
+    
+    //SAME AST TESTVIEW
     @EnvironmentObject var currentAuth: FirebaseManager
+    //DATA FOR TEST
     @ObservedObject var test: Test
+    //IF THE VIEW SHOULD CHANGE
     @Binding var shouldPopToRootView : Bool
+    //TIME
     @State private var now = ""
     @Binding var showAlert: Bool
     @Binding var showSheet: Bool
+    //WE DISABLE THE BUTTON FOR 5 SECONDS AFTER A SECTION HAS BEGUN
     @State var disableButton: Bool = false
+    //START THE TIMMER
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     
     var body: some View {
@@ -261,7 +299,10 @@ struct TimerNavigationView: View {
                 
             }
             HStack {
+                //ACTION OF BUTTON THE FAR RIGHT
                 Button(action: {
+                    
+                    //DISABLE BUTTON IMMIDAILTLY WHEN IT IS PRESSED SO IT CANT BE TWICED BY ACCIDENT
                     self.disableButton = true
                     switch self.test.testState{
                     case .notStarted:
@@ -286,13 +327,15 @@ struct TimerNavigationView: View {
                     self.disableButton = false
                     
                 }){
+                    
                     HStack{
+                        //DETERMINE WHAT THE BUTTON SAYS
                         getControlButton(test: self.test, showSheet: self.$showSheet)
                     }
                 }.disabled(self.disableButton || self.test.currentSection!.sectionTimer.fourSecondIn) //()!
                 
                 //Shows time text
-                
+                //LOGIC FOR TIMER
                 if (self.test.testState == .inSection
                     || self.test.testState == .lastSection || self.test.testState == .inBreak) && (self.test.timed == true) {
                     Text("\(now) left")
@@ -316,6 +359,7 @@ struct TimerNavigationView: View {
             }
         }
     }
+    //LOGIC FOR WHAT THE RIGHT HAND BUTTON SAYS
     func getControlButton(test: Test, showSheet: Binding<Bool>) -> AnyView {
         
         switch self.test.testState{
@@ -351,11 +395,13 @@ struct TestTable: View {
     @State var sectionDict: [TestType: [Test]]
     
     var body: some View {
-        
+        //ORDER ALL THE TESTS THE USER CAN TAKE
         List{
+            //LOOPING OVER ALL USERS TESTS
             ForEach(self.getOrderedKeys(), id: \.self){key in
                 Section(header: Text(key.rawValue)){
                     ForEach(self.sectionDict[key]!){test in
+                        //DETERMINING IF THE USER HAS "DOWNLOADED" THE TEST OR NOT
                         if self.user.testRefsMap.dict[test.testFromJson!.testRefName] == false{
                             Button(action: {
                                 self.showPicker.toggle()
@@ -371,6 +417,7 @@ struct TestTable: View {
                             
                             
                         }else{
+                            //IF THE HAVE DOWNLAODED THE TEST THEN IF THEY CLICK A SPECIFIC TEST IT WILL SEND THEM TO THE TEST VIEW WITH THAT TEST AS THE TESTDATA
                             NavigationLink(destination: TestView(shouldPopToRootView: self.$rootIsActive, testData: test)){
                                 Text(test.name)
                             }.isDetailLink(false).frame(height: 90)
@@ -390,7 +437,7 @@ struct TestTable: View {
     
 }
 
-
+//NEEDS TO BE UPDATED WHEN STUDY IS IMPLEMENTED
 struct StudyTable: View {
     @ObservedObject var user: User
     @Binding var rootIsActive: Bool
@@ -408,6 +455,7 @@ struct StudyTable: View {
     }
 }
 
+//NOT IMPLMENTED FULLY
 struct PastPerformanceTable: View {
     @EnvironmentObject var currentAuth: FirebaseManager
     var body: some View {
@@ -421,6 +469,7 @@ struct PastPerformanceTable: View {
     }
 }
 
+
 extension UIScrollView {
     func scrollToTop(adjustedContentOffset: CGFloat) {
         //Adjusted Contentoffset is the distance the navigation bar takes up
@@ -428,7 +477,7 @@ extension UIScrollView {
         setContentOffset(desiredOffset, animated: true)
     }
 }
-
+//STRUCTURE TO PICK A DOCUMENT FROM THE USERS FILES. MOSTLY COPIED FROM OTHER SOURCES.
 struct DocumentPicker: UIViewControllerRepresentable{
     var testRefString: String
     var user: User

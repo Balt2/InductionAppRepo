@@ -13,6 +13,7 @@ import Foundation
 class CustomTimer: ObservableObject {
     private var endDate: Date?
     private var timer: Timer?
+    //Used to compute how long it takes for somebody to answer each question
     private var remainingTimeAtLastAnswer: Double
     private var allotedTime: Double
     @Published var done = false
@@ -23,10 +24,8 @@ class CustomTimer: ObservableObject {
         }
     }
     
+    //Function that we have in order to not have students move to the next section instantly
     var fourSecondIn: Bool {
-        print(allotedTime)
-        print(timeRemaining)
-        print("four SECOND IN")
         return (allotedTime - timeRemaining < 4.0 && allotedTime != timeRemaining)
     }
     
@@ -58,15 +57,13 @@ class CustomTimer: ObservableObject {
             if self.timeRemaining < 0 {
                 timer.invalidate()
                 self.done = true
+                //Invalidate the timer and remove it from the stack
                 self.timer = nil
             }
         }
         RunLoop.current.add(self.timer!, forMode: .common)
     }
     
-//    func reset(){
-//        self.timeRemaining = Double(d)
-//    }
 
     private func setRemaining() {
         let min = max(floor(self.timeRemaining / 60),0)
