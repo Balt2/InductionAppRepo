@@ -10,6 +10,7 @@
 import Foundation
 import Combine
 
+//MODEL USED WHEN USER CREATES ACCOUNT
 class UserRegistrationViewModel: ObservableObject {
     // Input
     @Published var email = ""
@@ -33,9 +34,7 @@ class UserRegistrationViewModel: ObservableObject {
     private var cancellableSet: Set<AnyCancellable> = []
     
     init() {
-//        $firstName
-//
-//        $lastName
+
         
         $email
             .receive(on: RunLoop.main)
@@ -67,7 +66,7 @@ class UserRegistrationViewModel: ObservableObject {
             }
             .assign(to: \.isPasswordCapitalLetter, on: self)
             .store(in: &cancellableSet)
-        
+        //USED WHEN WE HAD ASSOCIATIONIDS IMPLEMENTED
 //        $associationID
 //            .receive(on: RunLoop.main)
 //            .map{ asID in

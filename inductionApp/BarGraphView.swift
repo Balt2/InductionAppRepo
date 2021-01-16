@@ -408,6 +408,7 @@ struct Grid: View {
     
 }
 
+//STRUCUTRE FOR EACH INDIVUDAL BAR (THIS WILL ALSO DRAW STACKED CHARTS)
 struct BarShape: View {
     var barEntry: BarEntry
     var yAxisTotal: Int
@@ -425,6 +426,7 @@ struct BarShape: View {
         }.rotationEffect(Angle(degrees: 180))
     }
     
+    //function to create teh indiviudal stacked rectangles
     func createStackRect(startHeight: CGFloat, endHeight: CGFloat, width: CGFloat) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: 0 , y: startHeight))

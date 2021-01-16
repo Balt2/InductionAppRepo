@@ -11,14 +11,7 @@ import Firebase
 import PencilKit
 import Combine
 
-class TestList: ObservableObject {
-    @Published var tests = [Test]()
-    
-    func add(test: Test){
-        tests.append(test)
-    }
-}
-
+//MMODEL FOR A TEST SECTION
 class TestSection: ObservableObject, Hashable, Identifiable {
     
     static func == (lhs: TestSection, rhs: TestSection) -> Bool {
@@ -31,7 +24,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     }
     var id = UUID()
     
-    
+    //BOLEAN THAT DETERMINES IF THE SECTION IS OVER
     @Published var sectionOver = false{
         didSet{
             if sectionOver == true{
@@ -42,6 +35,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
             }
         }
     }
+    //BOLEAN THAT IS TRUE IF THE TEST HAS BEGUN. IF IT HAS THEN WE START THE TIMER
     @Published var begunSection = false{
         didSet{
             if begunSection == true{
@@ -50,13 +44,16 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         }
     }
     
-    
+    //HOW MUCH TIME FOR THIS SECTION (IN SECONDS)
     var allotedTime: Double
+    //COSTUME TIMER
     @Published var sectionTimer: CustomTimer
+    //HOW MUCH TIME DID THEY FINISH THE SECTION WITH
     @Published var leftOverTime: Double
-    
+    //COSTUME TIMER FOR BREAKS
     @Published var breakTimer: CustomTimer
     
+    //RAW SCORE IS THE NUMBER OF QUESTIONS THEY GOT RIGHT
     var rawScore: Int{
         var score = 0
         for question in questions {
@@ -70,18 +67,23 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     
     
     
-    var inkingTool: PKInkingTool //= PKInkingTool(.pen, color: .black, width: 1)
+    var inkingTool: PKInkingTool
     var eraserTool: PKEraserTool = PKEraserTool(.bitmap)
+    //NAME OF SECTION
     var name: String
+    //WHAT INDEX IN THE TEST IS THE SECTION
     var sectionIndex: Int
     var index: (start: Int, end: Int) //Index of pages in the pdf
+   //PAGES OF THEST
     var pages = [PageModel]()
+    //LIST OF QUESTIONS IN THE SECTION
     var questions = [Question]()
     //Number of questions the student has answered in the section
     var numAnsweredQuestions = 0
+    //STUDY IS NOT TIMES, TEST IS
     var timed: Bool?
     
-    
+    //INITIALIZE WITH TEST SECTIONS THAT ARE READ IN FROM A JSON
     init(sectionFromJson: TestSectionFromJson, pages: [PageModel] = [PageModel](), name: String, questions: [Question], inkingTool: PKInkingTool, testType: TestType) {
         self.allotedTime = Double(sectionFromJson.timeAllowed)
         self.leftOverTime = Double(sectionFromJson.timeAllowed)
@@ -107,7 +109,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         }
         
     }
-    
+    //INITIALIZE WITH ALREADY EXISTING TEST SECTION
     init(testSection: TestSection){
         self.allotedTime = testSection.allotedTime
         self.leftOverTime = testSection.allotedTime
@@ -129,7 +131,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
     }
 
     
-    //scale up: bool
+    //scale up:
     func scalePages(){
        
         for page in pages{
@@ -138,6 +140,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         }
     }
     
+    //FUNCTION THAT MAKES TEST SECTION FROM A JSON FILE OF AN ENTIRE TEST
     func makeTestSectionForJson(test: Test) -> TestSectionFromJson{
         print("MAKING TEST SECTION FOR JSON")
         var questionsForJson = [QuestionFromJson]()
@@ -151,6 +154,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
             
             questionsForJson.append(temp)
         }
+        //SETS THE SCALED SCORE
         self.setScaledScore(test: test)
         //This is a var because we will be giving it a scaled score
         let sectionForJson = TestSectionFromJson(name: self.name,
@@ -197,7 +201,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
         }
         
     }
-    
+    //FUNCTION TO RESET THE SECTION AFTER THEY HAVE COMPLETED IT
     func reset(){
         self.leftOverTime = allotedTime
         
@@ -207,9 +211,10 @@ class TestSection: ObservableObject, Hashable, Identifiable {
             self.breakTimer = CustomTimer(duration: 0)
         }
         self.sectionTimer = CustomTimer(duration: Int(self.leftOverTime))
-    
+        
         begunSection = false
         sectionOver = false
+        //WE DO THIS SO WE REMOVE THE COMPUTATIONALLY HEAVY CANVASES FORM THE STACK
         pages.forEach {$0.reset()}
         questions.forEach {$0.reset() }
         
@@ -218,7 +223,7 @@ class TestSection: ObservableObject, Hashable, Identifiable {
 }
 
 
-
+//TEST MODEL CONTAINING ALL THE SECTIONS
 class Test: ObservableObject, Hashable, Identifiable {
     
     //Conform to protocal helpers
@@ -278,11 +283,12 @@ class Test: ObservableObject, Hashable, Identifiable {
     
     
     
-    //Data about a test (probably just taken)
+    //Data OF a test (probably just taken)
     var resultJson: Data{
         return self.createResultJson()
     }
     
+    //USED FOR PROVIDING THE OVERALL SCORE
     var overallScore: Int{
         if testType == .act{
             var sum = 0
@@ -296,15 +302,14 @@ class Test: ObservableObject, Hashable, Identifiable {
             return 0
         }
     }
+    //SUB SCORES
     var mathScore = 0
     
     var englishScore = 0
-    
+    //USED TO CONVERT RAW TO ACTUAL SCORES BASED ON SAT AND ACT CURVES. READ IN FROM TEST JSON FILE
     var scoreConvertDict = [Int: (readingSectionTestScore: Int, mathSectionTestScore: Int, writingAndLanguageTestScore: Int, scienceTestScore: Int)]()
     
     
-    //@Published var questions: [[Question]] = [] //A 2 dimensional array with a list of questions for each section of the test.
-
     //Create a test from Files on the computer
     init(jsonFile: String, pdfFile: String){
         
@@ -323,9 +328,6 @@ class Test: ObservableObject, Hashable, Identifiable {
             }
         }
                 
-
-
-        //self.sendJsonTestPerformanceData()
     }
     //Create a test fromo Data (coming from database mostly)
     init(jsonData: Data, pdfData: Data, corrections: Bool){
@@ -413,7 +415,7 @@ class Test: ObservableObject, Hashable, Identifiable {
               
         print("donne: \(self.name)")
     }
-    
+    //FUNCTION TO GET ALL THE PNGS FOR THIS TEST FROM THE DATABASE
     func getPngsU(user: User, completionHandler: @escaping (_ completion: [Data])  -> ()){
         user.getPngs(testRef: self.testFromJson!.testRefName){pngs in
             if pngs.count <= (self.sections.last?.index.end)!{
@@ -429,6 +431,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         }
     }
     
+    //SETTING PDF FOR SECTION GIVEN A LIST OF PAGES
     func setPDFForSection(images: [PageModel]){
         print(self.testFromJson?.testRefName)
         pdfImages = images
@@ -559,7 +562,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         //self.saveWriting()
 
     }
-    
+    //EVENTUALLY WE WANT TO SAVE THE WRITING ON THE TEST
 //    func saveWriting(){
 //
 //        let section1 = self.sections[0]
@@ -637,11 +640,12 @@ class Test: ObservableObject, Hashable, Identifiable {
             return nil
         }
     }
-    
+    //CREATE TEST FROM A TEST JSON
     func createTestFromJson(data: Data) -> TestFromJson? {
 
         do{
             let decoder = JSONDecoder()
+            //MAKE SURE TESTFROMJSON HAS THE SAME FORMAT AS THE JSON BEING LOADED IN
             let testFromJson = try decoder.decode(TestFromJson.self, from: data)
             return testFromJson
         }catch{
@@ -650,7 +654,7 @@ class Test: ObservableObject, Hashable, Identifiable {
         }
     }
     
-    
+    //CREATE SECTIONS FOR THIS TEST
     func createSectionArray(testFromJson: TestFromJson, corrections: Bool) -> [TestSection]{
         var sections: [TestSection] = []
         for section in testFromJson.sections {
@@ -681,7 +685,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
 
-    
+    //CREATING TEH RESULT JSON AFTER A USER TAKES A TEST
     func createResultJson() -> Data {
         //Creating encodable object from test
         var sectionsForJson = [TestSectionFromJson]()
@@ -724,7 +728,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
     
-    
+    //SEND THE RESULT JSON TO THE DATABASE
     func sendResultJson(user: User) {
         //Name of result: NameOfTest-UserID-Currentdate
         let nameOfFile = "\(testFromJson!.testRefName)-\(user.id)-\(Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"))"
@@ -874,7 +878,7 @@ class Test: ObservableObject, Hashable, Identifiable {
     }
     
 }
-
+//ENUM FOR THE DIFFERENT STATES A TEST CAN BE IN
 enum TestState{
     case notStarted
     case inSection
@@ -883,7 +887,7 @@ enum TestState{
     case testOver
 }
 
-
+//JSON STRUCTURE
 //Reading a Test JSON IN
 struct TestFromJson: Codable {
     var numberOfSections: Int

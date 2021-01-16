@@ -8,9 +8,11 @@
 
 import Foundation
 
+//MODEL FOR MINDESET SURVEYS
 class MindsetSurveyModel: Codable{
     var id = UUID()
     var name: String
+    //SECTIONS FOR MINDSET MODULE
     var sections: [MindsetSectionModel]
     
     init(name: String, sections: [MindsetSectionModel]){
@@ -19,6 +21,7 @@ class MindsetSurveyModel: Codable{
     }
 }
 
+//SECTION MODEL
 class MindsetSectionModel: Codable{
     var id = UUID()
     
@@ -32,6 +35,7 @@ class MindsetSectionModel: Codable{
     }
 }
 
+//QUESTION MODEL
 class MindsetQuestionModel: Codable, Hashable{
     
     static func == (lhs: MindsetQuestionModel, rhs: MindsetQuestionModel) -> Bool {

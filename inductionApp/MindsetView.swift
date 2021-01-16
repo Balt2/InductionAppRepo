@@ -8,12 +8,19 @@
 
 import SwiftUI
 
+//MODULE FOR PRE AND POST TEST MODULES
 struct MindsetView: View {
+    //WILL BE FALSE ONCE THE SHEET IS DISMISSED BY USER
     @Binding var presentView: Bool
+    //FREE RESPONSE STRING
     @State var responseString: String = ""
+    //DATA FOR TEST
     @ObservedObject var test: Test
+    //INFORMATION ABOUT THE QUESTIONS TO ASK
     var model: MindsetSurveyModel
+    //BOOLEAN TO DETERMIEN IF THIS IS PRE OR POST TEST
     var preTest: Bool
+    //USER
     @ObservedObject var user: User
     @Binding var shouldPopToRoot: Bool
     @Binding var surveySubmitted: Bool
@@ -21,6 +28,7 @@ struct MindsetView: View {
     var body: some View {
         Group{
             if test.loadedPDFIn == false && surveySubmitted == true{
+                //ONCE THEY HAVE SUBMITED THE PRE-SURVEY THIS WILL LOAD. IF THE TEST HAS NOT LOADED YET THIS LOGIC WILL RUN
                 VStack{
                     ActivityIndicator(isAnimating: (test.loadedPDFIn == false && surveySubmitted == true))
                     Text("Loading Test...")
@@ -30,8 +38,10 @@ struct MindsetView: View {
                     }
                 }.opacity(0.5)
             }else if surveySubmitted == false{
+                //IF THE SURVEY HAS NOT BEEN SUBMITED WE WILL SHOW IT
                 NavigationView{
                     VStack(alignment: .leading){
+                       //PRESENTING INFORMATION FROM THE SURVEY
                         Text(model.name).font(.largeTitle).padding([.top, .bottom], 10).frame(maxWidth: .infinity)
                         ScrollView(.vertical){
                             
@@ -48,7 +58,7 @@ struct MindsetView: View {
                                             MindsetQuestionView(question: question, headers: section.headers, responseString: self.$responseString)
                                                 .background(Color.white).frame(maxWidth: .infinity)
                                         }
-                                    }//.frame(maxWidth: .infinity).background(Color.white).padding([.top, .bottom], 10)
+                                    }
                                 }
                             }
                         }.navigationBarTitle(Text("Mindset Module: \(preTest ? "pre-test" : "post-test")"), displayMode: .inline).navigationBarItems(trailing: Button(action: {
@@ -81,11 +91,14 @@ struct MindsetView: View {
     }
 }
 
+//STRUCTURE FOR EACH QUESTION IN THE MODULE
 struct MindsetQuestionView: View {
+    //QUESTION MODEL
     var question: MindsetQuestionModel
+    //POSSIBLE ANSWERS FOR THIS QUESTION
     var headers: [String]
     var subHeaders: [String]?
-    
+    //WHAT DID THE USER SELECT. THEY ALSO MAY NOT SELECT ANY VALUE
     @State var chosenString: String = "N/A"
     @Binding var responseString: String
     var body: some View {
@@ -93,12 +106,13 @@ struct MindsetQuestionView: View {
             HStack{
                 ZStack(){
                     Circle().stroke().frame(width: 30, height: 30).foregroundColor(Color.blue)
-                        
+                    //DISPLAYING THE QUESTION NUMBER
                     Text(String(question.questionIndex))
                         .foregroundColor(Color.blue)
                 }
+                //DISPLAYING THE QUESTION TEXT
                 Text(question.question).fontWeight(.bold).foregroundColor(Color.orange).multilineTextAlignment(.center).frame(width: 170)
-            }.frame(maxWidth: .infinity)//.frame(width: 200)
+            }.frame(maxWidth: .infinity)
             Group{
                 if !headers.isEmpty{
                 
@@ -125,6 +139,7 @@ struct MindsetQuestionView: View {
     
 }
 
+//USES HEADERS AND SUBHEADERS TO MAKE THINGS BOLD
 struct ComplexHeaderView: View {
     var header: String
     var subHeader: String

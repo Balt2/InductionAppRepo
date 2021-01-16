@@ -10,25 +10,34 @@ import Foundation
 import SwiftUI
 import PencilKit
 
+
+//CLASS THAT CONTAINS INFORMATION ABOUT ALL PERFORMANCE TESTS. EVERY INSTANCE OF THIS CLASS IS USED TO CONTAIN ALL RESULTS FOR A SPECIFIC TYPE OF TEST
 class AllACTData{
-    
+    //LIST CONTAINING INDIVIUDAL PERFORMANCE
     var allTestData: [ACTFormatedTestData]?
+    //SECTIONS FOR THIS TYPE OF TEST
     var sectionNames: [String]?
     var higherSectionNames: [String]? //SAT only has math and english while act should have all for sub sections for this
+    //HIGH LEVEL GRAPH OF PERFORMANCE
     var overallPerformance: BarData?
+    //GRAPH DATA FOR TIMEING DATA
     var overallPerformanceTimeOfDay: BarData?
+    //GRAPH DATA FOR EACH SECTION
     var sectionsOverall: [String: BarData]?
+    //TYPE OF TEST
     var testType: TestType?
+    //USER WHO TOOK THE TEST
     var user: User?
     init(tests: [ACTFormatedTestData], user: User){
         if tests.count > 0{
+            //BECAUSE ALL THE TESTS WILL BE OF THE SAME TYPE WE CAN USE THE FIRST TEST TYPE AS THE TYPE FOR THIS INSTANCE
             self.testType = tests[0].testType!
-            print(tests[0].dateTaken)
+            //SORT BY DATE TAKEN
             let tempTests = tests.sorted(by: {$0.dateTaken! < $1.dateTaken!})
             for (index, test) in tempTests.enumerated(){
                 test.createData(index: index)
             }
-            self.allTestData = tempTests //TODO: Two many loops
+            self.allTestData = tempTests //TODO: TOO many loops
             self.user = user
 
             self.sectionNames = Array(self.allTestData![0].subSectionGraphs.keys)
@@ -38,7 +47,7 @@ class AllACTData{
             print("Invalid Creation of AllACTDATA: No tests")
         }
     }
-    
+    //ADD TEST TO THIS INSTANCE IF THE USER HAS JUST COMPLETED A TEST
     func addTest(test: ACTFormatedTestData){
         print("IN ADD TEST")
         print("ALLTESTDATA NOT NIL")
@@ -47,7 +56,7 @@ class AllACTData{
         print("CREATING SELF")
         self.createSelf()
     }
-    
+    //FUNCTION THAT INITAILIZES A LOT OF TEH GRAPH DATA
     func createSelf(){
         print("CREATE SELF!")
         DispatchQueue.global(qos: .utility).async {
@@ -85,8 +94,9 @@ class AllACTData{
                     }
                 }
             }
+            //SECTION DATA
             var sectionGraphs = [String: BarData]()
-            
+            //LOOPING THROUGH TEH SECTIONS AND CREATING DATA FOR EACH SECTION
             for (section, entries) in sectionEntries{
                 let tempGraph = BarData(
                     title: "\(self.testType!.rawValue) \(section) Performance",
@@ -99,7 +109,7 @@ class AllACTData{
             }
             
             
-            
+            //ASYNCHRONSULY GET THEIR PERFORMACNE DATA. THIS WAY THE VIEW WILL NOT PAUSE WHEN LOADING IN DATA
             DispatchQueue.main.async {
                 self.overallPerformance = overallBarData
                 self.overallPerformanceTimeOfDay = overallBarDataTimeOfDay
@@ -115,28 +125,24 @@ class AllACTData{
 
 
 
-
+//CLASS FOR THE DATA OF ONE TEST RESULT
 class ACTFormatedTestData: Test{
     
-    //    static func == (lhs: ACTFormatedTestData, rhs: ACTFormatedTestData) -> Bool {
-    //        return lhs.id == rhs.id
-    //    }
-    //
-    //    var id = UUID() //DELETE
-    //    var name: String //DELETE
-    //var testPDF = [PageModel]() //DELETE
-    
-    
-    var overall: BarEntry? //BarEntry(xLabel: date, yEntries: ([height: overallScore], orange)
-    //var overallTime: BarEntry //BarEntry(xLabel: date, yEntries: ([height: time], orange)
+    //OVERALL PERFORMANCE ENTRY
+    var overall: BarEntry?
+    //TIME OF DAY BAR ENTRY
     var todBarEntry: BarEntry?
+    //BAR ENTRY FOR EACH SECTION
     var sectionsOverall = [String: BarEntry]() //(SectionName, Entry for the section)
+    //BAR DATA FOR THE SPECIFIC SECTIONS OF THIS TEST. (DETAIL VIEW)
     var subSectionGraphs = [String: BarData]() //(SectionName, BarData)
+    //BAR DATA FOR TIMING OF EACH QUESTION FOR EACH SECTION. WILL BECOME A SCATTER PLOT
     var subSectionTime = [String: BarData]()
+    //TUTOR PDF WITH INFORMATION ABOUT THE STUDENTS PERFORMANCE.
     var tutorPDF: TestPDF?
     
     
-    init(pdfData: Data, jsonData: Data){ //} index: Int, user: User, testRefImages: String, tutorPDFName: String) {
+    init(pdfData: Data, jsonData: Data){
         //self.tutorPDF = TestPDF(name: tutorPDFName)
         super.init(jsonData: jsonData, pdfData: pdfData, corrections: true)
         //super.init(jsonData: data, user: user, testRefImages: testRefImages)
@@ -164,7 +170,6 @@ class ACTFormatedTestData: Test{
     
     func createData(index: Int){
 
-        //xLabel: "\(String(describing: self.testFromJson!.dateTaken!.components(separatedBy: [" "]).first!))"
         self.overall = BarEntry(xLabel: self.dateTaken!.toString(dateFormat: "MM-dd-yyyy"),
             yEntries: [(height: CGFloat(self.overallScore),
                         color: Color(red: 0.15, green: 0.68, blue: 0.37))],
@@ -195,6 +200,7 @@ class ACTFormatedTestData: Test{
             sectionsOverall["Math"] = mathSectionEntry
         }
         
+        //CREATING SECTION DATA
         for section in self.sections{
             
             var data = [String:(r: CGFloat, w: CGFloat, o: CGFloat)]()
@@ -283,16 +289,12 @@ class ACTFormatedTestData: Test{
             subSectionGraphs[section.name] = barData
         }
         print("FINNISHED CREATE DATA")
-        //        self.sectionsOverall = sectionsOverall
-        //        self.subSectionGraphs = subSectionGraphs
-        //        self.subSectionTime = subSectionTime
-        
     }
     
     
 }
 
-
+//STRUCTURE FOR DATA THAT GOES INTO THE BAR GRAPH
 struct BarData: Hashable, Identifiable{
     static func == (lhs: BarData, rhs: BarData) -> Bool {
         return lhs.id == rhs.id
@@ -308,6 +310,7 @@ struct BarData: Hashable, Identifiable{
     
 }
 
+//BAR ENTRY IS DATA ABOUT EACH BAR
 struct BarEntry: Hashable, Identifiable, Equatable{
     static func == (lhs: BarEntry, rhs: BarEntry) -> Bool {
         return lhs.id == rhs.id
@@ -326,7 +329,7 @@ struct BarEntry: Hashable, Identifiable, Equatable{
 }
 
 
-
+//QUICK DATA IS THE DATA PRESENTED ON THE HOMEPAGE
 class QuickData: ObservableObject {
     
     @Published var overallBarData: BarData
@@ -348,7 +351,7 @@ class QuickData: ObservableObject {
         self.testType = testType
         self.overallBarData = BarData(title: "Test Performance", xAxisLabel: "Dates", yAxisLabel: "Score", yAxisSegments: 4, yAxisTotal: 50, barEntries: [BarEntry(xLabel: " ", yEntries: [(height: 0, color: Color.gray)])])
     }
-    
+    //ADDING A NEW TEST TO THE QUICK DATA AFTER A USER TAKES A TEST
     func addNewTest(test: Test, testResultName: String){
         
         let newEntry = getNewDictEntry(test: test)
@@ -356,31 +359,8 @@ class QuickData: ObservableObject {
         
         self.createData(nsDictionary: databaseDictionary)
         
-//        if overallBarData.barEntries[0].xLabel == " "{
-//            let tempNSDictionary = [testResultName: newEntry]
-//            self.createData(nsDictionary: tempNSDictionary)
-//        }else{
-//           let newOverallBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.overallScore), color: Color("salmon"))])
-//
-//            overallBarData.barEntries.append(newOverallBarEntry)
-//
-//
-//            if testType == .sat || testType == .psat{
-//                let mathSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.mathScore!), color: Color("salmon"))])
-//                let englishSectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(test.englishScore!), color: Color("salmon"))])
-//
-//                sectionBarData["Math"]?.barEntries.append(mathSectionBarEntry)
-//                sectionBarData["English"]?.barEntries.append(englishSectionBarEntry)
-//            }else if testType == .act {
-//                for section in test.sections{
-//                    let sectionBarEntry = BarEntry(xLabel: Date().toString(dateFormat: "MM-dd-yyyy"), yEntries: [(height: CGFloat(section.scaledScore!), color: Color("salmon"))])
-//                    sectionBarData[section.name]?.barEntries.append(sectionBarEntry)
-//                }
-//            }
-//        }
-        
     }
-    
+    //CREATING A NEW ENTRY FOR QUICK DATA
     private func getNewDictEntry(test: Test) -> [String : [String: Int]] {
         switch testType{
         case .sat, .psat:
@@ -399,7 +379,7 @@ class QuickData: ObservableObject {
             tempSectionDict]
         }
     }
-    
+    //CREATE QUICK DATA FROM A DICTIONARY CONTAINING HOW THE STUDENT DID ON THIS TYPE OF TEST. INFORMATION IS CONTAINED WITHIN THE USERS FIREBASE ENTRY
     func createData(nsDictionary: [String: [String : [String: Int]]]){
         if !nsDictionary.isEmpty{
             databaseDictionary = nsDictionary

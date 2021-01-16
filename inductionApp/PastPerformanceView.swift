@@ -9,16 +9,24 @@
 import SwiftUI
 
 struct PastPerformanceView: View {
+    //INFORMATION ABOUT THE SCREEN ORIENTATION
     @EnvironmentObject var orientationInfo: OrientationInfo
+    //CURRENT USER
     @ObservedObject var user: User
-    
+    //INDEX OF SECTION THE USER IS LOOKING AT
     @State var index = 0
+    //BOOLEAN THAT DETERMIENS IF THE USER IS LOOKING AT A DETAIL ANAYLISIS
     @State var showDetailTest = false
+    //INDEX REPRESENTING WHICH TEST THEY WANT TO SEE THE DETAIL OF
     @State var allDataTestIndex = 0
+    //USED FOR THE VIEW OF TEST PDF
     @State var shouldScrollNav: Bool = true
     @State var shouldScrollToTopNav: Bool =  true
+    
+    //POP UP FOR GETTING INFORMATION ABOUT A SPECIFIC QUESTION
     @State var popUpShow: Bool = false
     
+    //WHICH TAB THEY ARE CURRENTLY LOOKING AT (GRAPHS (ANALYTICS), TEST PDF (CORRECTIONS) , TUTOR PDF)
     @State private var selection: Tabs = .analytics
     
     private enum Tabs: Hashable{
@@ -26,15 +34,16 @@ struct PastPerformanceView: View {
         case tutorPDF
         case corrections
     }
-    
+    //WIDTH OF SCREEN
     var width = UIScreen.main.bounds.width
     
     var body: some View {
         
         
         Group {
+            
             if showDetailTest == false{
-                
+                //EXCUTE LOGIC FOR THE OVERAL GRAPHS
                 //GeometryReader{geometry in
                 ScrollView(.vertical) {
                     VStack{
@@ -51,12 +60,13 @@ struct PastPerformanceView: View {
                         }
                         
                         
-                        
+                        //BAR CHART FOR THEIR OVERALL PERFORMANCE OVER THE DIFFERENT DATES THEY HAVE TAKEN THIS TYPE OF TEST
                         BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: user.currentPerformanceData!.overallPerformance!, showLegend: false, isQuickData: false).frame(width: UIScreen.main.bounds.width)
                         .animation(.default)
                         
                         CostumeBarView(index: self.$index, headers: user.currentPerformanceData!.higherSectionNames!).frame(width:  UIScreen.main.bounds.width)
                         
+                        //HSTACK CONTAINING THE SECTION BAR GRAPHS
                         HStack(spacing: 0){
                             ForEach(user.currentPerformanceData!.higherSectionNames!, id: \.self){sectionKey in
                                 BarChart(showDetailTest: self.$showDetailTest, allDataTestIndex: self.$allDataTestIndex, data: self.user.currentPerformanceData!.sectionsOverall![sectionKey]!, showLegend: false, isQuickData: false).frame(width: UIScreen.main.bounds.width)
@@ -65,7 +75,7 @@ struct PastPerformanceView: View {
                             .animation(.default)
                             .edgesIgnoringSafeArea(.all)
                             .padding(.all, 0)
-                        
+                        //TIME OF DAY GRAPH
                         //ScatterPlot(data: (user.currentPerformanceData?.overallPerformanceTimeOfDay!)!).frame(width: UIScreen.main.bounds.width)
                         //BarChart(showDetailTest: self.$showDetailTest, detailDataIndex: self.$detailDataIndex, data: self.scatterData, barChart: false).frame(width: UIScreen.main.bounds.width)
                         //                            .highPriorityGesture(DragGesture()
@@ -90,13 +100,14 @@ struct PastPerformanceView: View {
                     
                 }
             }else{
+                //IF THEY ARE LOOING AT A TEST DETAIL THEN THEY WILL HAVE A TAB VIEW
                 TabView(selection: $selection){
                     RawDataView(index: self.index, sectionNames: self.user.currentPerformanceData!.sectionNames!, data: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
                         .tabItem{
                             Image(systemName: "1.square.fill")
                             Text("Analytics")
                     }.tag(Tabs.analytics)
-                    
+                    //TUTOR PDF TAB
 //                    ScrollView(.vertical){
 //
 //                        ForEach(self.user.currentPerformanceData!.allTestData![allDataTestIndex].tutorPDF.pages, id: \.self){ page in
@@ -108,6 +119,7 @@ struct PastPerformanceView: View {
 //                        Image(systemName: "2.square.fill")
 //                        Text("Tutor PDF")
 //                    }.tag(Tabs.tutorPDF)
+                    //PDF OF TEST WITH EACH QUESTION CLICKABLE SO THEY CAN GET MORE INFORMATION ABOUT THAT ONE QUESTION
                     CorrectionView(shouldScroll: self.$shouldScrollNav, shouldScrollToTop: self.$shouldScrollToTopNav, showPopUp: self.$popUpShow,  testData: self.user.currentPerformanceData!.allTestData![allDataTestIndex])
 
                     .tabItem {
@@ -121,7 +133,7 @@ struct PastPerformanceView: View {
     
 }
 
-
+//STRUCTURE TO PRESENT THE DETAIL VIEW FOR A SPECIFIC TEST. GRAPHS INCLUDE SUB SECIOTN SCORES AND TIMING PER QUESTION
 struct RawDataView: View{
     @EnvironmentObject var orientationInfo: OrientationInfo
     @State var index: Int
@@ -155,6 +167,7 @@ struct RawDataView: View{
                 HStack{
                     Spacer()
                     //Group{
+                    //LABELS WITH THEIR ENGLISH AND MATH SCORES FOR SAT OR PSAT
                        ZStack{
                            RoundedRectangle(cornerRadius: 5)
                                .fill(Color(red: 0.12, green: 0.58, blue: 0.84))
@@ -176,6 +189,7 @@ struct RawDataView: View{
                     //}
                 }.frame(maxWidth: UIScreen.main.bounds.width)
             }else{
+                //SHOW SECTION NAME FOR ACT
                 HStack{
                     Spacer()
                     ForEach(self.sectionNames, id: \.self){sectionKey in
@@ -194,6 +208,7 @@ struct RawDataView: View{
                     Spacer()
                 }.frame(maxWidth: UIScreen.main.bounds.width)
             }
+            //HEADER WITH SECTION NAMES FOR USER TO CLICK THROUGH
             CostumeBarView(index: self.$index, headers: self.sectionNames).frame(width: orientationInfo.orientation.rawValue == "BEN" ? UIScreen.main.bounds.width : UIScreen.main.bounds.width )
             HStack(spacing: 0){
                 ForEach(self.sectionNames, id: \.self){sectionKey in
@@ -214,6 +229,7 @@ struct RawDataView: View{
     }
 }
 
+//TAKEN FROM ONLINE SOURCE
 struct CostumeBarView : View {
     
     @Binding var index : Int
